@@ -423,6 +423,8 @@ function renderDialogue(
 
   const scene = getScene(toSceneId(state.location, state.timeSlot));
   const choices = getAvailableDialogueChoices(state, person);
+  const refusesFurtherDialogue =
+    state.loopState.dialogue.refusesFurtherDialogue.includes(person);
 
   root.innerHTML = `
     <main class="app-shell dialogue-shell">
@@ -450,7 +452,11 @@ function renderDialogue(
           <h2 id="dialogue-title">Tal med ${person}</h2>
           <div class="dialogue-options" data-dialogue-options></div>
           <p class="dialogue-status" aria-live="polite" data-dialogue-status>
-            Tidligere spørgsmål er dæmpet, men kan stilles igen.
+            ${
+              refusesFurtherDialogue
+                ? `${person} vil ikke tale mere med Jørgen i dag efter anklagen.`
+                : "Tidligere spørgsmål er dæmpet, men kan stilles igen."
+            }
           </p>
           <button
             class="secondary-action"

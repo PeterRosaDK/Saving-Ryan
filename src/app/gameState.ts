@@ -17,6 +17,7 @@ export function createInitialLoopState(): LoopState {
     dialogue: {
       askedChoices: [],
       barbaraHelp: "not_requested",
+      refusesFurtherDialogue: [],
     },
   };
 }

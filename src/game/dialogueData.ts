@@ -142,10 +142,7 @@ function getAccusationClip(
   person: Exclude<CharacterId, "Ryan">,
 ): VideoClipId {
   if (person === "Laura") {
-    if (
-      state.knowledge.ryan_left_laura &&
-      state.knowledge.necklace_connects_laura_to_scene
-    ) {
+    if (isConclusiveAccusation(state, person)) {
       return "Peter-BeskyldLaura3";
     }
 
@@ -160,6 +157,17 @@ function getAccusationClip(
   return `Peter-Beskyld${person}1` as VideoClipId;
 }
 
+export function isConclusiveAccusation(
+  state: GameState,
+  person: CharacterId,
+): boolean {
+  return (
+    person === "Laura" &&
+    state.knowledge.ryan_left_laura &&
+    state.knowledge.necklace_connects_laura_to_scene
+  );
+}
+
 function getSpecialChoices(
   state: GameState,
   person: CharacterId,
@@ -168,10 +176,7 @@ function getSpecialChoices(
   const afterMurder = state.timeSlot >= 3;
 
   if (afterMurder && person !== "Ryan") {
-    const accusationSolvesCase =
-      person === "Laura" &&
-      state.knowledge.ryan_left_laura &&
-      state.knowledge.necklace_connects_laura_to_scene;
+    const accusationSolvesCase = isConclusiveAccusation(state, person);
 
     choices.push(
       defineChoice(
@@ -390,6 +395,12 @@ export function getDialogueChoices(
   state: GameState,
   person: CharacterId,
 ): readonly DialogueChoice[] {
+  if (
+    state.loopState.dialogue.refusesFurtherDialogue.includes(person)
+  ) {
+    return [];
+  }
+
   if (person === "Ryan" && state.timeSlot >= 3) {
     return [];
   }

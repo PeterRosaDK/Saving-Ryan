@@ -447,6 +447,39 @@ describe("legacy dialogue rules", () => {
     expect(skipped.state.knowledge.laura_confessed).toBe(false);
   });
 
+  it("ends an inconclusively accused character's dialogue until the next day", () => {
+    const accused = executeDialogueChoice(
+      learnKnowledge(startedState({ timeSlot: 3 }), [
+        "barbara_is_computer_expert",
+      ]),
+      "David",
+      "accuse",
+    ).state;
+
+    expect(
+      accused.loopState.dialogue.refusesFurtherDialogue,
+    ).toContain("David");
+    expect(getAvailableDialogueChoices(accused, "David")).toEqual([]);
+    expect(topics(accused, "Laura")).toContain("accuse");
+
+    const nextDay = reduceGameState(
+      reduceGameState(
+        {
+          ...accused,
+          timeSlot: 4,
+        },
+        { type: "WAIT" },
+      ),
+      { type: "COMPLETE_TRANSITION" },
+    );
+
+    expect(nextDay.knowledge.barbara_is_computer_expert).toBe(true);
+    expect(
+      nextDay.loopState.dialogue.refusesFurtherDialogue,
+    ).toEqual([]);
+    expect(topics(nextDay, "David")).toContain("about_laura");
+  });
+
   it("models Barbara's help as a multi-step sequence", () => {
     let state = learnKnowledge(startedState(), [
       "laura_hid_computer_activity",
@@ -528,6 +561,9 @@ describe("legacy dialogue rules", () => {
     expect(
       accusation.state.knowledge.secret_passage_exists,
     ).toBe(true);
+    expect(
+      accusation.state.loopState.dialogue.refusesFurtherDialogue,
+    ).not.toContain("Laura");
   });
 
   it("has Laura reveal the passage when motive and evidence make her confess", () => {

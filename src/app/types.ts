@@ -69,6 +69,7 @@ export interface DialogueProgress {
 export interface LoopDialogueState {
   askedChoices: DialogueChoiceId[];
   barbaraHelp: BarbaraHelpState;
+  refusesFurtherDialogue: CharacterId[];
 }
 
 export type SceneInteractionId =

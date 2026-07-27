@@ -1,7 +1,7 @@
 # Deferred time and observation design
 
 Status: approved design basis. Director restoration and canonical Laura
-completion are finished; the first phase 9 vertical slice is implemented.
+completion are finished; phase 9 is proceeding through small vertical slices.
 
 This document records the agreed direction and the boundary between the active
 vertical slice and later phase 9 work.
@@ -49,7 +49,8 @@ is now the successful initial search of Barbara's computer.
 `pendingTransition` records whether time was advanced by the clock or an
 interaction. Basic loop-local conversation memory is separated from permanent
 knowledge. The current model still does not support multiple ordered transition
-cues, NPC disposition, timed dialogue, or case-specific event resolution.
+cues, general NPC disposition, timed dialogue, or case-specific event
+resolution.
 
 Source-scene event effects are now applied before a new-day `loopState` reset,
 so later loop-local effects cannot be written into the wrong day.
@@ -184,7 +185,8 @@ knowledge effects, new-day reset, and idempotent completion.
 
 All current scene interactions declare `timeCost: 0 | 1`, and tests require
 every timed interaction to provide an elapsed-time cue. Timed dialogue, new
-C2/E2 observations, NPC disposition, and case data remain outside this slice.
+C2/E2 observations, broader NPC disposition, and case data remain outside this
+slice.
 
 ## First loop-local memory slice
 
@@ -193,7 +195,9 @@ Conversation progress now belongs to `loopState.dialogue`:
 - asked choice IDs remain available for faded/repeat UI and same-day responses;
 - Marie remembers whether Jørgen has earned her confidence;
 - Ryan uses his second warning clip only after being warned earlier that day;
-- Barbara's request/ready/completed help state is local to the day.
+- Barbara's request/ready/completed help state is local to the day;
+- a character inconclusively accused by Jørgen refuses further questions until
+  the next morning.
 
 Ordinary time changes preserve this state. Evening-to-morning uses one
 `createInitialLoopState()` boundary to reset conversation history and transition
@@ -201,9 +205,10 @@ history together. Permanent facts learned from those conversations remain in
 `knowledge`, so Ryan may forget the warning while Jørgen remembers that warning
 alone was ineffective.
 
-No trust score, anger, disposition, or false-accusation consequence is included
-yet. Tests cover same-day retention, new-day reset, Marie's trust restart,
-Ryan's warning restart, permanent knowledge, and the complete Laura path.
+No trust score, anger scale, departure, or cross-character warning is included.
+Tests cover same-day retention, new-day reset, Marie's trust restart, Ryan's
+warning restart, the minimal accusation refusal, permanent knowledge, and the
+complete Laura path.
 
 ## Required future validation
 

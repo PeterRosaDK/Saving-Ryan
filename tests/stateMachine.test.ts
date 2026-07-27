@@ -284,6 +284,7 @@ describe("legacy game state", () => {
         dialogue: {
           askedChoices: ["Marie:marie_and_ryan"],
           barbaraHelp: "ready",
+          refusesFurtherDialogue: ["Marie"],
         },
       },
     };

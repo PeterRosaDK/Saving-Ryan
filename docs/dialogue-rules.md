@@ -98,3 +98,18 @@ Only the third variant receives the report-backed text confession and applies
 `laura_confessed` plus `secret_passage_exists`. Warning Ryan records that he
 dismissed the warning, but is not itself a solution. The complete continuation
 is documented in `docs/canonical-laura-completion.md`.
+
+## Phase 9 same-day accusation consequence
+
+The Director only played `Peter-Beskyld<Person>1` for its accusation option and
+recorded no reaction. The first phase 9 extension therefore uses a deliberately
+small text-backed rule: after an inconclusive accusation, that character refuses
+further questions for the remainder of the day. Other characters remain
+available, and the refusal resets with loop-local dialogue state the next
+morning.
+
+Laura's accusation is conclusive only when both canonical case pillars are
+known. An early accusation therefore also closes Laura's dialogue until the
+next loop, but never removes Jørgen's permanent knowledge or makes the case
+unwinnable. No trust score, anger scale, departure, or cross-character warning
+is inferred from the legacy material.

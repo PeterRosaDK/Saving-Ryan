@@ -6,6 +6,7 @@ import type {
 } from "../app/types";
 import {
   getDialogueChoices,
+  isConclusiveAccusation,
   type DialogueChoice,
 } from "./dialogueData";
 import {
@@ -60,6 +61,35 @@ function advanceBarbaraHelp(
       };
 }
 
+function recordInconclusiveAccusation(
+  state: GameState,
+  choice: DialogueChoice,
+): GameState {
+  if (
+    choice.topic !== "accuse" ||
+    isConclusiveAccusation(state, choice.person) ||
+    state.loopState.dialogue.refusesFurtherDialogue.includes(
+      choice.person,
+    )
+  ) {
+    return state;
+  }
+
+  return {
+    ...state,
+    loopState: {
+      ...state.loopState,
+      dialogue: {
+        ...state.loopState.dialogue,
+        refusesFurtherDialogue: [
+          ...state.loopState.dialogue.refusesFurtherDialogue,
+          choice.person,
+        ],
+      },
+    },
+  };
+}
+
 export function executeDialogueChoice(
   state: GameState,
   person: CharacterId,
@@ -106,6 +136,7 @@ export function executeDialogueChoice(
     nextState = applyKnowledgeEffects(nextState, choice.effects);
     nextState = advanceBarbaraHelp(nextState, choice);
   }
+  nextState = recordInconclusiveAccusation(nextState, choice);
 
   return {
     state: nextState,
