@@ -54,6 +54,8 @@ Dialogue normalization and conditional-link provenance are in
 [docs/dialogue-rules.md](docs/dialogue-rules.md).
 The parity boundary, remaining unknowns, and original Laura gaps are in
 [docs/legacy-restoration-status.md](docs/legacy-restoration-status.md).
+The recovered intro sound and missing production music are inventoried in
+[docs/audio-assets.md](docs/audio-assets.md).
 
 ## Commands
 

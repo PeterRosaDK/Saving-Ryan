@@ -58,3 +58,18 @@ introduced minor color loss during import.
 
 The extractor preserves MP3 streams and converts Director PCM/ADPCM members to
 browser-compatible WAV files.
+
+To audit the complete supplied project, run it once for each Director file:
+
+```sh
+for movie in Intro Spillet Video Billeder; do
+  /tmp/saving-ryan-director-tools/saving_ryan_extract_sounds \
+    "Legacy/${movie}.dir" \
+    "/tmp/saving-ryan-audio/${movie}"
+done
+```
+
+The expected result is one member named `intro` from `Intro.dir` and zero sound
+members from each of the other three files. See
+[`docs/audio-assets.md`](../../docs/audio-assets.md) for the report comparison
+and missing-music assessment.

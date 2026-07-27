@@ -98,7 +98,12 @@ tested, and do not require the deferred time/case abstractions.
   currently perform its continue/back roles.
 - `Peter-GangGruppe`, `Peter-GangLab`, `Peter-GangKantine`, and
   `Peter-GangLaese` exist in the video cast but have no recovered Lingo
-  references.
+  references. Their audio is quiet walking/location production sound, not the
+  additional music mentioned in the report.
+- The report says that a couple of sparse, single-instrument pieces had been
+  composed, but the supplied Director files contain only the `intro` sound
+  member. No separate location-music sources survive in the repository; see
+  `docs/audio-assets.md`.
 - `sektorA4-Ryan1/2`, alternate accusation takes, `Ryan-omSara`, and
   `Ryan-omSaraOgDavid` appear to be unused or unfinished material. The active
   `A Special` score explicitly points at the A3 Ryan stills even when opened
