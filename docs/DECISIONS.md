@@ -38,6 +38,9 @@ requires removing or changing the Access application, updating
 `X-Robots-Tag`/`robots.txt`, and reviewing media rights. It does not require a
 new game architecture.
 
+Collaborators do not need Cloudflare accounts. Add their exact email addresses
+to the Access allow policy; they authenticate with an emailed one-time code.
+
 ## 2026-07-28 — Static health endpoints
 
 `/health/live`, `/health/ready`, and `/health` proxy to bounded JSON assets.
