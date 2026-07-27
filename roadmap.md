@@ -566,7 +566,11 @@ In progress:
   definition;
 - B4 versus E4 verifies that current position selects the observed event and
   that completion advances time exactly once;
-- explicit `timeCost`, loop-local NPC memory, and the proposed new C2/E2
+- the first successful search of Barbara's computer declares `timeCost: 1`,
+  previews its destination time, advances through the shared gateway, and is
+  free on replay;
+- locked computer access and all other current interactions remain free;
+- loop-local NPC memory, timed dialogue, and the proposed new C2/E2
   observations remain separate later slices.
 
 The approved but deferred design and Laura event matrix are recorded in

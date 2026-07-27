@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createInitialGameState } from "../src/app/gameState";
 import {
+  SCENE_INTERACTIONS,
   canPerformSceneInteraction,
   getSceneInteraction,
+  getSceneInteractionTimeCost,
 } from "../src/game/sceneInteractions";
 import { getSceneOccupants } from "../src/game/sceneOccupants";
 import {
@@ -182,6 +184,33 @@ describe("verified scene content", () => {
         interaction,
       ),
     ).toBe(true);
+  });
+
+  it("declares one interval for the first successful computer search and zero for replay", () => {
+    const interaction = getSceneInteraction("inspect_barbaras_computer");
+    const initial = createInitialGameState();
+    const unlocked = learnKnowledge(initial, [
+      "barbara_hacker_alias_intruder",
+    ]);
+    const completed = learnKnowledge(unlocked, [
+      "barbara_forged_grades",
+    ]);
+
+    expect(interaction.timeCost).toBe(1);
+    expect(interaction.timeAdvanceCue).toEqual({
+      kind: "text",
+      text: "Det tager resten af tidsintervallet at gennemgå Barbaras filer grundigt.",
+    });
+    expect(getSceneInteractionTimeCost(unlocked, interaction)).toBe(1);
+    expect(getSceneInteractionTimeCost(completed, interaction)).toBe(0);
+  });
+
+  it("gives every timed interaction an elapsed-time cue", () => {
+    for (const interaction of Object.values(SCENE_INTERACTIONS)) {
+      if (interaction.timeCost === 1) {
+        expect(interaction.timeAdvanceCue?.kind).toBe("text");
+      }
+    }
   });
 
   it("only makes the passage a prevention route after the complete case and warning", () => {

@@ -42,18 +42,18 @@ Current time-triggered knowledge is limited to:
 - B4: playing `LauraSuspekt` and learning about Laura's hidden computer
   activity.
 
-Other investigation effects currently come from scene entry, manual inspection,
-dialogue, or the `BarbaraHacker` special sequence.
+Other investigation effects come from scene entry, manual inspection, dialogue,
+or the `BarbaraHacker` special sequence. The first timed investigation action
+is now the successful initial search of Barbara's computer.
 
-The current model does not support explicit action time cost, an action cause on
-`pendingTransition`, multiple ordered transition cues, NPC-local memory, or
-case-specific event resolution. Dialogue history and Barbara's help status also
-survive day reset today.
+`pendingTransition` now records whether time was advanced by the clock or an
+interaction. The current model still does not support multiple ordered
+transition cues, NPC-local memory, timed dialogue, or case-specific event
+resolution. Dialogue history and Barbara's help status also survive day reset
+today.
 
-A future implementation must correct one ordering detail before adding
-loop-local effects: the current reducer resets `loopState` before it applies
-source-scene wait effects. Permanent knowledge is unaffected, but a source event
-must not write yesterday's NPC memory into the new day.
+Source-scene event effects are now applied before a new-day `loopState` reset,
+so later loop-local effects cannot be written into the wrong day.
 
 ## Approved minimal direction
 
@@ -161,15 +161,31 @@ owns its text cue, optional special cue, and effects.
   `laura_hid_computer_activity` effect.
 - E4 owns only its corridor/new-day text and has no Laura effect.
 - E1 owns the existing `ryan_bullied_marie` effect.
-- `pendingTransition` stores only the selected event ID and target transition.
+- `pendingTransition` stores the time-advance cause and target transition.
 - One reducer gateway applies the event once, advances one interval, resets the
   loop when appropriate, and then applies target-scene entry effects.
 - Source-event effects are applied before the new-day `loopState` reset. This
   prevents later loop-local effects from leaking from the previous day.
 
 Tests cover all 20 event definitions, B4 versus E4 selection, B4 special media,
-knowledge effects, new-day reset, and idempotent completion. No `timeCost`,
-new C2/E2 observations, NPC memory, or case data is part of this slice.
+knowledge effects, new-day reset, and idempotent completion.
+
+## First timed-action slice
+
+`inspect_barbaras_computer` is the first explicit `timeCost: 1` action:
+
+- the time marker appears only when the Intruder clue makes the action usable;
+- hover, focus, and accessible labels name the destination time;
+- the successful search cue plays before a dedicated elapsed-time panel;
+- effects and the one-interval advance complete through the same reducer
+  gateway as clock use;
+- the ordinary B2/B3 wait event is not observed or recorded;
+- locked access consumes no time;
+- after `barbara_forged_grades` is known, replay consumes no time.
+
+All current scene interactions declare `timeCost: 0 | 1`, and tests require
+every timed interaction to provide an elapsed-time cue. Timed dialogue, new
+C2/E2 observations, NPC memory, and case data remain outside this slice.
 
 ## Required future validation
 

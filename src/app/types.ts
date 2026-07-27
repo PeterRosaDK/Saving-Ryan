@@ -85,10 +85,20 @@ export interface LoopState {
   seenTransitions: SceneId[];
 }
 
+export type TimeAdvanceCause =
+  | {
+      kind: "clock";
+      eventId: TransitionEventId;
+    }
+  | {
+      kind: "interaction";
+      id: SceneInteractionId;
+    };
+
 export interface PendingTransition {
   from: SceneId;
   to: SceneId;
-  eventId: TransitionEventId;
+  cause: TimeAdvanceCause;
   beginsNewLoop: boolean;
 }
 

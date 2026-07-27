@@ -36,6 +36,8 @@ the canonical Laura story is now playable from intro to epilogue:
 - all 20 transition narrations use the recovered `Spillet.dir` wording;
 - those 20 transitions are now scene-keyed declarative events, with B4's
   `LauraSuspekt` cue and effects isolated from simultaneous locations;
+- the first successful search of Barbara's computer visibly costs one interval,
+  while locked access and replay remain free;
 - all 20 original room photographs are rendered at their original 640×480
   position inside the responsive 800×600 stage;
 - Director-score rectangles now drive rollover/focus hotspots for doors,

@@ -32,8 +32,19 @@ export const TIMES: readonly TimeDefinition[] = [
   { id: 4, name: "Aften" },
 ];
 
+const NEXT_TIME_SLOT: Readonly<Record<TimeSlot, TimeSlot>> = {
+  1: 2,
+  2: 3,
+  3: 4,
+  4: 1,
+};
+
 export function toSceneId(location: LocationId, time: TimeSlot): SceneId {
   return `${location}${time}`;
+}
+
+export function getNextTimeSlot(time: TimeSlot): TimeSlot {
+  return NEXT_TIME_SLOT[time];
 }
 
 export const SCENES: readonly SceneDefinition[] = LOCATIONS.flatMap((location) =>

@@ -9,6 +9,7 @@ import {
 } from "../game/dialogueEngine";
 import type { DialogueChoice } from "../game/dialogueData";
 import {
+  getNextTimeSlot,
   getScene,
   LOCATIONS,
   toSceneId,
@@ -28,6 +29,8 @@ import {
 import {
   canPerformSceneInteraction,
   getSceneInteractions,
+  getSceneInteraction,
+  getSceneInteractionTimeCost,
   type SceneInteraction,
 } from "../game/sceneInteractions";
 import { getLocationTransitionEvent } from "../game/transitionEvents";
@@ -567,8 +570,11 @@ async function completePendingTransition(
     return;
   }
 
-  const event = getLocationTransitionEvent(pending.eventId);
-  if (!event.specialCue) {
+  const specialCue =
+    pending.cause.kind === "clock"
+      ? getLocationTransitionEvent(pending.cause.eventId).specialCue
+      : undefined;
+  if (!specialCue) {
     store.dispatch({ type: "COMPLETE_TRANSITION" });
     return;
   }
@@ -584,7 +590,7 @@ async function completePendingTransition(
     status.textContent = "Sekvensen begynder…";
   }
 
-  const result = await narrativeHost.play(event.specialCue);
+  const result = await narrativeHost.play(specialCue);
   if (isCompletedPlayback(result.status)) {
     if (store.getState().pendingTransition === pending) {
       store.dispatch({ type: "COMPLETE_TRANSITION" });
@@ -626,10 +632,15 @@ function renderExploration(
   const visibleManualInteractions = manualInteractions.filter(
     (interaction) => !replacedInteractionIds.has(interaction.id),
   );
-  const transitionEvent = state.pendingTransition
-    ? getLocationTransitionEvent(state.pendingTransition.eventId)
-    : null;
-  const transitionText = transitionEvent?.cue.text ?? null;
+  const pending = state.pendingTransition;
+  const transitionCue = pending
+    ? pending.cause.kind === "clock"
+      ? getLocationTransitionEvent(pending.cause.eventId).cue
+      : getSceneInteraction(pending.cause.id).timeAdvanceCue
+    : undefined;
+  const transitionText = transitionCue?.text ?? null;
+  const transitionTarget = pending ? getScene(pending.to) : null;
+  const transitionKind = pending?.cause.kind ?? null;
 
   root.innerHTML = `
     <main class="app-shell">
@@ -671,8 +682,12 @@ function renderExploration(
         transitionText
           ? `<div class="transition-dialog" role="dialog" aria-modal="true" aria-labelledby="transition-title">
               <div>
-                <p class="eyebrow">Tiden går</p>
-                <h2 id="transition-title">${scene.time.name}</h2>
+                <p class="eyebrow">${
+                  transitionKind === "interaction"
+                    ? "Tidskrævende handling"
+                    : "Tiden går"
+                }</p>
+                <h2 id="transition-title">${transitionTarget?.time.name ?? scene.time.name}</h2>
                 <p>${transitionText}</p>
                 <p class="transition-status" aria-live="polite" data-transition-status></p>
                 <button class="primary-action" type="button" data-dismiss>Fortsæt</button>
@@ -736,15 +751,33 @@ function renderExploration(
       ({ id }) => id === interactionId,
     );
     if (interaction) {
-      appendHotspot(
-        hotspotButton(interaction.label, "inspect", rect, () => {
+      const canPerform = canPerformSceneInteraction(state, interaction);
+      const timeCost = canPerform
+        ? getSceneInteractionTimeCost(state, interaction)
+        : 0;
+      const nextTime =
+        timeCost === 1
+          ? getScene(
+              toSceneId(
+                state.location,
+                getNextTimeSlot(state.timeSlot),
+              ),
+            ).time.name
+          : null;
+      const label = nextTime
+        ? `${interaction.label} — bruger tid frem til ${nextTime.toLowerCase()}`
+        : interaction.label;
+      const hotspot = hotspotButton(label, "inspect", rect, () => {
           void playSceneInteraction(
             interaction,
             store,
             narrativeHost,
           );
-        }),
-      );
+        });
+      if (timeCost === 1) {
+        hotspot.classList.add("scene-hotspot--timed");
+      }
+      appendHotspot(hotspot);
     }
   });
 

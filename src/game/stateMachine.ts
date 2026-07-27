@@ -3,25 +3,23 @@ import type {
   GameAction,
   GameEffect,
   GameState,
-  TimeSlot,
+  TimeAdvanceCause,
 } from "../app/types";
-import { getScene, toSceneId } from "./sceneRegistry";
+import {
+  getNextTimeSlot,
+  getScene,
+  toSceneId,
+} from "./sceneRegistry";
 import {
   canPerformSceneInteraction,
   getSceneInteraction,
+  getSceneInteractionTimeCost,
   getSceneInteractions,
 } from "./sceneInteractions";
 import { applyKnowledgeEffects } from "./knowledgeGraph";
 import { executeDialogueChoice } from "./dialogueEngine";
 import { isCharacterInScene } from "./sceneOccupants";
 import { getLocationTransitionEvent } from "./transitionEvents";
-
-const NEXT_TIME: Readonly<Record<TimeSlot, TimeSlot>> = {
-  1: 2,
-  2: 3,
-  3: 4,
-  4: 1,
-};
 
 function applyEffects(
   state: GameState,
@@ -44,6 +42,24 @@ function applyTriggeredSceneEffects(
 
 function canExplore(state: GameState): boolean {
   return state.phase === "exploration" && state.pendingTransition === null;
+}
+
+function beginTimeAdvance(
+  state: GameState,
+  cause: TimeAdvanceCause,
+): GameState {
+  const sceneId = toSceneId(state.location, state.timeSlot);
+  const nextTime = getNextTimeSlot(state.timeSlot);
+
+  return {
+    ...state,
+    pendingTransition: {
+      from: sceneId,
+      to: toSceneId(state.location, nextTime),
+      cause,
+      beginsNewLoop: state.timeSlot === 4,
+    },
+  };
 }
 
 export function reduceGameState(
@@ -94,19 +110,11 @@ export function reduceGameState(
 
       const sceneId = toSceneId(state.location, state.timeSlot);
       const event = getLocationTransitionEvent(sceneId);
-      const nextTime = NEXT_TIME[state.timeSlot];
-      const nextSceneId = toSceneId(state.location, nextTime);
-      const beginsNewLoop = state.timeSlot === 4;
 
-      return {
-        ...state,
-        pendingTransition: {
-          from: sceneId,
-          to: nextSceneId,
-          eventId: event.id,
-          beginsNewLoop,
-        },
-      };
+      return beginTimeAdvance(state, {
+        kind: "clock",
+        eventId: event.id,
+      });
     }
 
     case "COMPLETE_TRANSITION": {
@@ -118,25 +126,34 @@ export function reduceGameState(
       }
 
       const pending = state.pendingTransition;
-      const event = getLocationTransitionEvent(pending.eventId);
       const target = getScene(pending.to);
-      const eventState = applyEffects(state, event.effects);
+      const sourceEffects =
+        pending.cause.kind === "clock"
+          ? getLocationTransitionEvent(pending.cause.eventId).effects
+          : getSceneInteraction(pending.cause.id).effects;
+      const effectState = applyEffects(state, sourceEffects);
+      const seenClockEvent =
+        pending.cause.kind === "clock"
+          ? getLocationTransitionEvent(pending.cause.eventId).scene
+          : null;
       const completedState: GameState = {
-        ...eventState,
+        ...effectState,
         location: target.location.id,
         timeSlot: target.time.id,
         loop: pending.beginsNewLoop
-          ? eventState.loop + 1
-          : eventState.loop,
+          ? effectState.loop + 1
+          : effectState.loop,
         loopState: {
           seenTransitions: pending.beginsNewLoop
             ? []
-            : [
-                ...new Set([
-                  ...eventState.loopState.seenTransitions,
-                  event.scene,
-                ]),
-              ],
+            : seenClockEvent
+              ? [
+                  ...new Set([
+                    ...effectState.loopState.seenTransitions,
+                    seenClockEvent,
+                  ]),
+                ]
+              : effectState.loopState.seenTransitions,
         },
         pendingTransition: null,
       };
@@ -161,6 +178,19 @@ export function reduceGameState(
         !canPerformSceneInteraction(state, interaction)
       ) {
         return state;
+      }
+
+      if (getSceneInteractionTimeCost(state, interaction) === 1) {
+        if (!interaction.timeAdvanceCue) {
+          throw new Error(
+            `Timed interaction has no transition cue: ${interaction.id}`,
+          );
+        }
+
+        return beginTimeAdvance(state, {
+          kind: "interaction",
+          id: interaction.id,
+        });
       }
 
       const nextState = applyEffects(state, interaction.effects);

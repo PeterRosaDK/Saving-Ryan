@@ -68,7 +68,10 @@ describe("legacy game state", () => {
     expect(waiting.pendingTransition).toEqual({
       from: "B2",
       to: "B3",
-      eventId: "B2",
+      cause: {
+        kind: "clock",
+        eventId: "B2",
+      },
       beginsNewLoop: false,
     });
     expect(waiting.loopState.seenTransitions).toEqual([]);
@@ -91,7 +94,10 @@ describe("legacy game state", () => {
       const waiting = reduceGameState(initial, { type: "WAIT" });
 
       expect(waiting.pendingTransition?.from).toBe(scene.id);
-      expect(waiting.pendingTransition?.eventId).toBe(scene.id);
+      expect(waiting.pendingTransition?.cause).toEqual({
+        kind: "clock",
+        eventId: scene.id,
+      });
 
       const completed = reduceGameState(waiting, {
         type: "COMPLETE_TRANSITION",
@@ -118,7 +124,10 @@ describe("legacy game state", () => {
     expect(waiting.pendingTransition).toMatchObject({
       from: "B4",
       to: "B1",
-      eventId: "B4",
+      cause: {
+        kind: "clock",
+        eventId: "B4",
+      },
       beginsNewLoop: true,
     });
 
@@ -152,8 +161,14 @@ describe("legacy game state", () => {
     const waitingInB = reduceGameState(atB4, { type: "WAIT" });
     const waitingInE = reduceGameState(atE4, { type: "WAIT" });
 
-    expect(waitingInB.pendingTransition?.eventId).toBe("B4");
-    expect(waitingInE.pendingTransition?.eventId).toBe("E4");
+    expect(waitingInB.pendingTransition?.cause).toEqual({
+      kind: "clock",
+      eventId: "B4",
+    });
+    expect(waitingInE.pendingTransition?.cause).toEqual({
+      kind: "clock",
+      eventId: "E4",
+    });
 
     const nextB = reduceGameState(waitingInB, {
       type: "COMPLETE_TRANSITION",
@@ -479,7 +494,36 @@ describe("legacy game state", () => {
       id: "inspect_barbaras_computer",
     });
 
-    expect(state.knowledge.barbara_forged_grades).toBe(true);
+    expect(toSceneId(state.location, state.timeSlot)).toBe("B2");
+    expect(state.knowledge.barbara_forged_grades).toBe(false);
+    expect(state.pendingTransition).toEqual({
+      from: "B2",
+      to: "B3",
+      cause: {
+        kind: "interaction",
+        id: "inspect_barbaras_computer",
+      },
+      beginsNewLoop: false,
+    });
+
+    const completed = reduceGameState(state, {
+      type: "COMPLETE_TRANSITION",
+    });
+    expect(toSceneId(completed.location, completed.timeSlot)).toBe("B3");
+    expect(completed.knowledge.barbara_forged_grades).toBe(true);
+    expect(completed.loopState.seenTransitions).toEqual(["D1"]);
+
+    const replayed = reduceGameState(completed, {
+      type: "PERFORM_INTERACTION",
+      id: "inspect_barbaras_computer",
+    });
+    expect(replayed).toBe(completed);
+    expect(replayed.pendingTransition).toBeNull();
+    expect(
+      reduceGameState(completed, {
+        type: "COMPLETE_TRANSITION",
+      }),
+    ).toBe(completed);
   });
 
   it("connects the report's Sarah-to-Marie motive route across a new day", () => {

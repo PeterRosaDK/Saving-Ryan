@@ -23,6 +23,8 @@ export interface SceneInteraction {
   label: string;
   requires: readonly KnowledgeId[];
   effects: readonly GameEffect[];
+  timeCost: 0 | 1;
+  timeAdvanceCue?: Extract<NarrativeCue, { kind: "text" }>;
   cue?: NarrativeCue;
   blockedCue?: NarrativeCue;
   replaces?: readonly SceneInteractionId[];
@@ -38,6 +40,7 @@ export const SCENE_INTERACTIONS = {
     label: "Læg mærke til Barbaras computerarbejde",
     requires: [],
     effects: [{ type: "LEARN", id: "barbara_is_computer_expert" }],
+    timeCost: 0,
   },
   inspect_ryans_body_and_necklace: {
     id: "inspect_ryans_body_and_necklace",
@@ -47,6 +50,7 @@ export const SCENE_INTERACTIONS = {
     label: "Undersøg liget og halskæden",
     requires: [],
     effects: [{ type: "LEARN", id: "killer_dropped_necklace" }],
+    timeCost: 0,
     cue: stillsCue([
       {
         image: "sektorA3-Ryan1",
@@ -68,6 +72,7 @@ export const SCENE_INTERACTIONS = {
     label: "Kig i papirkurven",
     requires: [],
     effects: [{ type: "LEARN", id: "ryan_has_girlfriend_sarah" }],
+    timeCost: 0,
     cue: stillsCue([
       {
         image: "sektorD4-Brev1",
@@ -89,6 +94,10 @@ export const SCENE_INTERACTIONS = {
     label: "Log ind på Barbaras computer",
     requires: ["barbara_hacker_alias_intruder"],
     effects: [{ type: "LEARN", id: "barbara_forged_grades" }],
+    timeCost: 1,
+    timeAdvanceCue: textCue(
+      "Det tager resten af tidsintervallet at gennemgå Barbaras filer grundigt.",
+    ),
     cue: textCue(
       "Du kaster et blik på Barbaras computer. Der er adgangskontrol på, så du prøver at bruge det navn, David fortalte dig. Det lykkes! Du kan se, at Barbara er inde i universitetets ellers utilgængelige filsystem over karakterer, og du kan desuden se, at hun tilsyneladende er inde under sit eget stamblad!",
     ),
@@ -104,6 +113,7 @@ export const SCENE_INTERACTIONS = {
     label: "Kryb ind under bordet og lyt",
     requires: [],
     effects: [{ type: "LEARN", id: "barbara_and_ryan_argued" }],
+    timeCost: 0,
     cue: textCue(
       "Du kravler ind under bordet og overværer et skænderi mellem Ryan og Barbara. Det lyder, som om Ryan afpresser Barbara.",
     ),
@@ -116,6 +126,7 @@ export const SCENE_INTERACTIONS = {
     label: "Kig nærmere på bogen",
     requires: [],
     effects: [{ type: "LEARN", id: "secret_passage_exists" }],
+    timeCost: 0,
     cue: textCue(
       "Du hiver i bogen og opdager pludselig, at den i virkeligheden er en mystisk kontakt, der aktiverer en hemmelig dørmekanisme. En skydedør glider til side.",
     ),
@@ -132,6 +143,7 @@ export const SCENE_INTERACTIONS = {
       "ryan_dismissed_warning",
     ],
     effects: [{ type: "LEARN", id: "ryan_was_saved" }],
+    timeCost: 0,
     cue: textCue(
       "Du trækker i bogen, åbner den skjulte dør og følger passagen op mod afsatsen. Denne gang når du frem først. Da Laura viser sig, står du allerede mellem hende og Ryan. Du griber ind, før hun kan nå ham, og hendes skjulte rute er afsløret. Ryan bliver ikke skubbet.",
     ),
@@ -162,4 +174,17 @@ export function canPerformSceneInteraction(
   interaction: SceneInteraction,
 ): boolean {
   return hasKnowledge(state, interaction.requires);
+}
+
+export function getSceneInteractionTimeCost(
+  state: GameState,
+  interaction: SceneInteraction,
+): 0 | 1 {
+  const alreadyCompleted =
+    interaction.effects.length > 0 &&
+    interaction.effects.every(
+      (effect) => state.knowledge[effect.id],
+    );
+
+  return alreadyCompleted ? 0 : interaction.timeCost;
 }

@@ -31,7 +31,9 @@ export function videoCue(clipId: VideoClipId): NarrativeCue {
   };
 }
 
-export function textCue(text: string): NarrativeCue {
+export function textCue(
+  text: string,
+): Extract<NarrativeCue, { kind: "text" }> {
   return {
     kind: "text",
     text,

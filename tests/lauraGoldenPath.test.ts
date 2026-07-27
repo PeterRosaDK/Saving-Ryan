@@ -53,14 +53,14 @@ describe("playable Laura golden path", () => {
     move("B");
     dispatch({
       type: "PERFORM_INTERACTION",
-      id: "inspect_barbaras_computer",
+      id: "eavesdrop_barbara_and_ryan",
     });
     dispatch({
       type: "PERFORM_INTERACTION",
-      id: "eavesdrop_barbara_and_ryan",
+      id: "inspect_barbaras_computer",
     });
+    dispatch({ type: "COMPLETE_TRANSITION" });
 
-    wait();
     wait();
     move("D");
     dispatch({
