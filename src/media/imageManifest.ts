@@ -1,4 +1,7 @@
-import type { SceneId } from "../app/types";
+import type {
+  CharacterId,
+  SceneId,
+} from "../app/types";
 import { getPublicUrl } from "./publicUrl";
 
 export const IMAGE_MEMBERS = [
@@ -136,6 +139,14 @@ const SCENE_BACKGROUND_MEMBERS = {
   E4: "sektorE4",
 } as const satisfies Record<SceneId, ImageMemberName>;
 
+const CHARACTER_PORTRAIT_MEMBERS = {
+  Barbara: "portrait-Barbara",
+  David: "portrait-David",
+  Laura: "portrait-Laura",
+  Marie: "portrait-Marie",
+  Ryan: "portrait-Ryan",
+} as const satisfies Record<CharacterId, ImageMemberName>;
+
 export function getImageUrl(
   memberName: ImageMemberName,
   baseUrl?: string,
@@ -151,6 +162,13 @@ export function getSceneBackgroundUrl(
   baseUrl?: string,
 ): string {
   return getImageUrl(SCENE_BACKGROUND_MEMBERS[sceneId], baseUrl);
+}
+
+export function getCharacterPortraitUrl(
+  person: CharacterId,
+  baseUrl?: string,
+): string {
+  return getImageUrl(CHARACTER_PORTRAIT_MEMBERS[person], baseUrl);
 }
 
 // These members were missing from the supplied BMP collection and were decoded

@@ -20,15 +20,18 @@ The first conversion slice is underway:
   time-sensitive clips, repeat history, and explicit dead ends;
 - the intended Laura motive/evidence route is an executable semantic knowledge
   graph, including Barbara's multi-step help sequence;
+- the first playable dialogue slice connects Barbara in B1 and David/Marie in D1
+  through portraits and repeatable topic choices;
+- question and answer cues play sequentially and update the same tested state
+  machine used by exploration;
 - transition narration recovered from `Spillet.dir` is wired into a runnable UI;
 - all 20 original room photographs are rendered in the exploration stage;
 - all 81 Director video members and 93 PNG members are closed, file-validated
   catalogues;
-- the persistent media host is isolated from ordinary gameplay rerenders.
+- the persistent narrative host is isolated from ordinary gameplay rerenders and
+  accepts both original video and intentional text-only fallback cues;
 - the abort-safe `VideoPlayer` distinguishes completion, skip, autoplay blocking,
-  missing media, network/decode failures, and cancellation; connecting the typed
-  dialogue engine to the persistent player and dialogue UI is the next integration
-  step.
+  missing media, network/decode failures, and cancellation.
 
 See [roadmap.md](roadmap.md) for the complete migration plan.
 The image comparison and provenance notes are in
@@ -66,6 +69,6 @@ tests/        state and manifest tests
 tools/        Director inspection and asset conversion utilities
 ```
 
-The current interface renders the original room photographs. Director film-loop
-placement, character animation, hotspots, and dialogue portraits are the next image
-integration steps.
+The current interface renders the original room photographs and dialogue
+portraits. Director film-loop placement, character animation, and remaining
+verified talk/inspect hotspots are the next image integration steps.

@@ -11,6 +11,8 @@ import {
   getSceneInteractions,
 } from "./sceneInteractions";
 import { applyKnowledgeEffects } from "./knowledgeGraph";
+import { executeDialogueChoice } from "./dialogueEngine";
+import { isCharacterInScene } from "./sceneOccupants";
 
 const NEXT_TIME: Readonly<Record<TimeSlot, TimeSlot>> = {
   1: 2,
@@ -163,6 +165,60 @@ export function reduceGameState(
       }
 
       return applyEffects(state, interaction.effects);
+    }
+
+    case "START_DIALOGUE": {
+      if (!canExplore(state)) {
+        return state;
+      }
+
+      const sceneId = toSceneId(state.location, state.timeSlot);
+      if (!isCharacterInScene(sceneId, action.person)) {
+        return state;
+      }
+
+      return {
+        ...state,
+        phase: "dialogue",
+        dialogue: {
+          ...state.dialogue,
+          activePerson: action.person,
+        },
+      };
+    }
+
+    case "CLOSE_DIALOGUE": {
+      if (
+        state.phase !== "dialogue" ||
+        state.dialogue.activePerson === null
+      ) {
+        return state;
+      }
+
+      return {
+        ...state,
+        phase: "exploration",
+        dialogue: {
+          ...state.dialogue,
+          activePerson: null,
+        },
+      };
+    }
+
+    case "COMPLETE_DIALOGUE_CHOICE": {
+      if (
+        state.phase !== "dialogue" ||
+        state.dialogue.activePerson !== action.person
+      ) {
+        return state;
+      }
+
+      return executeDialogueChoice(
+        state,
+        action.person,
+        action.topic,
+        action.completion,
+      ).state;
     }
 
     case "RESET_GAME":

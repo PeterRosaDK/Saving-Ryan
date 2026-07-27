@@ -17,6 +17,7 @@ import {
   learnKnowledge,
 } from "../src/game/knowledgeGraph";
 import { reduceGameState } from "../src/game/stateMachine";
+import type { NarrativeCue } from "../src/media/narrativeCue";
 import { VIDEO_CLIP_IDS } from "../src/media/videoManifest";
 
 function startedState(
@@ -34,6 +35,10 @@ function topics(state: GameState, person: CharacterId): string[] {
   return getAvailableDialogueChoices(state, person).map(
     (choice) => choice.topic,
   );
+}
+
+function videoClip(cue: NarrativeCue | null | undefined): string | null {
+  return cue?.kind === "video" ? cue.clipId : null;
 }
 
 describe("legacy dialogue rules", () => {
@@ -68,12 +73,12 @@ describe("legacy dialogue rules", () => {
     ).find((choice) => choice.topic === "about_ryan");
 
     expect(morning).toMatchObject({
-      questionClip: "Peter-omRyan",
-      answerClip: "David-omRyan",
+      questionCue: { kind: "video", clipId: "Peter-omRyan" },
+      answerCue: { kind: "video", clipId: "David-omRyan" },
     });
     expect(afternoon).toMatchObject({
-      questionClip: "Peter-omRyanDie",
-      answerClip: "David-omRyanDie",
+      questionCue: { kind: "video", clipId: "Peter-omRyanDie" },
+      answerCue: { kind: "video", clipId: "David-omRyanDie" },
     });
     expect(getAvailableDialogueChoices(
       startedState({ timeSlot: 3 }),
@@ -140,14 +145,14 @@ describe("legacy dialogue rules", () => {
       "Ryan",
       "warn_ryan",
     );
-    expect(first.choice?.questionClip).toBe("Ryan-Advarsel1");
+    expect(videoClip(first.choice?.questionCue)).toBe("Ryan-Advarsel1");
 
     const second = executeDialogueChoice(
       first.state,
       "Ryan",
       "warn_ryan",
     );
-    expect(second.choice?.questionClip).toBe("Ryan-Advarsel2");
+    expect(videoClip(second.choice?.questionCue)).toBe("Ryan-Advarsel2");
   });
 
   it("unlocks David's useful computer answer and keeps the others as dead ends", () => {
@@ -161,8 +166,14 @@ describe("legacy dialogue rules", () => {
     );
 
     expect(david.choice).toMatchObject({
-      questionClip: "Peter-omBarbaraOgComputere",
-      answerClip: "David-omBarbaraOgComputere",
+      questionCue: {
+        kind: "video",
+        clipId: "Peter-omBarbaraOgComputere",
+      },
+      answerCue: {
+        kind: "video",
+        clipId: "David-omBarbaraOgComputere",
+      },
     });
     expect(
       david.state.knowledge.barbara_hacker_alias_intruder,
@@ -174,7 +185,9 @@ describe("legacy dialogue rules", () => {
         person,
         "barbara_and_computers",
       );
-      expect(deadEnd.choice?.answerClip).toBe(`${person}-VedIkke`);
+      expect(videoClip(deadEnd.choice?.answerCue)).toBe(
+        `${person}-VedIkke`,
+      );
       expect(
         deadEnd.state.knowledge.barbara_hacker_alias_intruder,
       ).toBe(false);
@@ -197,8 +210,11 @@ describe("legacy dialogue rules", () => {
     );
 
     expect(deadEnd.choice).toMatchObject({
-      questionClip: "Peter-omRyanOgMarie",
-      answerClip: "David-VedIkke",
+      questionCue: {
+        kind: "video",
+        clipId: "Peter-omRyanOgMarie",
+      },
+      answerCue: { kind: "video", clipId: "David-VedIkke" },
     });
   });
 
@@ -212,7 +228,9 @@ describe("legacy dialogue rules", () => {
       "Marie",
       "marie_and_ryan",
     );
-    expect(first.choice?.questionClip).toBe("Marie-Fortrolighed");
+    expect(videoClip(first.choice?.questionCue)).toBe(
+      "Marie-Fortrolighed",
+    );
     expect(first.state.knowledge.ryan_left_laura).toBe(false);
 
     const ready = learnKnowledge(first.state, [
@@ -223,7 +241,7 @@ describe("legacy dialogue rules", () => {
       "Marie",
       "marie_and_ryan",
     );
-    expect(confidence.choice?.questionClip).toBe(
+    expect(videoClip(confidence.choice?.questionCue)).toBe(
       "Marie-Fortrolighed2",
     );
     expect(confidence.state.knowledge.ryan_left_laura).toBe(true);
@@ -246,7 +264,9 @@ describe("legacy dialogue rules", () => {
         person,
         "necklace",
       );
-      expect(result.choice?.answerClip).toBe(`${person}-VedIkke`);
+      expect(videoClip(result.choice?.answerCue)).toBe(
+        `${person}-VedIkke`,
+      );
       expect(result.choice?.effects).toEqual([]);
     }
   });
@@ -299,7 +319,9 @@ describe("legacy dialogue rules", () => {
       "Barbara",
       "ask_barbara_for_help",
     );
-    expect(request.choice?.questionClip).toBe("Barbara-omHilfe1");
+    expect(videoClip(request.choice?.questionCue)).toBe(
+      "Barbara-omHilfe1",
+    );
     expect(request.state.dialogue.barbaraHelp).toBe("ready");
 
     const help = executeDialogueChoice(
@@ -308,8 +330,11 @@ describe("legacy dialogue rules", () => {
       "ask_barbara_for_help",
     );
     expect(help.choice).toMatchObject({
-      questionClip: "Barbara-omHilfe2",
-      answerClip: "BarbaraHacker",
+      questionCue: {
+        kind: "video",
+        clipId: "Barbara-omHilfe2",
+      },
+      answerCue: { kind: "video", clipId: "BarbaraHacker" },
     });
     expect(help.state.dialogue.barbaraHelp).toBe("completed");
     expect(help.state.knowledge.laura_was_in_institution).toBe(true);
@@ -352,7 +377,7 @@ describe("legacy dialogue rules", () => {
       "Laura",
       "accuse",
     );
-    expect(accusation.choice?.questionClip).toBe(
+    expect(videoClip(accusation.choice?.questionCue)).toBe(
       "Peter-BeskyldLaura3",
     );
     expect(accusation.state.knowledge.laura_confessed).toBe(true);
@@ -396,9 +421,10 @@ describe("legacy dialogue rules", () => {
         "Ryan",
       ] as const) {
         for (const choice of getAvailableDialogueChoices(state, person)) {
-          expect(catalogue.has(choice.questionClip)).toBe(true);
-          if (choice.answerClip) {
-            expect(catalogue.has(choice.answerClip)).toBe(true);
+          for (const cue of [choice.questionCue, choice.answerCue]) {
+            if (cue?.kind === "video") {
+              expect(catalogue.has(cue.clipId)).toBe(true);
+            }
           }
         }
       }

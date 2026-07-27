@@ -5,6 +5,7 @@ import { SCENES } from "../src/game/sceneRegistry";
 import {
   DIRECTOR_EXTRACTED_MEMBERS,
   FILM_LOOP_FRAMES,
+  getCharacterPortraitUrl,
   getImageUrl,
   getSceneBackgroundUrl,
   IMAGE_MEMBERS,
@@ -26,6 +27,9 @@ describe("image asset manifest", () => {
     );
     expect(getImageUrl("sektorB2-RyanBarbara1", "/saving-ryan/")).toBe(
       "/saving-ryan/assets/images/sektorB2-RyanBarbara1.png",
+    );
+    expect(getCharacterPortraitUrl("David")).toBe(
+      "/assets/images/portrait-David.png",
     );
   });
 

@@ -18,6 +18,7 @@ describe("legacy game state", () => {
     expect(state.phase).toBe("intro");
     expect(toSceneId(state.location, state.timeSlot)).toBe("A1");
     expect(state.loop).toBe(1);
+    expect(state.dialogue.activePerson).toBeNull();
     expect(Object.keys(state.knowledge)).toEqual([...KNOWLEDGE_IDS]);
     expect(Object.values(state.knowledge).every((known) => !known)).toBe(true);
   });
@@ -195,6 +196,84 @@ describe("legacy game state", () => {
         id: "inspect_girlfriend_letter",
       }),
     ).toBe(waiting);
+  });
+
+  it("only starts dialogue with a confirmed occupant of the current scene", () => {
+    const atA1 = finishIntro();
+    expect(
+      reduceGameState(atA1, {
+        type: "START_DIALOGUE",
+        person: "Barbara",
+      }),
+    ).toBe(atA1);
+
+    const atB1 = reduceGameState(atA1, {
+      type: "MOVE_TO_LOCATION",
+      location: "B",
+    });
+    const talking = reduceGameState(atB1, {
+      type: "START_DIALOGUE",
+      person: "Barbara",
+    });
+
+    expect(talking.phase).toBe("dialogue");
+    expect(talking.dialogue.activePerson).toBe("Barbara");
+
+    const closed = reduceGameState(talking, {
+      type: "CLOSE_DIALOGUE",
+    });
+    expect(closed.phase).toBe("exploration");
+    expect(closed.dialogue.activePerson).toBeNull();
+    expect(toSceneId(closed.location, closed.timeSlot)).toBe("B1");
+  });
+
+  it("blocks movement and waiting while a dialogue is open", () => {
+    const atB1 = reduceGameState(finishIntro(), {
+      type: "MOVE_TO_LOCATION",
+      location: "B",
+    });
+    const talking = reduceGameState(atB1, {
+      type: "START_DIALOGUE",
+      person: "Barbara",
+    });
+
+    expect(reduceGameState(talking, { type: "WAIT" })).toBe(talking);
+    expect(
+      reduceGameState(talking, {
+        type: "MOVE_TO_LOCATION",
+        location: "D",
+      }),
+    ).toBe(talking);
+  });
+
+  it("connects the first playable Barbara-to-David knowledge route", () => {
+    let state = reduceGameState(finishIntro(), {
+      type: "MOVE_TO_LOCATION",
+      location: "B",
+    });
+    expect(state.knowledge.barbara_is_computer_expert).toBe(true);
+
+    state = reduceGameState(state, {
+      type: "MOVE_TO_LOCATION",
+      location: "D",
+    });
+    state = reduceGameState(state, {
+      type: "START_DIALOGUE",
+      person: "David",
+    });
+    state = reduceGameState(state, {
+      type: "COMPLETE_DIALOGUE_CHOICE",
+      person: "David",
+      topic: "barbara_and_computers",
+      completion: "ended",
+    });
+
+    expect(state.phase).toBe("dialogue");
+    expect(state.dialogue.activePerson).toBe("David");
+    expect(state.dialogue.askedChoices).toContain(
+      "David:barbara_and_computers",
+    );
+    expect(state.knowledge.barbara_hacker_alias_intruder).toBe(true);
   });
 
   it("does not run a scene interaction from the wrong scene", () => {

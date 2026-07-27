@@ -105,6 +105,7 @@ button {
 
 .primary-action,
 .secondary-action,
+.talk-action,
 .clock-action,
 .location-action {
   border: 1px solid transparent;
@@ -118,6 +119,7 @@ button {
 
 .primary-action,
 .secondary-action,
+.talk-action,
 .clock-action {
   min-height: 48px;
   padding: 0 22px;
@@ -248,6 +250,7 @@ button {
 }
 
 .secondary-action,
+.talk-action,
 .clock-action {
   color: #f4f0e7;
   border-color: rgba(244, 240, 231, 0.3);
@@ -257,6 +260,8 @@ button {
 
 .secondary-action:hover,
 .secondary-action:focus-visible,
+.talk-action:hover,
+.talk-action:focus-visible,
 .clock-action:hover,
 .clock-action:focus-visible {
   border-color: var(--signal-bright);
@@ -381,6 +386,83 @@ button {
   line-height: 1.6;
 }
 
+.dialogue-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 2fr) minmax(340px, 3fr);
+  min-height: 600px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #151b1a;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.38);
+}
+
+.dialogue-portrait {
+  display: grid;
+  min-height: 100%;
+  padding: 32px;
+  place-items: end center;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(92, 117, 113, 0.35), transparent 45%),
+    #202b29;
+}
+
+.dialogue-portrait img {
+  display: block;
+  width: min(100%, 360px);
+  max-height: 520px;
+  object-fit: contain;
+}
+
+.dialogue-panel {
+  padding: clamp(28px, 5vw, 64px);
+  background: var(--panel);
+}
+
+.dialogue-panel h2 {
+  margin: 0 0 30px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 500;
+}
+
+.dialogue-options {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.dialogue-choice {
+  min-height: 46px;
+  padding: 10px 14px;
+  color: #f4f0e7;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  text-align: left;
+  background: #202a29;
+}
+
+.dialogue-choice:hover,
+.dialogue-choice:focus-visible {
+  border-color: var(--signal);
+  background: #293533;
+}
+
+.dialogue-choice.is-asked {
+  color: rgba(244, 240, 231, 0.48);
+}
+
+.dialogue-choice:disabled {
+  cursor: progress;
+  opacity: 0.55;
+}
+
+.dialogue-status {
+  min-height: 48px;
+  color: rgba(244, 240, 231, 0.68);
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.5;
+}
+
 .media-host {
   position: fixed;
   z-index: 20;
@@ -395,11 +477,43 @@ button {
   display: none;
 }
 
+.media-frame {
+  width: min(704px, 100%);
+}
+
 .media-host video {
   width: min(704px, 100%);
   aspect-ratio: 11 / 9;
   background: #000;
   box-shadow: 0 30px 90px #000;
+}
+
+.text-cue {
+  min-height: 320px;
+  padding: clamp(32px, 7vw, 72px);
+  border: 1px solid var(--line);
+  background: #1b2423;
+  box-shadow: 0 30px 90px #000;
+}
+
+.text-cue p {
+  color: rgba(244, 240, 231, 0.86);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.25rem, 3vw, 1.8rem);
+  line-height: 1.6;
+}
+
+.media-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.media-controls p {
+  margin: 0;
+  color: rgba(244, 240, 231, 0.7);
 }
 
 @media (max-width: 800px) {
@@ -415,6 +529,18 @@ button {
 
   .game-layout {
     grid-template-columns: 1fr;
+  }
+
+  .dialogue-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .dialogue-portrait {
+    min-height: 280px;
+  }
+
+  .dialogue-portrait img {
+    max-height: 280px;
   }
 
   .notebook {

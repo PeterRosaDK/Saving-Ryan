@@ -7,6 +7,29 @@ preserving the existing story, time loop, investigation logic, dialogue, video, 
 visual identity. Conversion comes first; unfinished game content and new features
 belong to a later phase.
 
+## Committed product direction
+
+The first complete game is the canonical Laura case described by the report and
+the Director project. A normal new game must enter that case directly; it remains
+the reference implementation for story progression, dialogue, knowledge, and the
+ending.
+
+Only after that route is complete and stable should the main menu add a
+**Mystisk case** option. That option will select one curated case definition when
+a new game begins. The selected murderer and case facts must remain fixed when the
+day loops. It is not a procedural name swap: every later case must explicitly
+define its motive, method, access, alibi, physical evidence, required knowledge,
+red herrings, confession conditions, and prevention/ending sequence.
+
+Missing material should initially be represented as an intentional text cue. The
+same cue boundary can later be upgraded to a still image plus voice-over without
+changing dialogue or knowledge rules. New live-action recording is not a
+dependency, and cloned voices must never be assumed without the necessary rights
+and consent.
+
+Do not introduce case selection, randomized state, or save migration while the
+canonical dialogue IDs and Laura route are still changing.
+
 ## What the legacy project actually contains
 
 The four `.dir` files are binary Director 8 RIFX/XFIR containers, not text source
@@ -170,6 +193,12 @@ interface GameState {
   // Simple known/unknown facts persist across loops.
   knowledge: Record<KnowledgeId, boolean>;
 
+  dialogue: {
+    activePerson: CharacterId | null;
+    askedChoices: DialogueChoiceId[];
+    barbaraHelp: BarbaraHelpState;
+  };
+
   loopState: {
     seenTransitions: SceneId[];
   };
@@ -180,9 +209,9 @@ interface GameState {
 }
 ```
 
-Dialogue progress and transient media state are deliberately not speculated into
-this contract yet. The dialogue phase will introduce typed option IDs and explicit
-repeat rules. Runtime media state will not be serialized as durable game progress.
+Dialogue progress now uses typed option IDs and explicit repeat rules. Runtime
+media state remains outside `GameState` and will not be serialized as durable game
+progress.
 
 Use semantic knowledge IDs such as:
 
@@ -247,8 +276,11 @@ Current foundation:
   network-error, decode-error, and aborted are explicit states;
 - ended and skipped are distinct results, so dialogue data can define whether a
   skipped clip still applies its effects;
-- sequential question/answer orchestration and the dialogue UI are not connected
-  yet.
+- a persistent narrative host now plays question and answer cues sequentially;
+- the same host accepts text cues as a deliberate fallback for future missing
+  assets;
+- the first verified talk slice connects Barbara in B1 and David/Marie in D1 to
+  portraits, repeatable choices, playback, and state effects.
 
 Media audit results:
 
@@ -336,7 +368,7 @@ media.
 2. Translate `Script Talemuligheder` and `Script Talemuligheder Special` into data.
 3. Translate `Script Samtaler` into dialogue availability selectors.
 4. Translate each dialogue choice into:
-   `requires`, `questionClip`, `answerClip`, and `effects`.
+   `requires`, `questionCue`, `answerCue`, and `effects`.
 5. Preserve repeatable questions and record which topics were previously asked.
 6. Add graph tests proving that required evidence/motive paths are reachable.
 
@@ -356,7 +388,10 @@ Current completion:
 - Barbara's helper link is a request/ready/completed state rather than a magic
   string;
 - the report's Laura motive/evidence chain is executable as a semantic knowledge
-  graph and covered by reachability and dead-end tests.
+  graph and covered by reachability and dead-end tests;
+- the first playable UI route observes Barbara's expertise in B1, asks David
+  about it in D1, and learns her `Intruder` alias through the same reducer used by
+  the tests.
 
 ### Phase 3 — Build the application shell and intro
 
@@ -423,7 +458,8 @@ Only after conversion parity:
 - complete missing intro/cutscene material;
 - improve sound and music;
 - broaden dialogue and alternative investigations;
-- decide whether to keep Laura fixed as the murderer or add replay variants;
+- keep Laura as the default canonical case and add the curated **Mystisk case**
+  mode one murderer at a time;
 - commission or generate new assets with a documented art direction.
 
 ## Known legacy defects and migration risks

@@ -19,6 +19,7 @@ export function createInitialGameState(): GameState {
     loop: 1,
     knowledge: createInitialKnowledge(),
     dialogue: {
+      activePerson: null,
       askedChoices: [],
       barbaraHelp: "not_requested",
     },

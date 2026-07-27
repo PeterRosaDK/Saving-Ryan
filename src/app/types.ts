@@ -1,4 +1,4 @@
-export type AppPhase = "intro" | "exploration";
+export type AppPhase = "intro" | "exploration" | "dialogue";
 
 export type LocationId = "A" | "B" | "C" | "D" | "E";
 
@@ -58,6 +58,7 @@ export type BarbaraHelpState =
   | "completed";
 
 export interface DialogueProgress {
+  activePerson: CharacterId | null;
   askedChoices: DialogueChoiceId[];
   barbaraHelp: BarbaraHelpState;
 }
@@ -106,4 +107,12 @@ export type GameAction =
   | { type: "WAIT" }
   | { type: "COMPLETE_TRANSITION" }
   | { type: "PERFORM_INTERACTION"; id: SceneInteractionId }
+  | { type: "START_DIALOGUE"; person: CharacterId }
+  | { type: "CLOSE_DIALOGUE" }
+  | {
+      type: "COMPLETE_DIALOGUE_CHOICE";
+      person: CharacterId;
+      topic: DialogueTopicId;
+      completion: "ended" | "skipped";
+    }
   | { type: "RESET_GAME" };

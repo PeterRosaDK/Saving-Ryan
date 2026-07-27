@@ -1,5 +1,14 @@
 import type { GameStore } from "../app/gameStore";
-import type { GameState, KnowledgeId } from "../app/types";
+import type {
+  CharacterId,
+  GameState,
+  KnowledgeId,
+} from "../app/types";
+import {
+  getAvailableDialogueChoices,
+} from "../game/dialogueEngine";
+import type { DialogueChoice } from "../game/dialogueData";
+import { getSceneOccupants } from "../game/sceneOccupants";
 import {
   getScene,
   LOCATIONS,
@@ -7,7 +16,12 @@ import {
 } from "../game/sceneRegistry";
 import { getSceneInteractions } from "../game/sceneInteractions";
 import { TRANSITION_TEXT } from "../game/transitionText";
-import { getSceneBackgroundUrl } from "../media/imageManifest";
+import {
+  getCharacterPortraitUrl,
+  getSceneBackgroundUrl,
+} from "../media/imageManifest";
+import type { VideoPlaybackResultStatus } from "../media/VideoPlayer";
+import { NarrativeHost } from "./NarrativeHost";
 
 const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
   barbara_is_computer_expert: "Barbara er computerekspert",
@@ -89,9 +103,176 @@ function renderKnowledge(state: GameState): string {
   `;
 }
 
+const PLAYBACK_ERROR_LABELS: Readonly<
+  Partial<Record<VideoPlaybackResultStatus, string>>
+> = {
+  "autoplay-blocked":
+    "Browseren blokerede videoen. Prøv at vælge spørgsmålet igen.",
+  "missing-media": "Et nødvendigt medieklip mangler.",
+  "network-error": "Medieklippet kunne ikke indlæses.",
+  "decode-error": "Browseren kunne ikke afkode medieklippet.",
+};
+
+function isCompletedPlayback(
+  status: VideoPlaybackResultStatus,
+): status is "ended" | "skipped" {
+  return status === "ended" || status === "skipped";
+}
+
+async function playDialogueChoice(
+  choice: DialogueChoice,
+  person: CharacterId,
+  root: HTMLElement,
+  store: GameStore,
+  narrativeHost: NarrativeHost,
+): Promise<void> {
+  const status = root.querySelector<HTMLElement>("[data-dialogue-status]");
+  const controls = root.querySelectorAll<HTMLButtonElement>(
+    ".dialogue-choice, [data-close-dialogue]",
+  );
+  controls.forEach((control) => {
+    control.disabled = true;
+  });
+  if (status) {
+    status.textContent = "Jørgen stiller spørgsmålet…";
+  }
+
+  const questionResult = await narrativeHost.play(choice.questionCue);
+  if (!isCompletedPlayback(questionResult.status)) {
+    if (questionResult.status !== "aborted" && status?.isConnected) {
+      status.textContent =
+        PLAYBACK_ERROR_LABELS[questionResult.status] ??
+        "Sekvensen blev afbrudt.";
+      controls.forEach((control) => {
+        control.disabled = false;
+      });
+    }
+    return;
+  }
+
+  let completion: "ended" | "skipped" = questionResult.status;
+  if (choice.answerCue) {
+    if (status?.isConnected) {
+      status.textContent = `${person} svarer…`;
+    }
+    const answerResult = await narrativeHost.play(choice.answerCue);
+    if (!isCompletedPlayback(answerResult.status)) {
+      if (answerResult.status !== "aborted" && status?.isConnected) {
+        status.textContent =
+          PLAYBACK_ERROR_LABELS[answerResult.status] ??
+          "Sekvensen blev afbrudt.";
+        controls.forEach((control) => {
+          control.disabled = false;
+        });
+      }
+      return;
+    }
+
+    if (answerResult.status === "skipped") {
+      completion = "skipped";
+    }
+  }
+
+  const current = store.getState();
+  if (
+    current.phase === "dialogue" &&
+    current.dialogue.activePerson === person
+  ) {
+    store.dispatch({
+      type: "COMPLETE_DIALOGUE_CHOICE",
+      person,
+      topic: choice.topic,
+      completion,
+    });
+  }
+}
+
+function renderDialogue(
+  root: HTMLElement,
+  state: GameState,
+  store: GameStore,
+  narrativeHost: NarrativeHost,
+): void {
+  const person = state.dialogue.activePerson;
+  if (!person) {
+    throw new Error("Dialogue phase requires an active person.");
+  }
+
+  const scene = getScene(toSceneId(state.location, state.timeSlot));
+  const choices = getAvailableDialogueChoices(state, person);
+
+  root.innerHTML = `
+    <main class="app-shell dialogue-shell">
+      <header class="game-header">
+        <div>
+          <p class="eyebrow">Samtale i ${scene.location.name}</p>
+          <h1>${person}</h1>
+        </div>
+        <dl class="status-strip">
+          <div><dt>Scene</dt><dd>${scene.id}</dd></div>
+          <div><dt>Tid</dt><dd>${scene.time.name}</dd></div>
+          <div><dt>Dag</dt><dd>${state.loop}</dd></div>
+        </dl>
+      </header>
+
+      <section class="dialogue-layout" aria-labelledby="dialogue-title">
+        <div class="dialogue-portrait">
+          <img
+            src="${getCharacterPortraitUrl(person)}"
+            alt="Portræt af ${person}"
+          />
+        </div>
+        <div class="dialogue-panel">
+          <p class="eyebrow">Hvad vil du spørge om?</p>
+          <h2 id="dialogue-title">Tal med ${person}</h2>
+          <div class="dialogue-options" data-dialogue-options></div>
+          <p class="dialogue-status" aria-live="polite" data-dialogue-status>
+            Tidligere spørgsmål er dæmpet, men kan stilles igen.
+          </p>
+          <button
+            class="secondary-action"
+            type="button"
+            data-close-dialogue
+          >
+            Afslut samtalen
+          </button>
+        </div>
+      </section>
+    </main>
+  `;
+
+  const options = root.querySelector("[data-dialogue-options]");
+  choices.forEach((choice) => {
+    const asked = state.dialogue.askedChoices.includes(choice.id);
+    options?.append(
+      button(
+        choice.label,
+        `dialogue-choice${asked ? " is-asked" : ""}`,
+        () => {
+          void playDialogueChoice(
+            choice,
+            person,
+            root,
+            store,
+            narrativeHost,
+          );
+        },
+      ),
+    );
+  });
+
+  root
+    .querySelector("[data-close-dialogue]")
+    ?.addEventListener("click", () => {
+      narrativeHost.abort();
+      store.dispatch({ type: "CLOSE_DIALOGUE" });
+    });
+}
+
 function renderExploration(root: HTMLElement, state: GameState, store: GameStore): void {
   const sceneId = toSceneId(state.location, state.timeSlot);
   const scene = getScene(sceneId);
+  const occupants = getSceneOccupants(sceneId);
   const manualInteractions = getSceneInteractions(sceneId, "manual").filter(
     ({ effects }) =>
       effects.some(
@@ -159,6 +340,17 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
 
   const stageActions = root.querySelector("[data-stage-actions]");
   if (stageActions) {
+    occupants.forEach((person) => {
+      stageActions.append(
+        button(`Tal med ${person}`, "talk-action", () => {
+          store.dispatch({
+            type: "START_DIALOGUE",
+            person,
+          });
+        }),
+      );
+    });
+
     manualInteractions.forEach((interaction) => {
       stageActions.append(
         button(interaction.label, "secondary-action", () => {
@@ -204,17 +396,8 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
   appView.dataset.appView = "";
 
   const mediaHost = document.createElement("section");
-  mediaHost.className = "media-host";
   mediaHost.dataset.mediaHost = "";
-  mediaHost.hidden = true;
-  mediaHost.setAttribute("aria-label", "Videoafspiller");
-
-  const video = document.createElement("video");
-  video.dataset.videoPlayer = "";
-  video.controls = true;
-  video.playsInline = true;
-  video.preload = "metadata";
-  mediaHost.append(video);
+  const narrativeHost = new NarrativeHost(mediaHost);
 
   root.replaceChildren(appView, mediaHost);
 
@@ -224,11 +407,17 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
       return;
     }
 
+    if (state.phase === "dialogue") {
+      renderDialogue(appView, state, store, narrativeHost);
+      return;
+    }
+
     renderExploration(appView, state, store);
   });
 
   return () => {
     unsubscribe();
+    narrativeHost.destroy();
     root.replaceChildren();
   };
 }

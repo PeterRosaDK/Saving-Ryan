@@ -7,6 +7,10 @@ import type {
   KnowledgeId,
 } from "../app/types";
 import type { VideoClipId } from "../media/videoManifest";
+import {
+  videoCue,
+  type NarrativeCue,
+} from "../media/narrativeCue";
 
 export const CHARACTERS = [
   "Barbara",
@@ -28,13 +32,31 @@ export interface DialogueChoice {
   id: DialogueChoiceId;
   person: CharacterId;
   topic: DialogueTopicId;
+  label: string;
   requires: readonly KnowledgeId[];
-  questionClip: VideoClipId;
-  answerClip: VideoClipId | null;
+  questionCue: NarrativeCue;
+  answerCue: NarrativeCue | null;
   effects: readonly GameEffect[];
   repeatable: boolean;
   effectsOnSkip: boolean;
 }
+
+const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
+  about_laura: "Hvad mener du om Laura?",
+  about_marie: "Hvad mener du om Marie?",
+  about_david: "Hvad mener du om David?",
+  about_ryan: "Hvad mener du om Ryan?",
+  about_barbara: "Hvad mener du om Barbara?",
+  alibi: "Hvor var du, da Ryan blev myrdet?",
+  theory: "Hvem tror du myrdede Ryan?",
+  accuse: "Jeg tror, det var dig.",
+  barbara_and_computers: "Hvad ved du om Barbara og computere?",
+  necklace: "Kender du denne halskæde?",
+  marie_and_ryan: "Hvad skete der mellem Marie og Ryan?",
+  barbara_and_ryan: "Hvad foregår der mellem Barbara og Ryan?",
+  ask_barbara_for_help: "Vil du hjælpe mig med Lauras computer?",
+  warn_ryan: "Ryan, du er i fare.",
+};
 
 function choiceId(
   person: CharacterId,
@@ -58,9 +80,10 @@ function defineChoice(
     id: choiceId(person, topic),
     person,
     topic,
+    label: TOPIC_LABELS[topic],
     requires: options.requires ?? [],
-    questionClip,
-    answerClip,
+    questionCue: videoCue(questionClip),
+    answerCue: answerClip ? videoCue(answerClip) : null,
     effects: options.effects ?? [],
     repeatable: true,
     effectsOnSkip: options.effectsOnSkip ?? false,
