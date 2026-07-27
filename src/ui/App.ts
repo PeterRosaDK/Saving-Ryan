@@ -5,15 +5,9 @@ import {
   LOCATIONS,
   toSceneId,
 } from "../game/sceneRegistry";
+import { getSceneInteractions } from "../game/sceneInteractions";
+import { TRANSITION_TEXT } from "../game/transitionText";
 import { getSceneBackgroundUrl } from "../media/imageManifest";
-
-const CLUES: Partial<Record<string, KnowledgeId>> = {
-  B1: "barbara_is_computer_expert",
-  D4: "ryan_has_girlfriend_sarah",
-  E1: "ryan_bullied_marie",
-  B4: "laura_hid_computer_activity",
-  A3: "killer_dropped_necklace",
-};
 
 const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
   barbara_is_computer_expert: "Barbara er computerekspert",
@@ -67,15 +61,14 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
   const introCopy = root.querySelector(".intro-copy");
   introCopy?.append(
     button("Begynd dagen", "primary-action", () => {
-      store.dispatch({ type: "START_GAME" });
+      store.dispatch({ type: "INTRO_FINISHED" });
     }),
   );
 }
 
 function renderKnowledge(state: GameState): string {
-  const discoveries = Object.entries(state.knowledge).filter(
-    ([, status]) => status !== "unknown",
-  ) as [KnowledgeId, GameState["knowledge"][KnowledgeId]][];
+  const discoveries = Object.entries(state.knowledge).filter(([, known]) => known)
+    .map(([id]) => id as KnowledgeId);
 
   if (discoveries.length === 0) {
     return "<p class=\"empty-state\">Du har endnu ikke samlet nogen spor.</p>";
@@ -85,8 +78,8 @@ function renderKnowledge(state: GameState): string {
     <ul class="clue-list">
       ${discoveries
         .map(
-          ([id, status]) =>
-            `<li><span>${CLUE_LABELS[id]}</span><small>${status}</small></li>`,
+          (id) =>
+            `<li><span>${CLUE_LABELS[id]}</span><small>fundet</small></li>`,
         )
         .join("")}
     </ul>
@@ -96,10 +89,16 @@ function renderKnowledge(state: GameState): string {
 function renderExploration(root: HTMLElement, state: GameState, store: GameStore): void {
   const sceneId = toSceneId(state.location, state.timeSlot);
   const scene = getScene(sceneId);
-  const availableClue = CLUES[sceneId];
-  const clueIsUnknown =
-    availableClue !== undefined &&
-    state.knowledge[availableClue] === "unknown";
+  const manualInteractions = getSceneInteractions(sceneId, "manual").filter(
+    ({ effects }) =>
+      effects.some(
+        (effect) =>
+          effect.type === "LEARN" && !state.knowledge[effect.id],
+      ),
+  );
+  const transitionText = state.pendingTransition
+    ? TRANSITION_TEXT[state.pendingTransition.transitionId]
+    : null;
 
   root.innerHTML = `
     <main class="app-shell">
@@ -141,12 +140,12 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
       <nav class="location-nav" aria-label="Gå til et andet lokale" data-location-nav></nav>
 
       ${
-        state.lastTransition
+        transitionText
           ? `<div class="transition-dialog" role="dialog" aria-modal="true" aria-labelledby="transition-title">
               <div>
                 <p class="eyebrow">Tiden går</p>
                 <h2 id="transition-title">${scene.time.name}</h2>
-                <p>${state.lastTransition}</p>
+                <p>${transitionText}</p>
                 <button class="primary-action" type="button" data-dismiss>Fortsæt</button>
               </div>
             </div>`
@@ -157,16 +156,16 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
 
   const stageActions = root.querySelector("[data-stage-actions]");
   if (stageActions) {
-    if (availableClue && clueIsUnknown) {
+    manualInteractions.forEach((interaction) => {
       stageActions.append(
-        button("Undersøg området", "secondary-action", () => {
+        button(interaction.label, "secondary-action", () => {
           store.dispatch({
-            type: "SET_KNOWLEDGE",
-            id: availableClue,
+            type: "PERFORM_INTERACTION",
+            id: interaction.id,
           });
         }),
       );
-    }
+    });
 
     stageActions.append(
       button("Vent et tidsinterval", "clock-action", () => {
@@ -193,7 +192,7 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
   });
 
   root.querySelector("[data-dismiss]")?.addEventListener("click", () => {
-    store.dispatch({ type: "DISMISS_TRANSITION" });
+    store.dispatch({ type: "COMPLETE_TRANSITION" });
   });
 }
 

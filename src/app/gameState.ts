@@ -1,27 +1,13 @@
-import type { GameState, KnowledgeId, KnowledgeStatus } from "./types";
+import {
+  KNOWLEDGE_IDS,
+  type GameState,
+  type KnowledgeId,
+} from "./types";
 
-export const KNOWLEDGE_IDS = [
-  "barbara_is_computer_expert",
-  "barbara_hacker_alias_intruder",
-  "barbara_forged_grades",
-  "ryan_has_girlfriend_sarah",
-  "ryan_bullied_marie",
-  "laura_hid_computer_activity",
-  "ryan_and_laura_were_together",
-  "ryan_left_laura",
-  "secret_passage_exists",
-  "laura_was_in_institution",
-  "laura_owns_polar_bear_necklace",
-  "ryan_was_murdered",
-  "killer_dropped_necklace",
-  "necklace_connects_laura_to_scene",
-  "laura_confessed",
-] as const satisfies readonly KnowledgeId[];
-
-function createInitialKnowledge(): Record<KnowledgeId, KnowledgeStatus> {
+function createInitialKnowledge(): Record<KnowledgeId, boolean> {
   return Object.fromEntries(
-    KNOWLEDGE_IDS.map((id) => [id, "unknown"]),
-  ) as Record<KnowledgeId, KnowledgeStatus>;
+    KNOWLEDGE_IDS.map((id) => [id, false]),
+  ) as Record<KnowledgeId, boolean>;
 }
 
 export function createInitialGameState(): GameState {
@@ -35,11 +21,6 @@ export function createInitialGameState(): GameState {
     loopState: {
       seenTransitions: [],
     },
-    dialogue: {
-      person: null,
-      returnScene: null,
-      askedTopics: [],
-    },
-    lastTransition: null,
+    pendingTransition: null,
   };
 }
