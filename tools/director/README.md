@@ -36,6 +36,21 @@ Requirements:
   Legacy/Billeder.dir
 ```
 
+The dump includes cast slot numbers, score-chunk summaries, and both Director
+sound-channel references when the score version is supported. Those fields are
+useful when checking whether a recovered sound cast is actually assigned in the
+saved movie rather than merely present as imported masters.
+
+For the later recovered build, inspect the readable decompiled movie directly:
+
+```sh
+/tmp/saving-ryan-director-tools/saving_ryan_director_dump \
+  "Legacy Fresh/Spillet/spillet_decompiled.dir"
+```
+
+The adjacent compiled `spillet.dir` is a control, not the primary source for
+Lingo interpretation.
+
 ## Extract bitmap cast members
 
 ```sh
@@ -69,7 +84,8 @@ for movie in Intro Spillet Video Billeder; do
 done
 ```
 
-The expected result is one member named `intro` from `Intro.dir` and zero sound
-members from each of the other three files. See
-[`docs/audio-assets.md`](../../docs/audio-assets.md) for the report comparison
-and missing-music assessment.
+For the originally supplied `Legacy/` set, the expected result is one member
+named `intro` from `Intro.dir` and zero sound members from each of the other
+three files. A later working copy supplied standalone music WAV files; see
+[`docs/audio-assets.md`](../../docs/audio-assets.md) for provenance and the
+missing score-assignment finding.

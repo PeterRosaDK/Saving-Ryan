@@ -255,6 +255,12 @@ export const DIRECTOR_STAGE = {
   tickMilliseconds: 40,
 } as const;
 
+export const DIRECTOR_TOOL_RECTS = {
+  help: rect(760, 179, 70, 75),
+  music: rect(760, 250, 70, 75),
+  quit: rect(760, 320, 70, 75),
+} as const;
+
 export function getScenePresentation(sceneId: SceneId): ScenePresentation {
   const location = sceneId[0] as LocationId;
   const timeSlot = Number(sceneId[1]) as TimeSlot;

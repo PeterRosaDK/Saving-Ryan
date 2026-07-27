@@ -60,8 +60,8 @@ describe("image asset manifest", () => {
       .map((fileName) => fileName.replace(/\.png$/, ""))
       .sort();
 
-    expect(IMAGE_MEMBERS).toHaveLength(93);
-    expect(new Set(IMAGE_MEMBERS).size).toBe(93);
+    expect(IMAGE_MEMBERS).toHaveLength(109);
+    expect(new Set(IMAGE_MEMBERS).size).toBe(109);
     expect([...IMAGE_MEMBERS].sort()).toEqual(actualMembers);
   });
 });

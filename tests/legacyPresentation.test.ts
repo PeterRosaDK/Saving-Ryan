@@ -91,10 +91,10 @@ describe("Director presentation parity", () => {
     );
   });
 
-  it("models the 535-frame, 20 fps Director intro score", () => {
-    expect(INTRO_SCORE.frames).toBe(535);
+  it("models the later 581-frame, 20 fps Director intro score", () => {
+    expect(INTRO_SCORE.frames).toBe(581);
     expect(INTRO_SCORE.millisecondsPerFrame).toBe(50);
-    expect(INTRO_DURATION_MILLISECONDS).toBe(26_750);
+    expect(INTRO_DURATION_MILLISECONDS).toBe(29_050);
     expect(INTRO_SCORE.title.map(({ image }) => image)).toEqual([
       "titel-saving",
       "titel-ryan",
@@ -115,6 +115,11 @@ describe("Director presentation parity", () => {
       { character: "Laura", actor: "Signe", startsAtFrame: 360 },
       { character: "Ryan", actor: "Claus", startsAtFrame: 435 },
     ]);
+    expect(INTRO_SCORE.final).toMatchObject({
+      image: "intro-slut",
+      startsAtFrame: 523,
+      fullyVisibleAtFrame: 574,
+    });
   });
 
   it("serves the extracted original intro sound", () => {

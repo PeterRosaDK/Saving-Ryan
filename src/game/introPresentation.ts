@@ -20,9 +20,9 @@ export interface IntroCreditCard {
 }
 
 export const INTRO_SCORE = {
-  frames: 535,
+  frames: 581,
   millisecondsPerFrame: 50,
-  titleFrames: 60,
+  titleFrames: 55,
   cardFrames: 75,
   title: [
     {
@@ -43,7 +43,7 @@ export const INTRO_SCORE = {
       startsAtFrame: 61,
       portrait: {
         image: "halv-Barbara",
-        rect: { centerX: 724, centerY: 444, width: 152, height: 312 },
+        rect: { centerX: 687, centerY: 404, width: 227, height: 393 },
       },
       title: {
         image: "titel-jane1",
@@ -60,7 +60,7 @@ export const INTRO_SCORE = {
       startsAtFrame: 135,
       portrait: {
         image: "halv-David",
-        rect: { centerX: 74, centerY: 474, width: 149, height: 252 },
+        rect: { centerX: 99, centerY: 430, width: 200, height: 341 },
       },
       title: {
         image: "titel-soren1",
@@ -77,7 +77,7 @@ export const INTRO_SCORE = {
       startsAtFrame: 210,
       portrait: {
         image: "halv-Marie",
-        rect: { centerX: 725, centerY: 456, width: 150, height: 287 },
+        rect: { centerX: 687, centerY: 410, width: 227, height: 379 },
       },
       title: {
         image: "titel-bodil1",
@@ -94,7 +94,7 @@ export const INTRO_SCORE = {
       startsAtFrame: 285,
       portrait: {
         image: "halv-Peter",
-        rect: { centerX: 74, centerY: 442, width: 149, height: 316 },
+        rect: { centerX: 107, centerY: 393, width: 215, height: 415 },
       },
       title: {
         image: "titel-peter1",
@@ -111,7 +111,7 @@ export const INTRO_SCORE = {
       startsAtFrame: 360,
       portrait: {
         image: "halv-Laura",
-        rect: { centerX: 725, centerY: 489, width: 149, height: 222 },
+        rect: { centerX: 684, centerY: 435, width: 231, height: 330 },
       },
       title: {
         image: "titel-signe1",
@@ -128,7 +128,7 @@ export const INTRO_SCORE = {
       startsAtFrame: 435,
       portrait: {
         image: "halv-Ryan",
-        rect: { centerX: 74, centerY: 463, width: 149, height: 274 },
+        rect: { centerX: 110, centerY: 419, width: 221, height: 362 },
       },
       title: {
         image: "titel-claus1",
@@ -140,6 +140,13 @@ export const INTRO_SCORE = {
       },
     },
   ] as const satisfies readonly IntroCreditCard[],
+  final: {
+    image: "intro-slut",
+    alt: "Saving Ryan-holdet med teksten Nogle gange er projektarbejdet en dræber",
+    startsAtFrame: 523,
+    fullyVisibleAtFrame: 574,
+    rect: { centerX: 397, centerY: 298, width: 699, height: 603 },
+  },
 } as const;
 
 export const INTRO_DURATION_MILLISECONDS =

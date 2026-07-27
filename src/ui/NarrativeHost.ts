@@ -41,8 +41,12 @@ export class NarrativeHost {
   private readonly unsubscribeVideo: () => void;
   private activeToken: symbol | null = null;
   private activePanel: ActivePanelCue | null = null;
+  private isActive = false;
 
-  constructor(private readonly root: HTMLElement) {
+  constructor(
+    private readonly root: HTMLElement,
+    private readonly onActiveChange: (active: boolean) => void = () => {},
+  ) {
     root.className = "media-host";
     root.hidden = true;
     root.setAttribute("aria-label", "Narrativ sekvens");
@@ -103,6 +107,7 @@ export class NarrativeHost {
     const token = Symbol(cue.kind);
     this.activeToken = token;
     this.root.hidden = false;
+    this.setActive(true);
 
     if (cue.kind === "text" || cue.kind === "stills") {
       this.video.hidden = true;
@@ -127,6 +132,7 @@ export class NarrativeHost {
     if (this.activeToken === token) {
       this.activeToken = null;
       this.root.hidden = true;
+      this.setActive(false);
     }
 
     return {
@@ -158,6 +164,7 @@ export class NarrativeHost {
 
     this.activeToken = null;
     this.root.hidden = true;
+    this.setActive(false);
     return aborted;
   }
 
@@ -230,6 +237,7 @@ export class NarrativeHost {
     if (this.activeToken === active.token) {
       this.activeToken = null;
       this.root.hidden = true;
+      this.setActive(false);
     }
     active.resolve({
       cue: active.cue,
@@ -246,5 +254,13 @@ export class NarrativeHost {
     }
 
     return element;
+  }
+
+  private setActive(active: boolean): void {
+    if (this.isActive === active) {
+      return;
+    }
+    this.isActive = active;
+    this.onActiveChange(active);
   }
 }

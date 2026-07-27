@@ -16,15 +16,16 @@ import {
   toSceneId,
 } from "../game/sceneRegistry";
 import {
-  INTRO_DURATION_MILLISECONDS,
   INTRO_SCORE,
 } from "../game/introPresentation";
 import {
   DIRECTOR_STAGE,
+  DIRECTOR_TOOL_RECTS,
   directorHotspotRectStyle,
   directorRectStyle,
   getScenePresentation,
   type DirectorHotspotRect,
+  type DirectorRect,
   type FilmLoopPresentation,
 } from "../game/scenePresentation";
 import {
@@ -43,6 +44,8 @@ import {
   getSceneBackgroundUrl,
 } from "../media/imageManifest";
 import { getIntroAudioUrl } from "../media/audioManifest";
+import { LocationMusicPlayer } from "../media/LocationMusicPlayer";
+import { getClockTickUrl } from "../media/musicManifest";
 import type { VideoPlaybackResultStatus } from "../media/VideoPlayer";
 import { NarrativeHost } from "./NarrativeHost";
 
@@ -113,6 +116,35 @@ function hotspotButton(
     element.append(clock);
   }
 
+  return element;
+}
+
+function toolbarButton(
+  label: string,
+  normalImage: Parameters<typeof getImageUrl>[0],
+  hoverImage: Parameters<typeof getImageUrl>[0],
+  rectangle: DirectorRect,
+  onClick: () => void,
+): HTMLButtonElement {
+  const element = button("", "scene-toolbar-button", onClick);
+  element.ariaLabel = label;
+  element.title = label;
+  element.dataset.hotspotLabel = label;
+  element.setAttribute("style", directorRectStyle(rectangle));
+
+  const normal = document.createElement("img");
+  normal.className = "scene-toolbar-icon scene-toolbar-icon--normal";
+  normal.src = getImageUrl(normalImage);
+  normal.alt = "";
+  normal.ariaHidden = "true";
+
+  const hover = document.createElement("img");
+  hover.className = "scene-toolbar-icon scene-toolbar-icon--hover";
+  hover.src = getImageUrl(hoverImage);
+  hover.alt = "";
+  hover.ariaHidden = "true";
+
+  element.append(normal, hover);
   return element;
 }
 
@@ -225,12 +257,13 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
     const next = INTRO_SCORE.credits[index + 1];
     const endsAt = next
       ? (next.startsAtFrame - 1) * INTRO_SCORE.millisecondsPerFrame
-      : INTRO_DURATION_MILLISECONDS;
+      : (INTRO_SCORE.final.startsAtFrame - 1) *
+        INTRO_SCORE.millisecondsPerFrame;
     const timing =
       `--intro-delay:${startsAt}ms;--intro-duration:${endsAt - startsAt}ms`;
     return `
       <div
-        class="intro-credit-card"
+        class="intro-credit-card${index === INTRO_SCORE.credits.length - 1 ? " intro-last-credit" : ""}"
         aria-label="${credit.character}, spillet af ${credit.actor}"
         style="${timing}"
       >
@@ -252,6 +285,19 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
       </div>
     `;
   }).join("");
+  const finalStartsAt =
+    (INTRO_SCORE.final.startsAtFrame - 1) *
+    INTRO_SCORE.millisecondsPerFrame;
+  const finalFadeDuration =
+    (INTRO_SCORE.final.fullyVisibleAtFrame -
+      INTRO_SCORE.final.startsAtFrame) *
+    INTRO_SCORE.millisecondsPerFrame;
+  const finalElement = scoreElement(
+    INTRO_SCORE.final.image,
+    INTRO_SCORE.final.alt,
+    `${directorRectStyle(INTRO_SCORE.final.rect)};--intro-delay:${finalStartsAt}ms;--intro-duration:${finalFadeDuration}ms`,
+    "intro-final-element",
+  );
 
   root.innerHTML = `
     <main class="app-shell">
@@ -260,6 +306,7 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
         <div class="intro-score" aria-label="Original Director-intro">
           ${titleElements}
           ${creditElements}
+          ${finalElement}
         </div>
         <audio
           data-intro-audio
@@ -630,6 +677,8 @@ function renderExploration(
   state: GameState,
   store: GameStore,
   narrativeHost: NarrativeHost,
+  musicPlayer: LocationMusicPlayer,
+  clockAudio: HTMLAudioElement,
 ): void {
   const sceneId = toSceneId(state.location, state.timeSlot);
   const scene = getScene(sceneId);
@@ -674,6 +723,12 @@ function renderExploration(
       <section class="game-layout">
         <div class="stage exploration-stage" aria-label="${scene.location.name}, ${scene.time.name}">
           <img
+            class="director-stage-background"
+            src="${getImageUrl("baggrund")}"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
             class="scene-background"
             style="${directorRectStyle(DIRECTOR_STAGE.background)}"
             src="${getSceneBackgroundUrl(scene.id)}"
@@ -684,6 +739,22 @@ function renderExploration(
             Bevæg markøren over scenen
           </p>
           <div class="hotspot-layer" data-hotspot-layer></div>
+          <div class="legacy-help" data-legacy-help hidden>
+            <div role="dialog" aria-modal="true" aria-labelledby="legacy-help-title">
+              <p class="eyebrow">Hjælp fra Director-udgaven</p>
+              <h2 id="legacy-help-title">Sådan spiller du</h2>
+              <ul>
+                <li>Uret lader tiden gå ét interval fra det sted, hvor Jørgen står.</li>
+                <li>Bevæg markøren over billedet for at finde personer, døre og spor.</li>
+                <li>Noden tænder og slukker for musikken.</li>
+                <li>Videoer og tekstsekvenser kan springes over.</li>
+                <li>Jørgens viden bevares, når dagen begynder forfra.</li>
+              </ul>
+              <button class="primary-action" type="button" data-close-help>
+                Tilbage til spillet
+              </button>
+            </div>
+          </div>
         </div>
 
         <aside class="notebook" aria-labelledby="notebook-title">
@@ -783,12 +854,12 @@ function renderExploration(
         ? `${interaction.label} — bruger tid frem til ${nextTime.toLowerCase()}`
         : interaction.label;
       const hotspot = hotspotButton(label, "inspect", rect, () => {
-          void playSceneInteraction(
-            interaction,
-            store,
-            narrativeHost,
-          );
-        });
+        void playSceneInteraction(
+          interaction,
+          store,
+          narrativeHost,
+        );
+      });
       if (timeCost === 1) {
         hotspot.classList.add("scene-hotspot--timed");
       }
@@ -796,20 +867,71 @@ function renderExploration(
     }
   });
 
-  if (presentation.quit) {
-    appendHotspot(
-      hotspotButton(
-        "Forlad stedet (og spillet)",
-        "quit",
-        presentation.quit,
-        () => {
-          if (window.confirm("Vil du forlade spillet og begynde forfra?")) {
-            store.dispatch({ type: "RESET_GAME" });
-          }
-        },
-      ),
-    );
-  }
+  const helpPanel = root.querySelector<HTMLElement>("[data-legacy-help]");
+  const helpButton = toolbarButton(
+    "Vis hjælp",
+    "tegn-sp",
+    "tegn-sp2",
+    DIRECTOR_TOOL_RECTS.help,
+    () => {
+      if (helpPanel) {
+        helpPanel.hidden = false;
+        helpPanel.querySelector<HTMLButtonElement>("[data-close-help]")?.focus();
+      }
+    },
+  );
+  appendHotspot(helpButton);
+
+  let musicButton: HTMLButtonElement;
+  const refreshMusicButton = (showStatus = false): void => {
+    const musicState = musicPlayer.getState();
+    const label = musicState.muted ? "Tænd musik" : "Sluk musik";
+    const icon = musicState.muted ? "tegn-musik2" : "tegn-musik";
+    musicButton.ariaLabel = label;
+    musicButton.title = label;
+    musicButton.dataset.hotspotLabel = label;
+    musicButton.querySelectorAll<HTMLImageElement>("img").forEach((image) => {
+      image.src = getImageUrl(icon);
+    });
+    if (infoBox && showStatus) {
+      infoBox.textContent = musicState.muted
+        ? "Musikken er slået fra"
+        : "Musikken er slået til";
+    }
+  };
+  musicButton = toolbarButton(
+    "Sluk musik",
+    "tegn-musik",
+    "tegn-musik",
+    DIRECTOR_TOOL_RECTS.music,
+    () => {
+      musicPlayer.toggleMuted();
+      refreshMusicButton(true);
+    },
+  );
+  refreshMusicButton();
+  appendHotspot(musicButton);
+
+  appendHotspot(
+    toolbarButton(
+      "Afslut og begynd forfra",
+      "tegn-afslut",
+      "tegn-afslut2",
+      DIRECTOR_TOOL_RECTS.quit,
+      () => {
+        if (window.confirm("Vil du forlade spillet og begynde forfra?")) {
+          store.dispatch({ type: "RESET_GAME" });
+        }
+      },
+    ),
+  );
+
+  helpPanel
+    ?.querySelector("[data-close-help]")
+    ?.addEventListener("click", () => {
+      helpPanel.hidden = true;
+      helpButton.focus();
+    });
 
   const clockHotspot = hotspotButton(
     getWaitActionLabel(state.location, state.timeSlot),
@@ -821,7 +943,9 @@ function renderExploration(
       height: presentation.clock.height,
     },
     () => {
-        store.dispatch({ type: "WAIT" });
+      clockAudio.currentTime = 0;
+      void clockAudio.play().catch(() => {});
+      store.dispatch({ type: "WAIT" });
     },
   );
   const clockImage = clockHotspot.querySelector("img");
@@ -839,13 +963,30 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
   const appView = document.createElement("div");
   appView.dataset.appView = "";
 
+  const musicAudio = document.createElement("audio");
+  musicAudio.dataset.locationMusic = "";
+  const musicPlayer = new LocationMusicPlayer(musicAudio);
+
+  const clockAudio = document.createElement("audio");
+  clockAudio.dataset.clockTick = "";
+  clockAudio.preload = "auto";
+  clockAudio.src = getClockTickUrl();
+
   const mediaHost = document.createElement("section");
   mediaHost.dataset.mediaHost = "";
-  const narrativeHost = new NarrativeHost(mediaHost);
+  const narrativeHost = new NarrativeHost(mediaHost, (active) => {
+    musicPlayer.setDucked(active);
+  });
 
-  root.replaceChildren(appView, mediaHost);
+  root.replaceChildren(appView, mediaHost, musicAudio, clockAudio);
 
   const unsubscribe = store.subscribe((state) => {
+    musicPlayer.setLocation(
+      state.phase === "exploration" || state.phase === "dialogue"
+        ? state.location
+        : null,
+    );
+
     if (state.phase === "intro") {
       renderIntro(appView, store);
       return;
@@ -861,12 +1002,23 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
       return;
     }
 
-    renderExploration(appView, state, store, narrativeHost);
+    renderExploration(
+      appView,
+      state,
+      store,
+      narrativeHost,
+      musicPlayer,
+      clockAudio,
+    );
   });
 
   return () => {
     unsubscribe();
     narrativeHost.destroy();
+    musicPlayer.destroy();
+    clockAudio.pause();
+    clockAudio.removeAttribute("src");
+    clockAudio.load();
     root.replaceChildren();
   };
 }
