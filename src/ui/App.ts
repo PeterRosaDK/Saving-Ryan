@@ -30,8 +30,7 @@ import {
   getSceneInteractions,
   type SceneInteraction,
 } from "../game/sceneInteractions";
-import { getSpecialSequenceCue } from "../game/specialSequenceCues";
-import { TRANSITION_TEXT } from "../game/transitionText";
+import { getLocationTransitionEvent } from "../game/transitionEvents";
 import {
   getCharacterPortraitUrl,
   getClockImageUrl,
@@ -568,7 +567,8 @@ async function completePendingTransition(
     return;
   }
 
-  if (!pending.specialSequence) {
+  const event = getLocationTransitionEvent(pending.eventId);
+  if (!event.specialCue) {
     store.dispatch({ type: "COMPLETE_TRANSITION" });
     return;
   }
@@ -584,9 +584,7 @@ async function completePendingTransition(
     status.textContent = "Sekvensen begynder…";
   }
 
-  const result = await narrativeHost.play(
-    getSpecialSequenceCue(pending.specialSequence),
-  );
+  const result = await narrativeHost.play(event.specialCue);
   if (isCompletedPlayback(result.status)) {
     if (store.getState().pendingTransition === pending) {
       store.dispatch({ type: "COMPLETE_TRANSITION" });
@@ -628,9 +626,10 @@ function renderExploration(
   const visibleManualInteractions = manualInteractions.filter(
     (interaction) => !replacedInteractionIds.has(interaction.id),
   );
-  const transitionText = state.pendingTransition
-    ? TRANSITION_TEXT[state.pendingTransition.transitionId]
+  const transitionEvent = state.pendingTransition
+    ? getLocationTransitionEvent(state.pendingTransition.eventId)
     : null;
+  const transitionText = transitionEvent?.cue.text ?? null;
 
   root.innerHTML = `
     <main class="app-shell">

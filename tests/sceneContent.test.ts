@@ -11,7 +11,7 @@ import {
   directorRectStyle,
   getScenePresentation,
 } from "../src/game/scenePresentation";
-import { getSpecialSequenceCue } from "../src/game/specialSequenceCues";
+import { getLocationTransitionEvent } from "../src/game/transitionEvents";
 import { learnKnowledge } from "../src/game/knowledgeGraph";
 
 describe("verified scene content", () => {
@@ -216,7 +216,7 @@ describe("verified scene content", () => {
   });
 
   it("uses the original Laura Suspekt video for the B4 special sequence", () => {
-    expect(getSpecialSequenceCue("laura_suspect")).toEqual({
+    expect(getLocationTransitionEvent("B4").specialCue).toEqual({
       kind: "video",
       clipId: "LauraSuspekt",
     });

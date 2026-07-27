@@ -5,7 +5,6 @@ import type {
   SceneId,
   SceneInteractionId,
   SceneInteractionTrigger,
-  SpecialSequenceId,
 } from "../app/types";
 import {
   hasKnowledge,
@@ -26,7 +25,6 @@ export interface SceneInteraction {
   effects: readonly GameEffect[];
   cue?: NarrativeCue;
   blockedCue?: NarrativeCue;
-  specialSequence?: SpecialSequenceId;
   replaces?: readonly SceneInteractionId[];
   concludesStory?: boolean;
 }
@@ -40,25 +38,6 @@ export const SCENE_INTERACTIONS = {
     label: "Læg mærke til Barbaras computerarbejde",
     requires: [],
     effects: [{ type: "LEARN", id: "barbara_is_computer_expert" }],
-  },
-  witness_ryan_bullying_marie: {
-    id: "witness_ryan_bullying_marie",
-    scenes: ["E1"],
-    kind: "observe",
-    trigger: "wait",
-    label: "Overvær Ryan mobbe Marie",
-    requires: [],
-    effects: [{ type: "LEARN", id: "ryan_bullied_marie" }],
-  },
-  witness_laura_computer_activity: {
-    id: "witness_laura_computer_activity",
-    scenes: ["B4"],
-    kind: "special",
-    trigger: "wait",
-    label: "Følg Lauras mistænkelige computeraktivitet",
-    requires: [],
-    effects: [{ type: "LEARN", id: "laura_hid_computer_activity" }],
-    specialSequence: "laura_suspect",
   },
   inspect_ryans_body_and_necklace: {
     id: "inspect_ryans_body_and_necklace",

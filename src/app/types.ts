@@ -6,6 +6,8 @@ export type TimeSlot = 1 | 2 | 3 | 4;
 
 export type SceneId = `${LocationId}${TimeSlot}`;
 
+export type TransitionEventId = SceneId;
+
 export const KNOWLEDGE_IDS = [
   "barbara_is_computer_expert",
   "barbara_hacker_alias_intruder",
@@ -66,12 +68,8 @@ export interface DialogueProgress {
   barbaraHelp: BarbaraHelpState;
 }
 
-export type SpecialSequenceId = "laura_suspect";
-
 export type SceneInteractionId =
   | "notice_barbara_computer_expertise"
-  | "witness_ryan_bullying_marie"
-  | "witness_laura_computer_activity"
   | "inspect_ryans_body_and_necklace"
   | "inspect_girlfriend_letter"
   | "eavesdrop_barbara_and_ryan"
@@ -79,7 +77,7 @@ export type SceneInteractionId =
   | "prevent_ryans_murder"
   | "inspect_barbaras_computer";
 
-export type SceneInteractionTrigger = "enter" | "manual" | "wait";
+export type SceneInteractionTrigger = "enter" | "manual";
 
 export type GameEffect = { type: "LEARN"; id: KnowledgeId };
 
@@ -90,8 +88,7 @@ export interface LoopState {
 export interface PendingTransition {
   from: SceneId;
   to: SceneId;
-  transitionId: SceneId;
-  specialSequence?: SpecialSequenceId;
+  eventId: TransitionEventId;
   beginsNewLoop: boolean;
 }
 

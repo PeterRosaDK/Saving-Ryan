@@ -558,6 +558,17 @@ Only after the canonical Laura story is complete:
 - add deliberate simultaneous observations and late-discovery loopbacks;
 - preserve unlimited loops and free ordinary navigation.
 
+In progress:
+
+- all 20 legacy wait transitions are consolidated as declarative,
+  scene-keyed location events;
+- transition text, optional special cues, and effects now share one event
+  definition;
+- B4 versus E4 verifies that current position selects the observed event and
+  that completion advances time exactly once;
+- explicit `timeCost`, loop-local NPC memory, and the proposed new C2/E2
+  observations remain separate later slices.
+
 The approved but deferred design and Laura event matrix are recorded in
 [`docs/time-observation-design.md`](docs/time-observation-design.md). Do not
 introduce this phase's abstractions during Director restoration or canonical gap

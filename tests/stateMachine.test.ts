@@ -68,8 +68,7 @@ describe("legacy game state", () => {
     expect(waiting.pendingTransition).toEqual({
       from: "B2",
       to: "B3",
-      transitionId: "B2",
-      specialSequence: undefined,
+      eventId: "B2",
       beginsNewLoop: false,
     });
     expect(waiting.loopState.seenTransitions).toEqual([]);
@@ -92,7 +91,7 @@ describe("legacy game state", () => {
       const waiting = reduceGameState(initial, { type: "WAIT" });
 
       expect(waiting.pendingTransition?.from).toBe(scene.id);
-      expect(waiting.pendingTransition?.transitionId).toBe(scene.id);
+      expect(waiting.pendingTransition?.eventId).toBe(scene.id);
 
       const completed = reduceGameState(waiting, {
         type: "COMPLETE_TRANSITION",
@@ -119,7 +118,7 @@ describe("legacy game state", () => {
     expect(waiting.pendingTransition).toMatchObject({
       from: "B4",
       to: "B1",
-      specialSequence: "laura_suspect",
+      eventId: "B4",
       beginsNewLoop: true,
     });
 
@@ -131,6 +130,42 @@ describe("legacy game state", () => {
     expect(completed.knowledge.laura_hid_computer_activity).toBe(true);
     expect(completed.knowledge.barbara_is_computer_expert).toBe(true);
     expect(completed.loopState.seenTransitions).toEqual([]);
+    expect(
+      reduceGameState(completed, {
+        type: "COMPLETE_TRANSITION",
+      }),
+    ).toBe(completed);
+  });
+
+  it("selects different evening events and effects from B4 and E4", () => {
+    const atB4: GameState = {
+      ...finishIntro(),
+      location: "B",
+      timeSlot: 4,
+    };
+    const atE4: GameState = {
+      ...finishIntro(),
+      location: "E",
+      timeSlot: 4,
+    };
+
+    const waitingInB = reduceGameState(atB4, { type: "WAIT" });
+    const waitingInE = reduceGameState(atE4, { type: "WAIT" });
+
+    expect(waitingInB.pendingTransition?.eventId).toBe("B4");
+    expect(waitingInE.pendingTransition?.eventId).toBe("E4");
+
+    const nextB = reduceGameState(waitingInB, {
+      type: "COMPLETE_TRANSITION",
+    });
+    const nextE = reduceGameState(waitingInE, {
+      type: "COMPLETE_TRANSITION",
+    });
+
+    expect(toSceneId(nextB.location, nextB.timeSlot)).toBe("B1");
+    expect(nextB.knowledge.laura_hid_computer_activity).toBe(true);
+    expect(toSceneId(nextE.location, nextE.timeSlot)).toBe("E1");
+    expect(nextE.knowledge.laura_hid_computer_activity).toBe(false);
   });
 
   it("learns about Ryan bullying Marie when the E1 transition completes", () => {

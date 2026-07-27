@@ -1,10 +1,10 @@
 # Deferred time and observation design
 
-Status: approved design basis, deliberately deferred until Director restoration
-and the canonical Laura gap-completion phase are finished.
+Status: approved design basis. Director restoration and canonical Laura
+completion are finished; the first phase 9 vertical slice is implemented.
 
-This document records the agreed direction without authorizing implementation.
-The current state machine remains authoritative during legacy restoration.
+This document records the agreed direction and the boundary between the active
+vertical slice and later phase 9 work.
 
 ## Product order
 
@@ -13,7 +13,7 @@ The current state machine remains authoritative during legacy restoration.
 3. Add expanded time, observation, and loop-local character memory.
 4. Add curated alternative cases one at a time.
 
-The following are explicitly out of scope during restoration:
+The following were explicitly out of scope during restoration:
 
 - a `transitionEvents` refactor;
 - `timeCost`;
@@ -151,6 +151,26 @@ This should prove event selection, idempotent completion, reset behavior, and
 location-dependent observation before any genuinely time-consuming action is
 introduced.
 
+### Implemented
+
+The 20 restored `Vent` branches now live in one declarative
+`LOCATION_TRANSITION_EVENTS` registry keyed by source `SceneId`. Each entry
+owns its text cue, optional special cue, and effects.
+
+- B4 owns the `LauraSuspekt` cue and
+  `laura_hid_computer_activity` effect.
+- E4 owns only its corridor/new-day text and has no Laura effect.
+- E1 owns the existing `ryan_bullied_marie` effect.
+- `pendingTransition` stores only the selected event ID and target transition.
+- One reducer gateway applies the event once, advances one interval, resets the
+  loop when appropriate, and then applies target-scene entry effects.
+- Source-event effects are applied before the new-day `loopState` reset. This
+  prevents later loop-local effects from leaking from the previous day.
+
+Tests cover all 20 event definitions, B4 versus E4 selection, B4 special media,
+knowledge effects, new-day reset, and idempotent completion. No `timeCost`,
+new C2/E2 observations, NPC memory, or case data is part of this slice.
+
 ## Required future validation
 
 - Every location event has valid cues.
@@ -162,4 +182,3 @@ introduced.
 - Central Laura knowledge remains reachable across unlimited loops.
 - Simultaneous observations can be collected over multiple loops without
   permanent softlocks.
-

@@ -14,6 +14,7 @@ import {
 import { applyKnowledgeEffects } from "./knowledgeGraph";
 import { executeDialogueChoice } from "./dialogueEngine";
 import { isCharacterInScene } from "./sceneOccupants";
+import { getLocationTransitionEvent } from "./transitionEvents";
 
 const NEXT_TIME: Readonly<Record<TimeSlot, TimeSlot>> = {
   1: 2,
@@ -32,7 +33,7 @@ function applyEffects(
 function applyTriggeredSceneEffects(
   state: GameState,
   sceneId: ReturnType<typeof toSceneId>,
-  trigger: "enter" | "wait",
+  trigger: "enter",
 ): GameState {
   return getSceneInteractions(sceneId, trigger).reduce(
     (nextState, interaction) =>
@@ -92,20 +93,17 @@ export function reduceGameState(
       }
 
       const sceneId = toSceneId(state.location, state.timeSlot);
+      const event = getLocationTransitionEvent(sceneId);
       const nextTime = NEXT_TIME[state.timeSlot];
       const nextSceneId = toSceneId(state.location, nextTime);
       const beginsNewLoop = state.timeSlot === 4;
-      const specialSequence = getSceneInteractions(sceneId, "wait").find(
-        ({ specialSequence: sequence }) => sequence !== undefined,
-      )?.specialSequence;
 
       return {
         ...state,
         pendingTransition: {
           from: sceneId,
           to: nextSceneId,
-          transitionId: sceneId,
-          specialSequence,
+          eventId: event.id,
           beginsNewLoop,
         },
       };
@@ -120,30 +118,29 @@ export function reduceGameState(
       }
 
       const pending = state.pendingTransition;
+      const event = getLocationTransitionEvent(pending.eventId);
       const target = getScene(pending.to);
-      let completedState: GameState = {
-        ...state,
+      const eventState = applyEffects(state, event.effects);
+      const completedState: GameState = {
+        ...eventState,
         location: target.location.id,
         timeSlot: target.time.id,
-        loop: pending.beginsNewLoop ? state.loop + 1 : state.loop,
+        loop: pending.beginsNewLoop
+          ? eventState.loop + 1
+          : eventState.loop,
         loopState: {
           seenTransitions: pending.beginsNewLoop
             ? []
             : [
                 ...new Set([
-                  ...state.loopState.seenTransitions,
-                  pending.transitionId,
+                  ...eventState.loopState.seenTransitions,
+                  event.scene,
                 ]),
               ],
         },
         pendingTransition: null,
       };
 
-      completedState = applyTriggeredSceneEffects(
-        completedState,
-        pending.from,
-        "wait",
-      );
       return applyTriggeredSceneEffects(
         completedState,
         pending.to,

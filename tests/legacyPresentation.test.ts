@@ -5,7 +5,10 @@ import {
   INTRO_DURATION_MILLISECONDS,
   INTRO_SCORE,
 } from "../src/game/introPresentation";
-import { TRANSITION_TEXT } from "../src/game/transitionText";
+import {
+  LOCATION_TRANSITION_EVENTS,
+  TRANSITION_TEXT,
+} from "../src/game/transitionEvents";
 import { getIntroAudioUrl } from "../src/media/audioManifest";
 
 describe("Director presentation parity", () => {
@@ -32,6 +35,32 @@ describe("Director presentation parity", () => {
       E3: "Du står og keder dig. Der sker intet som helst.",
       E4: "I ankommer til universitet. Efter et kort møde går folk hver til sit. Du går ud i gangen.",
     });
+  });
+
+  it("defines one location event per scene with the B4 special isolated from E4", () => {
+    expect(Object.keys(LOCATION_TRANSITION_EVENTS)).toHaveLength(20);
+    for (const [scene, event] of Object.entries(
+      LOCATION_TRANSITION_EVENTS,
+    )) {
+      expect(event.id).toBe(scene);
+      expect(event.scene).toBe(scene);
+      expect(event.cue.kind).toBe("text");
+    }
+
+    expect(LOCATION_TRANSITION_EVENTS.B4).toMatchObject({
+      specialCue: {
+        kind: "video",
+        clipId: "LauraSuspekt",
+      },
+      effects: [
+        {
+          type: "LEARN",
+          id: "laura_hid_computer_activity",
+        },
+      ],
+    });
+    expect(LOCATION_TRANSITION_EVENTS.E4.specialCue).toBeUndefined();
+    expect(LOCATION_TRANSITION_EVENTS.E4.effects).toEqual([]);
   });
 
   it("models the 535-frame, 20 fps Director intro score", () => {
