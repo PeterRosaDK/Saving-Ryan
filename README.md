@@ -94,11 +94,41 @@ validation boundary are in
 ## Commands
 
 ```sh
-npm install
+nvm use
+npm ci
 npm run dev
 npm test
 npm run build
 ```
+
+Node.js 22.16.0 is pinned in `.nvmrc`; Vite also supports the declared Node
+22.12–24 range. `npm ci` is the reproducible first install and is only needed
+again when dependencies change or `node_modules/` is removed. The generated,
+ignored production output is `dist/`.
+
+## Production
+
+The production target is a static Cloudflare Pages site:
+
+- Pages project: `saving-ryan`;
+- URL: `https://ryan.petergpt.dk`;
+- exposure: private preview through Cloudflare Access;
+- build: `npm ci && npm run build`;
+- output: `dist/`;
+- liveness: `/health/live`;
+- readiness: `/health/ready`.
+
+There is no production process, port, database, runtime data, log stream,
+environment variable, or Mac Mini dependency. The app uses no analytics or
+external application API; Cloudflare Pages and Access are the only external
+services and may incur cost according to the owner's plan and usage.
+
+Operational verification, rollback, privacy, and deployment commands are in
+[`docs/OPERATIONS.md`](docs/OPERATIONS.md) and
+[`deployment/README.md`](deployment/README.md). The production architecture and
+security decisions are recorded in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and
+[`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 Asset and Director inspection commands are documented under
 [`tools/`](tools/). The BMP conversion can be repeated with:
@@ -127,6 +157,7 @@ src/media/    media manifests and compatibility aliases
 src/ui/       DOM rendering
 tests/        state and manifest tests
 tools/        Director inspection and asset conversion utilities
+deployment/   Cloudflare Pages production contract
 ```
 
 The current interface renders the original intro, room photographs, primitive

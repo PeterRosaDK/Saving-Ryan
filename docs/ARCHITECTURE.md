@@ -1,0 +1,32 @@
+# Production architecture
+
+Saving Ryan is one static, client-side Vite/TypeScript application.
+
+```text
+private GitHub repository
+          |
+          | local, reproducible npm build
+          v
+       dist/
+          |
+          | Wrangler Direct Upload
+          v
+  Cloudflare Pages + Access
+          |
+          v
+  ryan.petergpt.dk
+```
+
+`src/`, `index.html`, and `public/` are authoritative. `dist/` is generated and
+ignored. The original Director projects and report in `Legacy/` are historical
+source material; `Legacy Fresh/` is a larger local forensic working copy and is
+intentionally ignored.
+
+The browser owns all game state. There is no backend, database, account system,
+analytics, external API, environment variable, or runtime secret. Pages serves
+the compiled module, CSS, images, video, and audio. Cloudflare Access is the
+only production authentication boundary.
+
+Arbitrary paths must return the committed `404.html`; the application does not
+use client-side routing. Static JSON liveness and readiness responses are valid
+because the deployed site's core dependencies are exactly its uploaded assets.
