@@ -131,6 +131,26 @@ export const SCENE_INTERACTIONS = {
       "Du hiver i bogen og opdager pludselig, at den i virkeligheden er en mystisk kontakt, der aktiverer en hemmelig dørmekanisme. En skydedør glider til side.",
     ),
   },
+  watch_secret_passage: {
+    id: "watch_secret_passage",
+    scenes: ["C2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Hold øje med bogreolen",
+    requires: [
+      "heard_scraping_behind_bookcase",
+      "noticed_laura_disappear_near_reading_room",
+    ],
+    effects: [
+      { type: "LEARN", id: "secret_passage_exists" },
+      { type: "LEARN", id: "laura_used_secret_passage" },
+    ],
+    timeCost: 1,
+    timeAdvanceCue: textCue(
+      "Du holder øje med bogreolen resten af middagen. Kort før skriget kommer Laura hastigt ind, aktiverer bogen og forsvinder gennem en skjult passage. Nu ved du, hvordan hun kan nå afsatsen uden at bruge dørene.",
+    ),
+    replaces: ["inspect_secret_passage_book"],
+  },
   prevent_ryans_murder: {
     id: "prevent_ryans_murder",
     scenes: ["C1"],

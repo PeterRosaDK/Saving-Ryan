@@ -202,6 +202,79 @@ describe("legacy game state", () => {
     expect(completed.knowledge.ryan_bullied_marie).toBe(true);
   });
 
+  it("requires separate C2 and E2 observations before next-loop passage surveillance", () => {
+    let state: GameState = {
+      ...finishIntro(),
+      location: "E",
+      timeSlot: 2,
+    };
+    const wait = (): void => {
+      state = reduceGameState(state, { type: "WAIT" });
+      state = reduceGameState(state, {
+        type: "COMPLETE_TRANSITION",
+      });
+    };
+
+    wait();
+    expect(toSceneId(state.location, state.timeSlot)).toBe("E3");
+    expect(
+      state.knowledge.noticed_laura_disappear_near_reading_room,
+    ).toBe(true);
+    expect(state.knowledge.heard_scraping_behind_bookcase).toBe(false);
+
+    wait();
+    wait();
+    expect(state.loop).toBe(2);
+    expect(toSceneId(state.location, state.timeSlot)).toBe("E1");
+
+    state = reduceGameState(state, {
+      type: "MOVE_TO_LOCATION",
+      location: "C",
+    });
+    wait();
+    wait();
+    expect(toSceneId(state.location, state.timeSlot)).toBe("C3");
+    expect(state.knowledge.heard_scraping_behind_bookcase).toBe(true);
+    expect(state.knowledge.laura_used_secret_passage).toBe(false);
+
+    wait();
+    wait();
+    expect(state.loop).toBe(3);
+    expect(toSceneId(state.location, state.timeSlot)).toBe("C1");
+
+    wait();
+    expect(toSceneId(state.location, state.timeSlot)).toBe("C2");
+
+    state = reduceGameState(state, {
+      type: "PERFORM_INTERACTION",
+      id: "watch_secret_passage",
+    });
+    expect(state.pendingTransition).toEqual({
+      from: "C2",
+      to: "C3",
+      cause: {
+        kind: "interaction",
+        id: "watch_secret_passage",
+      },
+      beginsNewLoop: false,
+    });
+    expect(state.knowledge.laura_used_secret_passage).toBe(false);
+
+    state = reduceGameState(state, {
+      type: "COMPLETE_TRANSITION",
+    });
+    expect(toSceneId(state.location, state.timeSlot)).toBe("C3");
+    expect(state.loop).toBe(3);
+    expect(state.knowledge.secret_passage_exists).toBe(true);
+    expect(state.knowledge.laura_used_secret_passage).toBe(true);
+    expect(state.loopState.seenTransitions).toEqual(["C1"]);
+    expect(
+      reduceGameState(state, {
+        type: "COMPLETE_TRANSITION",
+      }),
+    ).toBe(state);
+  });
+
   it("uses explicit manual interactions for the letter and necklace", () => {
     const atLetter: GameState = {
       ...finishIntro(),

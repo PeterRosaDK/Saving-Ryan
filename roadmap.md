@@ -572,14 +572,22 @@ In progress:
 - the first successful search of Barbara's computer declares `timeCost: 1`,
   previews its destination time, advances through the shared gateway, and is
   free on replay;
-- locked computer access and all other current interactions remain free;
+- locked computer access, completed timed interactions, and all restored
+  legacy interactions remain free;
 - asked dialogue choices, Marie's trust stage, Ryan's warning stage, and
   Barbara's help status now persist within a day and reset at the next morning;
 - permanent Jørgen knowledge remains intact across that reset;
 - an unsupported accusation now closes only that person's dialogue for the
   remainder of the day and resets the next morning;
-- broader disposition, departures, cross-character warnings, timed dialogue,
-  and the proposed new C2/E2 observations remain separate later slices.
+- C2's bookcase sound and E2's unexplained disappearance are neutral,
+  mutually exclusive observations that must be collected in separate loops;
+- knowing both unlocks a C2 passage-surveillance action that costs one interval
+  and establishes Laura's use of the route without replacing the canonical
+  motive/evidence gate;
+- the clock hotspot now previews both observation location and destination
+  time;
+- broader disposition, departures, cross-character warnings, and timed
+  dialogue remain separate later slices.
 
 The approved but deferred design and Laura event matrix are recorded in
 [`docs/time-observation-design.md`](docs/time-observation-design.md). Do not

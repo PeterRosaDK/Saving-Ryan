@@ -55,6 +55,12 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
   laura_hid_computer_activity: "Laura skjuler sin computeraktivitet",
   laura_acknowledged_barbara_and_ryan:
     "Laura ved mere om Barbara og Ryan",
+  heard_scraping_behind_bookcase:
+    "En skrabende lyd kom fra bogreolen i læsesalen",
+  noticed_laura_disappear_near_reading_room:
+    "Laura forsvandt fra gangen uden at bruge en dør",
+  laura_used_secret_passage:
+    "Laura benytter den skjulte passage ved bogreolen",
   ryan_and_laura_were_together: "Ryan og Laura har været kærester",
   ryan_left_laura: "Ryan forlod Laura",
   secret_passage_exists: "Der findes en skjult passage",
@@ -805,7 +811,16 @@ function renderExploration(
   }
 
   const clockHotspot = hotspotButton(
-    "Vent et tidsinterval",
+    `Vent i ${scene.location.name.toLowerCase()} til ${
+      state.timeSlot === 4
+        ? "næste morgen"
+        : getScene(
+            toSceneId(
+              state.location,
+              getNextTimeSlot(state.timeSlot),
+            ),
+          ).time.name.toLowerCase()
+    }`,
     "wait",
     {
       x: presentation.clock.centerX - presentation.clock.width / 2,

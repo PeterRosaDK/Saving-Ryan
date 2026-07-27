@@ -603,6 +603,18 @@ describe("legacy dialogue rules", () => {
     ).toBe(true);
   });
 
+  it("makes the phase 9 observation loopback semantically reachable", () => {
+    const reachable = getReachableKnowledge(["ryan_was_murdered"]);
+
+    for (const fact of [
+      "heard_scraping_behind_bookcase",
+      "noticed_laura_disappear_near_reading_room",
+      "laura_used_secret_passage",
+    ] as const) {
+      expect(reachable.has(fact)).toBe(true);
+    }
+  });
+
   it("only emits clips from the closed video catalogue", () => {
     const knownEverything = learnKnowledge(
       startedState(),

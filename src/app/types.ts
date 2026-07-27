@@ -17,6 +17,9 @@ export const KNOWLEDGE_IDS = [
   "ryan_bullied_marie",
   "laura_hid_computer_activity",
   "laura_acknowledged_barbara_and_ryan",
+  "heard_scraping_behind_bookcase",
+  "noticed_laura_disappear_near_reading_room",
+  "laura_used_secret_passage",
   "ryan_and_laura_were_together",
   "ryan_left_laura",
   "secret_passage_exists",
@@ -78,6 +81,7 @@ export type SceneInteractionId =
   | "inspect_girlfriend_letter"
   | "eavesdrop_barbara_and_ryan"
   | "inspect_secret_passage_book"
+  | "watch_secret_passage"
   | "prevent_ryans_murder"
   | "inspect_barbaras_computer";
 

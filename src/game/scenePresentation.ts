@@ -218,6 +218,9 @@ const INTERACTIONS = {
   C2: [{
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "watch_secret_passage",
+    rect: hotspotRect(117, 294, 14, 46),
   }],
   C3: [{
     interactionId: "inspect_secret_passage_book",

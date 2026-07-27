@@ -104,6 +104,10 @@ describe("verified scene content", () => {
       interactionId: "prevent_ryans_murder",
       rect: { x: 117, y: 294, width: 14, height: 46 },
     });
+    expect(getScenePresentation("C2").interactions).toContainEqual({
+      interactionId: "watch_secret_passage",
+      rect: { x: 117, y: 294, width: 14, height: 46 },
+    });
     for (const sceneId of ["D1", "D2", "D3", "D4"] as const) {
       expect(getScenePresentation(sceneId).interactions).toContainEqual({
         interactionId: "inspect_girlfriend_letter",
@@ -202,6 +206,33 @@ describe("verified scene content", () => {
       text: "Det tager resten af tidsintervallet at gennemgå Barbaras filer grundigt.",
     });
     expect(getSceneInteractionTimeCost(unlocked, interaction)).toBe(1);
+    expect(getSceneInteractionTimeCost(completed, interaction)).toBe(0);
+  });
+
+  it("requires both mutually exclusive observations before passage surveillance", () => {
+    const interaction = getSceneInteraction("watch_secret_passage");
+    const initial = createInitialGameState();
+    const oneObservation = learnKnowledge(initial, [
+      "heard_scraping_behind_bookcase",
+    ]);
+    const bothObservations = learnKnowledge(oneObservation, [
+      "noticed_laura_disappear_near_reading_room",
+    ]);
+    const completed = learnKnowledge(bothObservations, [
+      "secret_passage_exists",
+      "laura_used_secret_passage",
+    ]);
+
+    expect(canPerformSceneInteraction(initial, interaction)).toBe(false);
+    expect(canPerformSceneInteraction(oneObservation, interaction)).toBe(
+      false,
+    );
+    expect(canPerformSceneInteraction(bothObservations, interaction)).toBe(
+      true,
+    );
+    expect(getSceneInteractionTimeCost(bothObservations, interaction)).toBe(
+      1,
+    );
     expect(getSceneInteractionTimeCost(completed, interaction)).toBe(0);
   });
 

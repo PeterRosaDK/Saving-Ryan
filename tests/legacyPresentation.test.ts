@@ -61,6 +61,24 @@ describe("Director presentation parity", () => {
     });
     expect(LOCATION_TRANSITION_EVENTS.E4.specialCue).toBeUndefined();
     expect(LOCATION_TRANSITION_EVENTS.E4.effects).toEqual([]);
+    expect(LOCATION_TRANSITION_EVENTS.C2).toMatchObject({
+      specialCue: { kind: "text" },
+      effects: [
+        {
+          type: "LEARN",
+          id: "heard_scraping_behind_bookcase",
+        },
+      ],
+    });
+    expect(LOCATION_TRANSITION_EVENTS.E2).toMatchObject({
+      specialCue: { kind: "text" },
+      effects: [
+        {
+          type: "LEARN",
+          id: "noticed_laura_disappear_near_reading_room",
+        },
+      ],
+    });
   });
 
   it("models the 535-frame, 20 fps Director intro score", () => {

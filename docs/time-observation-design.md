@@ -40,7 +40,9 @@ Current time-triggered knowledge is limited to:
 
 - E1: witnessing Ryan bully Marie;
 - B4: playing `LauraSuspekt` and learning about Laura's hidden computer
-  activity.
+  activity;
+- C2: hearing a neutral scraping sound behind the bookcase;
+- E2: noticing that Laura vanished without using a hallway door.
 
 Other investigation effects come from scene entry, manual inspection, dialogue,
 or the `BarbaraHacker` special sequence. The first timed investigation action
@@ -108,9 +110,9 @@ Legend:
 | Morning → midday | E corridor | David/Laura talk while Ryan bullies Marie | Text | `ryan_bullied_marie` | K ★ |
 | Midday → afternoon | A canteen | Jørgen hears Ryan and sees the fall | Text | Possible later neutral fall observation | K + U ★ |
 | Midday → afternoon | B computer room | Ryan and Barbara leave; a scream is heard | Text + `LoopB2` | None from waiting; eavesdropping is separate | K ★ |
-| Midday → afternoon | C reading room | Ryan and David enter; a scream is heard | Text | Possible later scraping/passage sound | K + U ★ |
+| Midday → afternoon | C reading room | Ryan and David enter; a scream is heard; Jørgen hears the bookcase scrape | Legacy text + phase 9 text | `heard_scraping_behind_bookcase` | K + implemented phase 9 ★ |
 | Midday → afternoon | D group room | Marie leaves; a scream is heard | Text + `LoopD2` | None | K ★ |
-| Midday → afternoon | E corridor | David enters the reading room; Laura vanishes | Text + `LoopE2` | Possible later neutral disappearance observation | K + U ★ |
+| Midday → afternoon | E corridor | David enters the reading room; Laura vanishes without using a door | Legacy text + `LoopE2` + phase 9 text | `noticed_laura_disappear_near_reading_room` | K + implemented phase 9 ★ |
 | Afternoon → evening | A canteen | Laura leaves; David sits down | Text + `LoopA3` | None; body inspection is separate | K ★ |
 | Afternoon → evening | B computer room | Laura and Marie enter | Text | None | K ★ |
 | Afternoon → evening | C reading room | David leaves; Barbara enters | Text + `LoopC3` | None | K ★ |
@@ -122,14 +124,15 @@ Legend:
 | Evening → morning | D group room | New day with Marie and David | Text | None; letter is separate | K ★ |
 | Evening → morning | E corridor | New day in the corridor | Text | None | K ★ |
 
-The most useful later observation set is A2/C2/E2: the fall, a neutral sound at
-the passage, and Laura's disappearance. None should identify Laura alone.
+The A2/C2/E2 observation set now has two implemented neutral branches: the
+sound at the passage and Laura's disappearance. Neither identifies the murderer
+alone. A2's stronger perspective on the fall remains deferred.
 
 ## UX direction
 
 - Keep the Director clock as the wait hotspot.
-- Its focus/rollover label should eventually state both destination time and
-  current observation location.
+- Its focus/rollover label states both destination time and current observation
+  location.
 - Mark `timeCost: 1` actions with a small clock and a sentence naming the next
   time slot.
 - Do not confirm ordinary clock use or free dialogue replay.
@@ -184,9 +187,9 @@ knowledge effects, new-day reset, and idempotent completion.
 - after `barbara_forged_grades` is known, replay consumes no time.
 
 All current scene interactions declare `timeCost: 0 | 1`, and tests require
-every timed interaction to provide an elapsed-time cue. Timed dialogue, new
-C2/E2 observations, broader NPC disposition, and case data remain outside this
-slice.
+every timed interaction to provide an elapsed-time cue. Timed dialogue, the
+deferred A2 perspective, broader NPC disposition, and case data remain outside
+the implemented slices.
 
 ## First loop-local memory slice
 
@@ -209,6 +212,27 @@ No trust score, anger scale, departure, or cross-character warning is included.
 Tests cover same-day retention, new-day reset, Marie's trust restart, Ryan's
 warning restart, the minimal accusation refusal, permanent knowledge, and the
 complete Laura path.
+
+## First observation loopback slice
+
+The restored C2 and E2 transition text remains unchanged. Each transition now
+continues with one text-only phase 9 observation:
+
+- C2 records a scraping sound behind the bookcase;
+- E2 records that Laura disappeared without using a visible hallway door.
+
+Because both observations occur during the same midday-to-afternoon transition,
+they cannot be collected in one loop. Once both are permanent knowledge,
+the existing C2 book hotspot offers the more purposeful **Hold øje med
+bogreolen** action in a later loop. It costs the murder interval, uses the
+shared pending-transition gateway, and establishes both that the passage exists
+and that Laura uses it. The ordinary C2 wait event is not also applied.
+
+This route is currently supporting evidence, not a replacement for the
+canonical confession threshold. It reveals access but not motive, the necklace
+connection, or the complete murder method. The original freely discoverable
+book interaction remains available until the surveillance action is unlocked,
+preserving the restored Director behavior.
 
 ## Required future validation
 

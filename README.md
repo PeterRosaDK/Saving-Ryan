@@ -43,6 +43,11 @@ the canonical Laura story is now playable from intro to epilogue:
   knowledge;
 - an unsupported accusation makes that character refuse further questions for
   the rest of the day, without creating a hidden relationship score;
+- C2 and E2 now contain mutually exclusive, neutral passage observations; after
+  seeing both across different loops, Jørgen can spend the murder interval
+  watching the bookcase and establish that Laura uses the hidden route;
+- the clock hotspot names both the current location and destination time, making
+  it explicit that waiting is a choice of place as well as time;
 - all 20 original room photographs are rendered at their original 640×480
   position inside the responsive 800×600 stage;
 - Director-score rectangles now drive rollover/focus hotspots for doors,

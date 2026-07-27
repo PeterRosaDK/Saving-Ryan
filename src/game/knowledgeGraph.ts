@@ -12,6 +12,9 @@ export const INVESTIGATION_STEP_IDS = [
   "ask_ryan_about_sarah",
   "witness_ryan_bullying_marie",
   "eavesdrop_barbara_and_ryan",
+  "hear_bookcase_scrape",
+  "notice_laura_disappearance",
+  "watch_secret_passage",
   "discover_secret_passage",
   "earn_maries_confidence",
   "observe_laura_at_computer",
@@ -31,10 +34,10 @@ export interface InvestigationStep {
 }
 
 /*
- * This is the semantic counterpart to the legacy BetingetLink chains described
- * on pages 68–77 of the project report. Scene placement and special-sequence
- * presentation remain owned by the scene layer; this graph only describes
- * deterministic knowledge progression.
+ * This contains the semantic counterpart to the legacy BetingetLink chains
+ * described on pages 68–77 of the project report plus explicitly documented
+ * later knowledge routes. Scene placement and presentation remain owned by the
+ * scene layer; this graph only describes deterministic knowledge progression.
  */
 export const INVESTIGATION_STEPS = {
   observe_barbara_programming: {
@@ -71,6 +74,24 @@ export const INVESTIGATION_STEPS = {
     id: "eavesdrop_barbara_and_ryan",
     requires: [],
     effects: ["barbara_and_ryan_argued"],
+  },
+  hear_bookcase_scrape: {
+    id: "hear_bookcase_scrape",
+    requires: [],
+    effects: ["heard_scraping_behind_bookcase"],
+  },
+  notice_laura_disappearance: {
+    id: "notice_laura_disappearance",
+    requires: [],
+    effects: ["noticed_laura_disappear_near_reading_room"],
+  },
+  watch_secret_passage: {
+    id: "watch_secret_passage",
+    requires: [
+      "heard_scraping_behind_bookcase",
+      "noticed_laura_disappear_near_reading_room",
+    ],
+    effects: ["secret_passage_exists", "laura_used_secret_passage"],
   },
   discover_secret_passage: {
     id: "discover_secret_passage",

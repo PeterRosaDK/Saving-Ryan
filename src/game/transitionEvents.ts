@@ -4,6 +4,7 @@ import type {
   TransitionEventId,
 } from "../app/types";
 import {
+  textCue,
   videoCue,
   type NarrativeCue,
 } from "../media/narrativeCue";
@@ -37,9 +38,10 @@ function defineTransitionEvent(
 }
 
 /*
- * The text is verbatim from "Script Vent" in Spillet.dir. SceneId is both the
- * source location/time and the event lookup key, so simultaneous transitions
- * remain explicitly location-dependent.
+ * The primary text is verbatim from "Script Vent" in Spillet.dir. SceneId is
+ * both the source location/time and the event lookup key, so simultaneous
+ * transitions remain explicitly location-dependent. Phase 9 supplements use
+ * separate special cues and leave the restored wording intact.
  */
 export const LOCATION_TRANSITION_EVENTS = {
   A1: defineTransitionEvent(
@@ -90,6 +92,17 @@ export const LOCATION_TRANSITION_EVENTS = {
   C2: defineTransitionEvent(
     "C2",
     "Du går ud i gangen og holder en pause. På vejen derud møder du Ryan, der går ind i læsesalen. Lidt efter går også David derind. Pludselig høres et skrig fra kantinen!",
+    {
+      specialCue: textCue(
+        "Lige før skriget hører du en tung, skrabende lyd fra området bag bogreolen. Du kan ikke se, hvad der bevæger sig.",
+      ),
+      effects: [
+        {
+          type: "LEARN",
+          id: "heard_scraping_behind_bookcase",
+        },
+      ],
+    },
   ),
   C3: defineTransitionEvent(
     "C3",
@@ -130,6 +143,17 @@ export const LOCATION_TRANSITION_EVENTS = {
   E2: defineTransitionEvent(
     "E2",
     "David og Laura holder op med at tale. David går ind i læsesalen, og Laura er pludselig væk.",
+    {
+      specialCue: textCue(
+        "Du så ikke Laura gå gennem nogen af dørene i gangen. Hendes pludselige forsvinden må have en anden forklaring.",
+      ),
+      effects: [
+        {
+          type: "LEARN",
+          id: "noticed_laura_disappear_near_reading_room",
+        },
+      ],
+    },
   ),
   E3: defineTransitionEvent(
     "E3",
