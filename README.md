@@ -107,6 +107,13 @@ Asset and Director inspection commands are documented under
 ./tools/assets/convert-bmp-to-png.sh
 ```
 
+If the uncommitted recovered working copy is present locally, its 16 additional
+image derivatives can be reproduced with:
+
+```sh
+./tools/assets/convert-legacy-fresh-bmp-to-png.sh
+```
+
 ## Source layout
 
 ```text

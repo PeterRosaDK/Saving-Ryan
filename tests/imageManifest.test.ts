@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { SCENES } from "../src/game/sceneRegistry";
@@ -63,5 +63,16 @@ describe("image asset manifest", () => {
     expect(IMAGE_MEMBERS).toHaveLength(109);
     expect(new Set(IMAGE_MEMBERS).size).toBe(109);
     expect([...IMAGE_MEMBERS].sort()).toEqual(actualMembers);
+  });
+
+  it("preserves Director transparent mattes on toolbar and clock art", () => {
+    const imageDirectory = fileURLToPath(
+      new URL("../public/assets/images", import.meta.url),
+    );
+    for (const member of ["tegn-musik", "tegn-sp", "tegn-afslut", "ur1"]) {
+      const png = readFileSync(`${imageDirectory}/${member}.png`);
+      // PNG IHDR color type 6 is truecolour with an alpha channel.
+      expect(png[25], member).toBe(6);
+    }
   });
 });

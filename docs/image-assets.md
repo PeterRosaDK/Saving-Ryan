@@ -53,6 +53,16 @@ The current web collection therefore contains 109 closed, manifest-validated PNG
 files. The 89 BMP files common to both supplied working copies are byte-identical.
 See `docs/legacy-fresh-audit.md` for the comparison and integration decisions.
 
+Director treated the black matte around toolbar and clock artwork as transparent.
+The corresponding web derivatives therefore carry a real alpha channel; the
+source BMP files remain untouched. This prevents black rectangles from obscuring
+the recovered blue stage background.
+
+`tools/assets/convert-legacy-fresh-bmp-to-png.sh` reproduces the 16 later
+derivatives when the optional, deliberately uncommitted `Legacy Fresh` source is
+available. The original conversion script applies the same matte treatment to
+the four clock images.
+
 ## Source preference
 
 The supplied BMP files are preferred where available. Although dimensions match

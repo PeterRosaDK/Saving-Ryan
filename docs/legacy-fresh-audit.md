@@ -114,6 +114,7 @@ The web app now includes the later build's safe, source-backed improvements:
 
 - blue Director stage background with correctly centred room scene;
 - recovered help, music, and quit toolbar at score-derived coordinates;
+- Director-style transparent mattes for toolbar and clock derivatives;
 - local help overlay based on the recovered Director help text;
 - looping location music with mute control;
 - music ducking during video, still, and text narrative cues;
