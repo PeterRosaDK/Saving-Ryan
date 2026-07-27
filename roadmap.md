@@ -343,6 +343,21 @@ media.
 Exit criterion: the Laura solution path and every known dead-end topic can be
 executed as deterministic state transitions.
 
+Current completion:
+
+- the five base subjects and all recovered special topics are typed dialogue
+  data with closed manifest clip IDs;
+- availability observes acquired knowledge and whether the murder has occurred
+  in the characters' current day;
+- asked choices remain repeatable and skip effects follow an explicit per-choice
+  policy;
+- Director's missing `Dialog()` call, `VedIkk` typo, and missing
+  `Peter-omMarieOgRyan` member are normalized explicitly;
+- Barbara's helper link is a request/ready/completed state rather than a magic
+  string;
+- the report's Laura motive/evidence chain is executable as a semantic knowledge
+  graph and covered by reachability and dead-end tests.
+
 ### Phase 3 — Build the application shell and intro
 
 1. Scaffold Vite + TypeScript with a single `index.html`.

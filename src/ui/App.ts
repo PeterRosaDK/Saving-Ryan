@@ -13,9 +13,12 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
   barbara_is_computer_expert: "Barbara er computerekspert",
   barbara_hacker_alias_intruder: "Barbara bruger hackernavnet Intruder",
   barbara_forged_grades: "Barbara har ændret sine karakterer",
+  barbara_and_ryan_argued: "Barbara og Ryan havde en skjult konflikt",
   ryan_has_girlfriend_sarah: "Ryan har en kæreste, Sarah",
   ryan_bullied_marie: "Ryan behandler Marie ondt",
   laura_hid_computer_activity: "Laura skjuler sin computeraktivitet",
+  laura_acknowledged_barbara_and_ryan:
+    "Laura ved mere om Barbara og Ryan",
   ryan_and_laura_were_together: "Ryan og Laura har været kærester",
   ryan_left_laura: "Ryan forlod Laura",
   secret_passage_exists: "Der findes en skjult passage",

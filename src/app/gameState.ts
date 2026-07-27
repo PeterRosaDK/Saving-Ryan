@@ -18,6 +18,10 @@ export function createInitialGameState(): GameState {
     timeSlot: 1,
     loop: 1,
     knowledge: createInitialKnowledge(),
+    dialogue: {
+      askedChoices: [],
+      barbaraHelp: "not_requested",
+    },
     loopState: {
       seenTransitions: [],
     },

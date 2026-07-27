@@ -10,6 +10,7 @@ import {
   getSceneInteraction,
   getSceneInteractions,
 } from "./sceneInteractions";
+import { applyKnowledgeEffects } from "./knowledgeGraph";
 
 const NEXT_TIME: Readonly<Record<TimeSlot, TimeSlot>> = {
   1: 2,
@@ -18,28 +19,11 @@ const NEXT_TIME: Readonly<Record<TimeSlot, TimeSlot>> = {
   4: 1,
 };
 
-function applyEffect(state: GameState, effect: GameEffect): GameState {
-  switch (effect.type) {
-    case "LEARN":
-      if (state.knowledge[effect.id]) {
-        return state;
-      }
-
-      return {
-        ...state,
-        knowledge: {
-          ...state.knowledge,
-          [effect.id]: true,
-        },
-      };
-  }
-}
-
 function applyEffects(
   state: GameState,
   effects: readonly GameEffect[],
 ): GameState {
-  return effects.reduce(applyEffect, state);
+  return applyKnowledgeEffects(state, effects);
 }
 
 function applyTriggeredSceneEffects(
@@ -74,10 +58,12 @@ export function reduceGameState(
         phase: "exploration",
       };
 
-      return applyEffect(postIntroState, {
-        type: "LEARN",
-        id: "ryan_was_murdered",
-      });
+      return applyEffects(postIntroState, [
+        {
+          type: "LEARN",
+          id: "ryan_was_murdered",
+        },
+      ]);
     }
 
     case "MOVE_TO_LOCATION": {

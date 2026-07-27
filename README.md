@@ -16,18 +16,25 @@ The first conversion slice is underway:
 - knowledge persists when evening wraps into another morning;
 - intro completion establishes the murder knowledge required by the investigation;
 - the first five legacy clues use typed, declarative scene interactions;
+- Director dialogue choices are a closed, typed catalogue with prerequisites,
+  time-sensitive clips, repeat history, and explicit dead ends;
+- the intended Laura motive/evidence route is an executable semantic knowledge
+  graph, including Barbara's multi-step help sequence;
 - transition narration recovered from `Spillet.dir` is wired into a runnable UI;
 - all 20 original room photographs are rendered in the exploration stage;
 - all 81 Director video members and 93 PNG members are closed, file-validated
   catalogues;
 - the persistent media host is isolated from ordinary gameplay rerenders.
 - the abort-safe `VideoPlayer` distinguishes completion, skip, autoplay blocking,
-  missing media, network/decode failures, and cancellation; dialogue orchestration
-  is the next integration step.
+  missing media, network/decode failures, and cancellation; connecting the typed
+  dialogue engine to the persistent player and dialogue UI is the next integration
+  step.
 
 See [roadmap.md](roadmap.md) for the complete migration plan.
 The image comparison and provenance notes are in
 [docs/image-assets.md](docs/image-assets.md).
+Dialogue normalization and conditional-link provenance are in
+[docs/dialogue-rules.md](docs/dialogue-rules.md).
 
 ## Commands
 

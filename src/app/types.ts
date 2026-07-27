@@ -10,9 +10,11 @@ export const KNOWLEDGE_IDS = [
   "barbara_is_computer_expert",
   "barbara_hacker_alias_intruder",
   "barbara_forged_grades",
+  "barbara_and_ryan_argued",
   "ryan_has_girlfriend_sarah",
   "ryan_bullied_marie",
   "laura_hid_computer_activity",
+  "laura_acknowledged_barbara_and_ryan",
   "ryan_and_laura_were_together",
   "ryan_left_laura",
   "secret_passage_exists",
@@ -27,6 +29,38 @@ export const KNOWLEDGE_IDS = [
 export type KnowledgeId = (typeof KNOWLEDGE_IDS)[number];
 
 export type CharacterId = "Barbara" | "David" | "Laura" | "Marie" | "Ryan";
+
+export const DIALOGUE_TOPIC_IDS = [
+  "about_laura",
+  "about_marie",
+  "about_david",
+  "about_ryan",
+  "about_barbara",
+  "alibi",
+  "theory",
+  "accuse",
+  "barbara_and_computers",
+  "necklace",
+  "marie_and_ryan",
+  "barbara_and_ryan",
+  "ask_barbara_for_help",
+  "warn_ryan",
+] as const;
+
+export type DialogueTopicId = (typeof DIALOGUE_TOPIC_IDS)[number];
+
+export type DialogueChoiceId = `${CharacterId}:${DialogueTopicId}`;
+
+export type BarbaraHelpState =
+  | "not_requested"
+  | "requested"
+  | "ready"
+  | "completed";
+
+export interface DialogueProgress {
+  askedChoices: DialogueChoiceId[];
+  barbaraHelp: BarbaraHelpState;
+}
 
 export type SpecialSequenceId = "laura_suspect";
 
@@ -60,6 +94,7 @@ export interface GameState {
   timeSlot: TimeSlot;
   loop: number;
   knowledge: Record<KnowledgeId, boolean>;
+  dialogue: DialogueProgress;
   loopState: LoopState;
   pendingTransition: PendingTransition | null;
 }
