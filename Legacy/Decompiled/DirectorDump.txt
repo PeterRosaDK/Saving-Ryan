@@ -1,0 +1,907 @@
+
+===== FILE Legacy/Intro.dir =====
+version=1600 stage=800x600 tempo=20 castMembers=24 scripts=3
+
+--- CAST LIBRARIES ---
+id=66560 name="Internal" path="" range=1-58 count=58
+
+--- FRAME LABELS ---
+
+--- CAST MEMBERS ---
+chunk=5 type=bitmap name="halv-Barbara" scriptId=0
+chunk=6 type=bitmap name="halv-David" scriptId=0
+chunk=7 type=bitmap name="halv-Marie" scriptId=0
+chunk=9 type=bitmap name="halv-Laura" scriptId=0
+chunk=10 type=bitmap name="halv-Ryan" scriptId=0
+chunk=11 type=bitmap name="titel-ryan" scriptId=0
+chunk=12 type=bitmap name="titel-jane2" scriptId=0
+chunk=13 type=bitmap name="titel-soren2" scriptId=0
+chunk=14 type=bitmap name="titel-bodil2" scriptId=0
+chunk=15 type=bitmap name="titel-peter2" scriptId=0
+chunk=16 type=bitmap name="titel-signe2" scriptId=0
+chunk=17 type=bitmap name="titel-claus2" scriptId=0
+chunk=18 type=bitmap name="titel-saving" scriptId=0
+chunk=19 type=bitmap name="titel-jane1" scriptId=0
+chunk=20 type=bitmap name="titel-soren1" scriptId=0
+chunk=21 type=bitmap name="titel-bodil1" scriptId=0
+chunk=22 type=bitmap name="titel-peter1" scriptId=0
+chunk=23 type=bitmap name="titel-signe1" scriptId=0
+chunk=24 type=bitmap name="titel-claus1" scriptId=0
+chunk=28 type=bitmap name="halv-Peter" scriptId=0
+chunk=33 type=script name="" scriptId=1
+chunk=43 type=script name="" scriptId=3
+chunk=133 type=script name="" scriptId=4
+chunk=136 type=sound name="intro" scriptId=0
+
+--- DECOMPILED LINGO ---
+
+### script chunk=4 name="" type=3 handlers=1
+-- Behavior
+on mouseDown
+  go(1, "spillet")
+end
+
+### script chunk=8 name="" type=1 handlers=1
+-- Movie Script
+on exitFrame me
+  go(the frame)
+end
+
+### script chunk=118 name="" type=1 handlers=1
+-- Behavior
+on exitFrame me
+  puppetSound("intro")
+end
+
+===== FILE Legacy/Spillet.dir =====
+version=1600 stage=800x600 tempo=25 castMembers=44 scripts=19
+
+--- CAST LIBRARIES ---
+id=66560 name="Internal" path="" range=1-73 count=73
+id=1024 name="Movie" path="C:\WINDOWS\Skrivebord\UniSpil\Spillet\Video.cst" range=1-82 count=82
+id=1024 name="Billeder" path="C:\WINDOWS\Skrivebord\UniSpil\Spillet\Billeder.cst" range=1-87 count=87
+
+--- FRAME LABELS ---
+1	Start
+10	A1
+15	A2
+20	A3
+25	A4
+30	B1
+35	B2
+40	B3
+45	B4
+50	C1
+55	C2
+60	C3
+65	C4
+70	D1
+75	D2
+80	D3
+85	D4
+90	E1
+95	E2
+100	E3
+105	E4
+115	D Special
+120	A Special
+130	Kig bog
+135	Lyt under bordet
+140	Laura Suspekt
+145	Barbaras Computer
+150	BarbaraHilfe
+155	Smut
+165	Vent
+
+--- CAST MEMBERS ---
+chunk=7 type=script name="Dialog" scriptId=5
+chunk=15 type=script name="Script BarbaraHilfe" scriptId=20
+chunk=20 type=script name="Script Startmovie" scriptId=6
+chunk=32 type=script name="Script Sektor" scriptId=7
+chunk=33 type=script name="Script Starten af spillet" scriptId=8
+chunk=39 type=xtra name="Tekst-omDavid" scriptId=0
+chunk=43 type=script name="Script Backie" scriptId=11
+chunk=44 type=xtra name="Tekst-omBarbara" scriptId=0
+chunk=45 type=script name="Script Talemuligheder" scriptId=9
+chunk=48 type=script name="Script Special Hotspots!" scriptId=13
+chunk=55 type=xtra name="Tekst-omMarie" scriptId=0
+chunk=66 type=script name="Script Hotspot" scriptId=10
+chunk=67 type=script name="Script Samtaler" scriptId=4
+chunk=69 type=xtra name="Tekst-omPeter" scriptId=0
+chunk=74 type=button name="Nej-knap" scriptId=0 text="Nej"
+chunk=75 type=button name="Ja-knap" scriptId=0 text="Ja"
+chunk=76 type=xtra name="Tekst-VilDuSlutte" scriptId=0
+chunk=77 type=script name="Script Quit" scriptId=14
+chunk=78 type=xtra name="Tekst-omRyanOgMarie" scriptId=0
+chunk=79 type=xtra name="Tekst-omHalskaede" scriptId=0
+chunk=80 type=xtra name="Tekst-omBarbaraOgComputere" scriptId=0
+chunk=88 type=xtra name="Tekst-omLaura" scriptId=0
+chunk=89 type=xtra name="Tekst-omRyan" scriptId=0
+chunk=90 type=shape name="" scriptId=0
+chunk=94 type=xtra name="Infoboks" scriptId=0
+chunk=95 type=script name="Script Vent" scriptId=12
+chunk=96 type=script name="Script Talemuligheder Special" scriptId=3
+chunk=97 type=xtra name="Tekst-omAlibi" scriptId=0
+chunk=98 type=xtra name="Tekst-omBeskyld" scriptId=0
+chunk=99 type=xtra name="Tekst-omFormodning" scriptId=0
+chunk=100 type=xtra name="Mellemscene" scriptId=0
+chunk=104 type=xtra name="TekstBarbarasComputer2" scriptId=0
+chunk=105 type=xtra name="Tekst-BarbaraHilfe" scriptId=0
+chunk=108 type=script name="Script Specielle manøvrer" scriptId=16
+chunk=109 type=xtra name="TekstLytUnderBord" scriptId=0
+chunk=115 type=xtra name="TekstKigBog" scriptId=0
+chunk=144 type=xtra name="TekstBarbarasComputer" scriptId=0
+chunk=158 type=xtra name="Tekst-BarbaraHilfe2" scriptId=0
+chunk=160 type=xtra name="Tekst-omBarbaraOgRyan" scriptId=0
+chunk=161 type=script name="Script Laura Suspekt" scriptId=15
+chunk=162 type=xtra name="TekstLauraSuspekt" scriptId=0
+chunk=179 type=xtra name="Tekst-RyanAdvarsel2" scriptId=0
+chunk=180 type=xtra name="Tekst-RyanAdvarsel" scriptId=0
+chunk=181 type=script name="Script Barbaras Computer" scriptId=21
+
+--- DECOMPILED LINGO ---
+
+### script chunk=188 name="" type=-1 handlers=0
+-- Script
+global #13032
+global #-1
+global #156
+
+
+### script chunk=189 name="" type=1 handlers=0
+-- Score Script
+global #13032
+global #-1
+global #156
+
+
+### script chunk=190 name="Script Talemuligheder Special" type=1 handlers=3
+-- Behavior
+global question
+global Answer
+global Person
+global BetingetLink
+global Husk
+
+on mouseEnter me
+  sprite(the currentSpriteNum).backColor = 5
+end
+on mouseLeave me
+  sprite(the currentSpriteNum).backColor = 0
+end
+on mouseUp me
+  sprite(the currentSpriteNum).blendLevel = 50
+  case the currentSpriteNum of
+    21:
+      question = "Peter-omAlibi"
+      Answer = Person & "-omAlibi"
+      Dialog()
+    22:
+      question = "Peter-omFormodning"
+      Answer = Person & "-omFormodning"
+      Dialog()
+    23:
+      question = "Peter-Beskyld" & Person & "1"
+      Answer = EMPTY
+      Dialog()
+    24:
+      question = "Peter-omBarbaraOgComputere"
+      if Person = "David" then
+        Answer = "David-omBarbaraOgComputere"
+        BetingetLink[11] = "Ok"
+      else
+        Answer = Person & "-VedIkke"
+      end if
+      Dialog()
+    25:
+      question = "Peter-omHalskaede"
+      Answer = Person & "-VedIkke"
+      Dialog()
+    26:
+      if Person = "Marie" then
+        question = "Marie-Fortrolighed"
+      else
+        question = "Peter-omMarieOgRyan"
+        Answer = Person & "-VedIkk"
+      end if
+      Dialog()
+    27:
+      question = "Peter-omBarbaraOgRyan"
+      if Person = "Laura" then
+        Answer = "Laura-omBarbaraOgRyan"
+        BetingetLink[7] = "Ok"
+      else
+        Answer = Person & "-VedIkke"
+      end if
+      Dialog()
+    28:
+      if BetingetLink[16] = "Ah" then
+        BetingetLink[16] = "Ok"
+        question = "Barbara-omHilfe2"
+        Answer = EMPTY
+        Dialog()
+        Husk = marker(0)
+        go("BarbaraHilfe")
+      else
+        question = "Barbara-omHilfe1"
+        Answer = EMPTY
+        Dialog()
+        if BetingetLink[12] = "Ok" then
+          BetingetLink[16] = "Ah"
+          sprite(28).member = member("Tekst-BarbaraHilfe2")
+          sprite(28).backColor = 0
+          sprite(28).blendLevel = 255
+        end if
+      end if
+    29:
+      if sprite(29).member = member("Tekst-RyanAdvarsel") then
+        sprite(29).member = member("Tekst-RyanAdvarsel2")
+        question = "Ryan-Advarsel1"
+        sprite(29).backColor = 0
+        sprite(29).blendLevel = 255
+        Answer = EMPTY
+        Dialog()
+      else
+        question = "Ryan-Advarsel2"
+        Answer = EMPTY
+        Dialog()
+      end if
+
+  end case
+end
+
+### script chunk=191 name="Script Samtaler" type=1 handlers=2
+-- Movie Script
+global Person
+global BetingetLink
+
+on prepareFrame me
+  if sprite(10).member <> member("portrait-" & Person) then
+    sprite(10).member = member("portrait-" & Person)
+  end if
+  if BetingetLink[4] = "Ok" and Person <> "Barbara" then
+    sprite(24).blendLevel = 255
+  else
+    sprite(24).blendLevel = 0
+  end if
+  if BetingetLink[14] = "Ok" then
+    sprite(25).blendLevel = 255
+  else
+    sprite(25).blendLevel = 0
+  end if
+  if BetingetLink[3] = "Ok" then
+    sprite(26).blendLevel = 255
+  else
+    sprite(26).blendLevel = 0
+  end if
+  if BetingetLink[6] = "Ok" then
+    sprite(27).blendLevel = 255
+  else
+    sprite(27).blendLevel = 0
+  end if
+  if BetingetLink[13] = "Ok" then
+    sprite(28).blendLevel = 255
+  else
+    sprite(28).blendLevel = 0
+  end if
+end
+on exitFrame me
+  go(the frame)
+end
+
+### script chunk=192 name="Dialog" type=3 handlers=1
+-- Behavior
+global question
+global Answer
+
+on Dialog
+  sprite(10).blendLevel = 70
+  updateStage()
+  sprite(11).member = question
+  updateStage()
+  repeat while sprite(11).movieTime < member(question).duration
+    updateStage()
+  end repeat
+  if Answer <> EMPTY then
+    sprite(11).member = Answer
+    updateStage()
+    repeat while sprite(11).movieTime < member(Answer).duration
+      updateStage()
+    end repeat
+  end if
+  sprite(10).blendLevel = 255
+  sprite(11).member = member("BlankVideo")
+  updateStage()
+end
+
+### script chunk=193 name="Script Startmovie" type=3 handlers=1
+-- Behavior
+global BetingetLink
+
+on startMovie
+  BetingetLink = ["Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej", "Nej"]
+end
+
+### script chunk=194 name="Script Sektor" type=1 handlers=1
+-- Script
+global BetingetLink
+
+on exitFrame me
+  if the frameLabel = "B1" then
+    BetingetLink[4] = "Ok"
+  end if
+  go(the frame)
+end
+
+### script chunk=195 name="Script Starten af spillet" type=1 handlers=1
+-- Parent Script
+on exitFrame me
+  go("A1")
+end
+
+### script chunk=196 name="Script Talemuligheder" type=1 handlers=3
+-- Script
+global question
+global Answer
+global Person
+global Husk
+
+on mouseEnter me
+  sprite(the currentSpriteNum).backColor = 5
+end
+on mouseLeave me
+  sprite(the currentSpriteNum).backColor = 0
+end
+on mouseUp me
+  sprite(the currentSpriteNum).backColor = 7
+  sprite(the currentSpriteNum).blendLevel = 50
+  case the currentSpriteNum of
+    15:
+      if Person = "Laura" then
+        question = "Peter-omPeter"
+      else
+        question = "Peter-omLaura"
+      end if
+      Answer = Person & "-omLaura"
+      Dialog()
+    16:
+      if Person = "Marie" then
+        question = "Peter-omPeter"
+      else
+        question = "Peter-omMarie"
+      end if
+      Answer = Person & "-omMarie"
+      Dialog()
+    17:
+      if Person = "David" then
+        question = "Peter-omPeter"
+      else
+        question = "Peter-omDavid"
+      end if
+      Answer = Person & "-omDavid"
+      Dialog()
+    18:
+      if Person = "Ryan" then
+        question = "Peter-omPeter"
+        Answer = Person & "-omRyan"
+      else
+        if char 2 of Husk = "1" or char 2 of Husk = "2" then
+          question = "Peter-omRyan"
+          Answer = Person & "-omRyan"
+          Dialog()
+        else
+          question = "Peter-omRyanDie"
+          Answer = Person & "-omRyanDie"
+          Dialog()
+        end if
+      end if
+    19:
+      if Person = "Barbara" then
+        question = "Peter-omPeter"
+      else
+        question = "Peter-omBarbara"
+      end if
+      Answer = Person & "-omBarbara"
+      Dialog()
+
+  end case
+end
+
+### script chunk=197 name="Script Hotspot" type=1 handlers=3
+-- Script
+global Person
+global Husk
+
+on mouseEnter me
+  if the currentSpriteNum <> 31 then
+    sprite(the currentSpriteNum).blendLevel = 50
+  end if
+  case the currentSpriteNum of
+    20:
+      put "Gå til kantinen" into member("Infoboks")
+    21:
+      put "Gå til computerrummet" into member("Infoboks")
+    22:
+      put "Gå til læsesalen" into member("Infoboks")
+    23:
+      put "Gå til grupperummet" into member("Infoboks")
+    24:
+      put "Gå til gangen" into member("Infoboks")
+    25:
+      put "Snak med Laura" into member("Infoboks")
+    26:
+      put "Snak med Marie" into member("Infoboks")
+    27:
+      put "Snak med David" into member("Infoboks")
+    28:
+      put "Snak med Ryan" into member("Infoboks")
+    29:
+      put "Snak med Barbara" into member("Infoboks")
+    31:
+      put "Vent et tidsinterval" into member("Infoboks")
+
+  end case
+end
+on mouseLeave me
+  put EMPTY into member("Infoboks")
+  if the currentSpriteNum <> 31 then
+    sprite(the currentSpriteNum).blendLevel = 0
+  end if
+end
+on mouseUp
+  put EMPTY into member("Infoboks")
+  case the currentSpriteNum of
+    20:
+      go("A" & char 2 of the frameLabel)
+    21:
+      go("B" & char 2 of the frameLabel)
+    22:
+      go("C" & char 2 of the frameLabel)
+    23:
+      go("D" & char 2 of the frameLabel)
+    24:
+      go("E" & char 2 of the frameLabel)
+    25:
+      Person = "Laura"
+      Husk = the frameLabel
+      go(the frame + 1)
+    26:
+      Person = "Marie"
+      Husk = the frameLabel
+      go(the frame + 3)
+    27:
+      Person = "David"
+      Husk = the frameLabel
+      go(the frame + 2)
+    28:
+      Person = "Ryan"
+      Husk = the frameLabel
+      go(the frame + 1)
+    29:
+      Person = "Barbara"
+      Husk = the frameLabel
+      go(the frame + 2)
+    31:
+      Husk = the frameLabel
+      go("Vent")
+
+  end case
+end
+
+### script chunk=198 name="Script Backie" type=1 handlers=1
+-- Script
+on mouseUp me
+  go(marker(0))
+end
+
+### script chunk=199 name="Script Vent" type=1 handlers=3
+-- Script
+global Husk
+global Midlertid
+global BetingetLink
+
+on exitFrame
+  go(the frame)
+end
+on prepareFrame
+  if Midlertid <> 2 then
+    Midlertid = 2
+    case Husk of
+      "A4":
+        put "I ankommer til universitet. Efter et kort møde går folk hver til sit. Laura bliver siddende." into member("Mellemscene")
+      "B4":
+        put "Marie forlader lokalet. Du venter lidt og går så hen til Laura." into member("Mellemscene")
+      "C4":
+        put "I ankommer til universitet. Efter et kort møde går folk hver til sit. Du går med Ryan ind i læsesalen." into member("Mellemscene")
+      "D4":
+        put "I ankommer til universitet. Efter et kort møde går folk hver til sit. Du går med Marie og David ind i grupperummet." into member("Mellemscene")
+      "E4":
+        put "I ankommer til universitet. Efter et kort møde går folk hver til sit. Du går ud i gangen." into member("Mellemscene")
+      "A1":
+        put "Laura rejser sig og går ud mod gangen." into member("Mellemscene")
+      "B1":
+        put "Barbara sidder og skriver på sin computer. Ryan kommer ind i lokalet. Han kalder Barbara over til sig i hjørnet. De to begynder at diskutere." into member("Mellemscene")
+      "C1":
+        put "Ryan rejser sig og går ud i gangen." into member("Mellemscene")
+      "D1":
+        put "David rejser sig og går ud i gangen." into member("Mellemscene")
+      "E1":
+        put "David kommer ud fra grupperummet. Laura kommer fra kantinen og snakker med ham. Imens begynder Ryan at mobbe Marie." into member("Mellemscene")
+        BetingetLink[3] = "Ok"
+      "A2":
+        put "Pludselig hører du Ryans stemme råbe et eller andet, og sekundet efter kommer hans korpus svævende ned fra himlen og splatter ud." into member("Mellemscene")
+      "B2":
+        put "Ryan og Barbara går ud af rummet. Et par minutter efter hører du et skrig fra kantinen." into member("Mellemscene")
+      "C2":
+        put "Du går ud i gangen og holder en pause. På vejen derud møder du Ryan, der går ind i læsesalen. Lidt efter går også David derind. Pludselig høres et skrig fra kantinen!" into member("Mellemscene")
+      "D2":
+        put "Marie forlader lokalet. Nogle minutter efter høres et skrig fra kantinen!" into member("Mellemscene")
+      "E2":
+        put "David og Laura holder op med at snakke. David går ind i læsesalen, og Laura er pludselig væk." into member("Mellemscene")
+      "A3":
+        put "Laura går over mod gangen. David kommer og sætter sig." into member("Mellemscene")
+      "B3":
+        put "Laura og Marie kommer ind i rummet." into member("Mellemscene")
+      "C3":
+        put "David forlader læsesalen. Barbara kommer ind." into member("Mellemscene")
+      "D3":
+        put "Barbara går ud. Marie går med." into member("Mellemscene")
+      "E3":
+        put "Du står og keder dig. Der sker intet som helst." into member("Mellemscene")
+
+    end case
+  end if
+end
+on mouseUp me
+  Midlertid = 1
+  if Husk = "B4" then
+    go("Laura Suspekt")
+  else
+    case char 2 of Husk of
+      "1":
+        go(char 1 of Husk & "2")
+      "2":
+        go(char 1 of Husk & "3")
+      "3":
+        go(char 1 of Husk & "4")
+      "4":
+        go(char 1 of Husk & "1")
+
+    end case
+  end if
+end
+
+### script chunk=200 name="Script Special Hotspots!" type=1 handlers=3
+-- Script
+global Husk
+global BetingetLink
+
+on mouseEnter me
+  sprite(the currentSpriteNum).blendLevel = 50
+  case the currentSpriteNum of
+    20:
+      put "Kig på brevet" into member("Infoboks")
+    21:
+      put "Kig i papirkurven" into member("Infoboks")
+    22:
+      put "Forlad stedet (og spillet)" into member("Infoboks")
+    23:
+      put "Undersøg liget" into member("Infoboks")
+    24:
+      put "Tilbage til rummet" into member("Infoboks")
+    25:
+      put "Kig nærmere på halskæde" into member("Infoboks")
+    33:
+      put "Kig nærmere på bog" into member("Infoboks")
+    34:
+      put "Kryb ind under bordet og lyt til samtalen" into member("Infoboks")
+    35:
+      put "Kig på Barbaras computerskærm" into member("Infoboks")
+
+  end case
+end
+on mouseLeave me
+  sprite(the currentSpriteNum).blendLevel = 0
+  put EMPTY into member("Infoboks")
+end
+on mouseUp
+  put EMPTY into member("Infoboks")
+  case the currentSpriteNum of
+    20:
+      BetingetLink[2] = "Ok"
+      go(the frame + 1)
+    21:
+      Husk = the frameLabel
+      go("D Special")
+    22:
+      Husk = the frameLabel
+      go("Smut")
+    23:
+      Husk = the frameLabel
+      go("A Special")
+    24:
+      go(Husk)
+    25:
+      BetingetLink[14] = "Ok"
+      go(the frame + 1)
+    33:
+      BetingetLink[18] = "Ok"
+      Husk = marker(0)
+      go("Kig bog")
+    34:
+      BetingetLink[6] = "Ok"
+      Husk = marker(0)
+      go("Lyt under bordet")
+    35:
+      Husk = marker(0)
+      go("Barbaras Computer")
+
+  end case
+end
+
+### script chunk=201 name="Script Quit" type=1 handlers=1
+-- Script
+global Husk
+
+on mouseUp me
+  if sprite(the currentSpriteNum) = 9 then
+    quit()
+  else
+    go(Husk)
+  end if
+end
+
+### script chunk=202 name="Script Laura Suspekt" type=1 handlers=2
+-- Script
+global BetingetLink
+
+on exitFrame me
+  if the frameLabel = "Laura Suspekt" then
+    if sprite(5).movieTime < member("LauraSuspekt").duration then
+      go(the frame)
+    else
+      go(the frame + 1)
+    end if
+  else
+    go(the frame)
+  end if
+end
+on mouseUp
+  if the frameLabel = "Laura Suspekt" then
+    go(the frame + 1)
+  else
+    BetingetLink[13] = "Ok"
+    go("B1")
+  end if
+end
+
+### script chunk=203 name="Script Specielle manøvrer" type=1 handlers=2
+-- Script
+global Husk
+
+on exitFrame me
+  go(the frame)
+end
+on mouseUp
+  go(Husk)
+end
+
+### script chunk=204 name="" type=-1 handlers=0
+-- Script
+global #13032
+
+
+### script chunk=205 name="Script BarbaraHilfe" type=1 handlers=1
+-- Script
+global BetingetLink
+global Husk
+
+on exitFrame me
+  if sprite(5).movieTime < member("BarbaraHacker").duration then
+    go(the frame)
+  else
+    BetingetLink[16] = "Ok"
+    go(Husk)
+  end if
+end
+
+### script chunk=206 name="Script Barbaras Computer" type=1 handlers=3
+-- Script
+global Husk
+global BetingetLink
+
+on exitFrame me
+  go(the frame)
+end
+on prepareFrame me
+  if BetingetLink[11] = "Ok" then
+    sprite(10).member = member("TekstBarbarasComputer2")
+    BetingetLink[12] = "Ok"
+  else
+    sprite(10).member = member("TekstBarbarasComputer")
+  end if
+end
+on mouseUp
+  go(Husk)
+end
+
+===== FILE Legacy/Video.dir =====
+version=1600 stage=0x0 tempo=0 castMembers=81 scripts=0
+
+--- CAST MEMBERS ---
+chunk=4 type=xtra name="BarbaraHacker" scriptId=0
+chunk=5 type=xtra name="Barbara-omAlibi" scriptId=0
+chunk=6 type=xtra name="Barbara-omBarbara" scriptId=0
+chunk=7 type=xtra name="Barbara-omDavid" scriptId=0
+chunk=8 type=xtra name="Barbara-omFormodning" scriptId=0
+chunk=9 type=xtra name="Barbara-omHilfe1" scriptId=0
+chunk=10 type=xtra name="Barbara-omHilfe2" scriptId=0
+chunk=11 type=xtra name="Barbara-omLaura" scriptId=0
+chunk=12 type=xtra name="Barbara-omMarie" scriptId=0
+chunk=13 type=xtra name="Barbara-omRyan" scriptId=0
+chunk=14 type=xtra name="Barbara-omRyanDie" scriptId=0
+chunk=15 type=xtra name="Barbara-VedIkke" scriptId=0
+chunk=16 type=xtra name="David-omAlibi" scriptId=0
+chunk=17 type=xtra name="David-omBarbara" scriptId=0
+chunk=18 type=xtra name="David-omBarbaraOgComputere" scriptId=0
+chunk=19 type=xtra name="David-omDavid" scriptId=0
+chunk=20 type=xtra name="David-omFormodning" scriptId=0
+chunk=21 type=xtra name="David-omLaura" scriptId=0
+chunk=22 type=xtra name="David-omMarie" scriptId=0
+chunk=23 type=xtra name="David-omRyan" scriptId=0
+chunk=24 type=xtra name="David-omRyanDie" scriptId=0
+chunk=25 type=xtra name="David-VedIkke" scriptId=0
+chunk=26 type=xtra name="Laura-omAlibi" scriptId=0
+chunk=27 type=xtra name="Laura-omBarbara" scriptId=0
+chunk=28 type=xtra name="Laura-omBarbaraOgRyan" scriptId=0
+chunk=29 type=xtra name="Laura-omDavid" scriptId=0
+chunk=30 type=xtra name="Laura-omFormodning" scriptId=0
+chunk=31 type=xtra name="Laura-omLaura" scriptId=0
+chunk=32 type=xtra name="Laura-omMarie" scriptId=0
+chunk=33 type=xtra name="Laura-omRyan" scriptId=0
+chunk=34 type=xtra name="Laura-omRyanDie" scriptId=0
+chunk=35 type=xtra name="LauraSuspekt" scriptId=0
+chunk=37 type=xtra name="Laura-VedIkke" scriptId=0
+chunk=38 type=xtra name="Marie-Fortrolighed" scriptId=0
+chunk=39 type=xtra name="Marie-Fortrolighed2" scriptId=0
+chunk=40 type=xtra name="Marie-omAlibi" scriptId=0
+chunk=41 type=xtra name="Marie-omBarbara" scriptId=0
+chunk=42 type=xtra name="Marie-omDavid" scriptId=0
+chunk=43 type=xtra name="Marie-omFormodning" scriptId=0
+chunk=44 type=xtra name="Marie-omLaura" scriptId=0
+chunk=45 type=xtra name="Marie-omMarie" scriptId=0
+chunk=46 type=xtra name="Marie-omRyan" scriptId=0
+chunk=47 type=xtra name="Marie-omRyanDie" scriptId=0
+chunk=48 type=xtra name="Marie-VedIkke" scriptId=0
+chunk=49 type=xtra name="Peter-BeskyldBarbara1" scriptId=0
+chunk=50 type=xtra name="Peter-BeskyldBarbara2" scriptId=0
+chunk=51 type=xtra name="Peter-BeskyldBarbara3" scriptId=0
+chunk=52 type=xtra name="Peter-BeskyldDavid1" scriptId=0
+chunk=53 type=xtra name="Peter-BeskyldLaura1" scriptId=0
+chunk=54 type=xtra name="Peter-BeskyldLaura2" scriptId=0
+chunk=55 type=xtra name="Peter-BeskyldLaura3" scriptId=0
+chunk=56 type=xtra name="Peter-BeskyldMarie1" scriptId=0
+chunk=57 type=xtra name="Peter-BeskyldMarie2" scriptId=0
+chunk=58 type=xtra name="Peter-GangGruppe" scriptId=0
+chunk=59 type=xtra name="Peter-GangKantine" scriptId=0
+chunk=60 type=xtra name="Peter-GangLab" scriptId=0
+chunk=61 type=xtra name="Peter-GangLaese" scriptId=0
+chunk=62 type=xtra name="Peter-omAlibi" scriptId=0
+chunk=63 type=xtra name="Peter-omBarbara" scriptId=0
+chunk=64 type=xtra name="Peter-omBarbaraOgComputere" scriptId=0
+chunk=65 type=xtra name="Peter-omBarbaraOgRyan" scriptId=0
+chunk=66 type=xtra name="Peter-omDavid" scriptId=0
+chunk=67 type=xtra name="Peter-omFormodning" scriptId=0
+chunk=68 type=xtra name="Peter-omHalskaede" scriptId=0
+chunk=69 type=xtra name="Peter-omLaura" scriptId=0
+chunk=70 type=xtra name="Peter-omMarie" scriptId=0
+chunk=71 type=xtra name="Peter-omPeter" scriptId=0
+chunk=72 type=xtra name="Peter-omRyan" scriptId=0
+chunk=73 type=xtra name="Peter-omRyanDie" scriptId=0
+chunk=74 type=xtra name="Peter-omRyanOgMarie" scriptId=0
+chunk=75 type=xtra name="Ryan-Advarsel1" scriptId=0
+chunk=76 type=xtra name="Ryan-Advarsel2" scriptId=0
+chunk=77 type=xtra name="Ryan-omBarbara" scriptId=0
+chunk=78 type=xtra name="Ryan-omDavid" scriptId=0
+chunk=79 type=xtra name="Ryan-omLaura" scriptId=0
+chunk=80 type=xtra name="Ryan-omMarie" scriptId=0
+chunk=81 type=xtra name="Ryan-omRyan" scriptId=0
+chunk=82 type=xtra name="Ryan-omSara" scriptId=0
+chunk=83 type=xtra name="Ryan-omSaraOgDavid" scriptId=0
+chunk=84 type=xtra name="Ryan-omSaraOgLaura" scriptId=0
+chunk=85 type=xtra name="Ryan-VedIkke" scriptId=0
+
+--- DECOMPILED LINGO ---
+
+===== FILE Legacy/Billeder.dir =====
+version=1600 stage=0x0 tempo=0 castMembers=86 scripts=0
+
+--- CAST MEMBERS ---
+chunk=4 type=bitmap name="portrait-Barbara" scriptId=0
+chunk=5 type=bitmap name="portrait-David" scriptId=0
+chunk=6 type=bitmap name="portrait-Laura" scriptId=0
+chunk=7 type=bitmap name="portrait-Ryan" scriptId=0
+chunk=8 type=bitmap name="sektorA1" scriptId=0
+chunk=9 type=bitmap name="sektorA1-Laura1" scriptId=0
+chunk=10 type=bitmap name="sektorA1-Laura2" scriptId=0
+chunk=11 type=bitmap name="sektorA1-Laura3" scriptId=0
+chunk=12 type=bitmap name="sektorA2" scriptId=0
+chunk=13 type=bitmap name="sektorA3" scriptId=0
+chunk=14 type=bitmap name="sektorA3-Laura1" scriptId=0
+chunk=15 type=bitmap name="sektorA3-Laura2" scriptId=0
+chunk=16 type=bitmap name="sektorA3-Laura3" scriptId=0
+chunk=17 type=bitmap name="sektorA3-Ryan1" scriptId=0
+chunk=18 type=bitmap name="sektorA3-Ryan2" scriptId=0
+chunk=19 type=bitmap name="sektorA4" scriptId=0
+chunk=20 type=bitmap name="sektorA4-David1" scriptId=0
+chunk=22 type=bitmap name="sektorA4-David3" scriptId=0
+chunk=23 type=bitmap name="sektorA4-Ryan1" scriptId=0
+chunk=24 type=bitmap name="sektorA4-Ryan2" scriptId=0
+chunk=25 type=bitmap name="sektorB1" scriptId=0
+chunk=26 type=bitmap name="sektorB1-Barbara1" scriptId=0
+chunk=27 type=bitmap name="sektorB1-Barbara2" scriptId=0
+chunk=28 type=bitmap name="sektorB1-Barbara3" scriptId=0
+chunk=29 type=bitmap name="sektorB2" scriptId=0
+chunk=30 type=bitmap name="sektorB2-RyanBarbara1" scriptId=0
+chunk=31 type=bitmap name="sektorB2-RyanBarbara2" scriptId=0
+chunk=32 type=bitmap name="sektorB2-RyanBarbara3" scriptId=0
+chunk=33 type=bitmap name="sektorB3" scriptId=0
+chunk=34 type=bitmap name="sektorB4" scriptId=0
+chunk=35 type=bitmap name="sektorB4-LauraMarie1" scriptId=0
+chunk=36 type=bitmap name="sektorB4-LauraMarie2" scriptId=0
+chunk=37 type=bitmap name="sektorB4-LauraMarie3" scriptId=0
+chunk=38 type=bitmap name="sektorC1" scriptId=0
+chunk=39 type=bitmap name="sektorC1-Ryan1" scriptId=0
+chunk=40 type=bitmap name="sektorC1-Ryan2" scriptId=0
+chunk=41 type=bitmap name="sektorC1-Ryan3" scriptId=0
+chunk=42 type=bitmap name="sektorC2" scriptId=0
+chunk=43 type=bitmap name="sektorC3" scriptId=0
+chunk=44 type=bitmap name="sektorC3-David1" scriptId=0
+chunk=45 type=bitmap name="sektorC3-David2" scriptId=0
+chunk=46 type=bitmap name="sektorC3-David3" scriptId=0
+chunk=47 type=bitmap name="sektorC4" scriptId=0
+chunk=48 type=bitmap name="sektorC4-Barbara1" scriptId=0
+chunk=49 type=bitmap name="sektorC4-Barbara2" scriptId=0
+chunk=50 type=bitmap name="sektorD1" scriptId=0
+chunk=51 type=bitmap name="sektorD1-DavidMarie1" scriptId=0
+chunk=52 type=bitmap name="sektorD1-DavidMarie2" scriptId=0
+chunk=53 type=bitmap name="sektorD1-DavidMarie3" scriptId=0
+chunk=54 type=bitmap name="sektorD2" scriptId=0
+chunk=55 type=bitmap name="sektorD2-Marie1" scriptId=0
+chunk=56 type=bitmap name="sektorD2-Marie2" scriptId=0
+chunk=57 type=bitmap name="sektorD2-Marie3" scriptId=0
+chunk=58 type=bitmap name="sektorD4" scriptId=0
+chunk=59 type=bitmap name="sektorD4-Brev1" scriptId=0
+chunk=60 type=bitmap name="sektorD4-Brev2" scriptId=0
+chunk=61 type=bitmap name="sektorE1" scriptId=0
+chunk=62 type=bitmap name="sektorE2" scriptId=0
+chunk=63 type=bitmap name="sektorE2-LauraDavid1" scriptId=0
+chunk=64 type=bitmap name="sektorE2-LauraDavid2" scriptId=0
+chunk=65 type=bitmap name="sektorE2-LauraDavid3" scriptId=0
+chunk=66 type=bitmap name="sektorE3" scriptId=0
+chunk=67 type=bitmap name="sektorE4" scriptId=0
+chunk=69 type=filmLoop name="LoopC1" scriptId=0
+chunk=72 type=bitmap name="sektorA4-David2" scriptId=0
+chunk=205 type=filmLoop name="LoopB4" scriptId=0
+chunk=210 type=bitmap name="BlankPortrait" scriptId=0
+chunk=214 type=bitmap name="portrait-Marie" scriptId=0
+chunk=217 type=filmLoop name="LoopD2" scriptId=0
+chunk=252 type=filmLoop name="LoopA4" scriptId=0
+chunk=262 type=filmLoop name="LoopA1" scriptId=0
+chunk=263 type=filmLoop name="LoopA3" scriptId=0
+chunk=267 type=filmLoop name="LoopE2" scriptId=0
+chunk=277 type=filmLoop name="LoopC3" scriptId=0
+chunk=278 type=filmLoop name="LoopC4" scriptId=0
+chunk=292 type=bitmap name="sektorD3" scriptId=0
+chunk=293 type=filmLoop name="LoopD1" scriptId=0
+chunk=316 type=filmLoop name="LoopB2" scriptId=0
+chunk=320 type=bitmap name="videreknap" scriptId=0
+chunk=336 type=filmLoop name="LoopB1" scriptId=0
+chunk=339 type=bitmap name="ur4" scriptId=0
+chunk=340 type=bitmap name="ur3" scriptId=0
+chunk=341 type=bitmap name="ur2" scriptId=0
+chunk=342 type=bitmap name="halv-Peter" scriptId=0
+chunk=348 type=bitmap name="ur1" scriptId=0
+chunk=491 type=bitmap name="blankvideo" scriptId=0
+
+--- DECOMPILED LINGO ---

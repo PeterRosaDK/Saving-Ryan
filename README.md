@@ -29,6 +29,13 @@ npm test
 npm run build
 ```
 
+Asset and Director inspection commands are documented under
+[`tools/`](tools/). The BMP conversion can be repeated with:
+
+```sh
+./tools/assets/convert-bmp-to-png.sh
+```
+
 ## Source layout
 
 ```text
@@ -40,6 +47,7 @@ src/game/     scene registry, transitions, and state machine
 src/media/    media manifests and compatibility aliases
 src/ui/       DOM rendering
 tests/        state and manifest tests
+tools/        Director inspection and asset conversion utilities
 ```
 
 The current interface renders the original room photographs. Director film-loop
