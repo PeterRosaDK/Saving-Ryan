@@ -140,6 +140,7 @@ describe("legacy dialogue rules", () => {
       "warn_ryan",
     );
     expect(videoClip(first.choice?.questionCue)).toBe("Ryan-Advarsel1");
+    expect(first.state.knowledge.ryan_dismissed_warning).toBe(true);
 
     const second = executeDialogueChoice(
       first.state,
@@ -147,6 +148,17 @@ describe("legacy dialogue rules", () => {
       "warn_ryan",
     );
     expect(videoClip(second.choice?.questionCue)).toBe("Ryan-Advarsel2");
+  });
+
+  it("does not learn that Ryan dismissed a skipped warning", () => {
+    const skipped = executeDialogueChoice(
+      startedState(),
+      "Ryan",
+      "warn_ryan",
+      "skipped",
+    );
+
+    expect(skipped.state.knowledge.ryan_dismissed_warning).toBe(false);
   });
 
   it("uses a text question and the existing Ryan clip for the Sarah clue", () => {
@@ -456,13 +468,16 @@ describe("legacy dialogue rules", () => {
     expect(videoClip(accusation.choice?.questionCue)).toBe(
       "Peter-BeskyldLaura3",
     );
+    expect(accusation.choice?.answerCue).toMatchObject({
+      kind: "text",
+    });
     expect(accusation.state.knowledge.laura_confessed).toBe(true);
     expect(
       accusation.state.knowledge.secret_passage_exists,
     ).toBe(true);
   });
 
-  it("keeps passage discovery independent from Laura's confession", () => {
+  it("has Laura reveal the passage when motive and evidence make her confess", () => {
     const ready = learnKnowledge(
       startedState({ timeSlot: 3 }),
       ["ryan_left_laura", "necklace_connects_laura_to_scene"],
@@ -476,7 +491,7 @@ describe("legacy dialogue rules", () => {
     expect(accusation.state.knowledge.laura_confessed).toBe(true);
     expect(
       accusation.state.knowledge.secret_passage_exists,
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it("makes every required motive and evidence fact reachable", () => {

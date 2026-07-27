@@ -24,6 +24,7 @@ export const KNOWLEDGE_IDS = [
   "killer_dropped_necklace",
   "necklace_connects_laura_to_scene",
   "laura_confessed",
+  "ryan_dismissed_warning",
 ] as const;
 
 export type KnowledgeId = (typeof KNOWLEDGE_IDS)[number];

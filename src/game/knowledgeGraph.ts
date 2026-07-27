@@ -17,6 +17,7 @@ export const INVESTIGATION_STEP_IDS = [
   "observe_laura_at_computer",
   "get_barbaras_help",
   "inspect_murder_necklace",
+  "warn_ryan",
   "accuse_laura",
 ] as const;
 
@@ -105,10 +106,15 @@ export const INVESTIGATION_STEPS = {
     requires: [],
     effects: ["killer_dropped_necklace"],
   },
+  warn_ryan: {
+    id: "warn_ryan",
+    requires: [],
+    effects: ["ryan_dismissed_warning"],
+  },
   accuse_laura: {
     id: "accuse_laura",
     requires: ["ryan_left_laura", "necklace_connects_laura_to_scene"],
-    effects: ["laura_confessed"],
+    effects: ["laura_confessed", "secret_passage_exists"],
   },
 } as const satisfies Record<InvestigationStepId, InvestigationStep>;
 

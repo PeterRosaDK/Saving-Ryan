@@ -168,6 +168,11 @@ function getSpecialChoices(
   const afterMurder = state.timeSlot >= 3;
 
   if (afterMurder && person !== "Ryan") {
+    const accusationSolvesCase =
+      person === "Laura" &&
+      state.knowledge.ryan_left_laura &&
+      state.knowledge.necklace_connects_laura_to_scene;
+
     choices.push(
       defineChoice(
         person,
@@ -181,17 +186,20 @@ function getSpecialChoices(
         "Peter-omFormodning",
         `${person}-omFormodning` as VideoClipId,
       ),
-      defineChoice(
+      defineCueChoice(
         person,
         "accuse",
-        getAccusationClip(state, person),
-        null,
-        person === "Laura" &&
-          state.knowledge.ryan_left_laura &&
-          state.knowledge.necklace_connects_laura_to_scene
+        videoCue(getAccusationClip(state, person)),
+        accusationSolvesCase
+          ? textCue(
+              "Laura bryder sammen. Ryan forlod hende, og da han fandt den skjulte passage bag bogreolen i læsesalen, fulgte hun efter ham op på afsatsen. Der skubbede hun ham. Den hemmelige dør er vejen til første sal.",
+            )
+          : null,
+        accusationSolvesCase
           ? {
               effects: [
                 { type: "LEARN", id: "laura_confessed" },
+                { type: "LEARN", id: "secret_passage_exists" },
               ],
             }
           : {},
@@ -363,6 +371,14 @@ function getSpecialChoices(
         "warn_ryan",
         wasAsked ? "Ryan-Advarsel2" : "Ryan-Advarsel1",
         null,
+        {
+          effects: [
+            {
+              type: "LEARN",
+              id: "ryan_dismissed_warning",
+            },
+          ],
+        },
       ),
     );
   }

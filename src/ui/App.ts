@@ -62,6 +62,7 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
   killer_dropped_necklace: "Morderen tabte en halskæde",
   necklace_connects_laura_to_scene: "Halskæden forbinder Laura med gerningsstedet",
   laura_confessed: "Laura har tilstået",
+  ryan_dismissed_warning: "Ryan afviser advarslen",
 };
 
 function button(
