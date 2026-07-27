@@ -21,6 +21,12 @@ The first hosted release uses Cloudflare Access for
 `saving-ryan.pages.dev` hostname must be covered so the latter cannot bypass
 the gate.
 
+Cloudflare's required provisioning order is Pages project, first deployment,
+custom domain/certificate, and then Access. Enabling Access on the custom
+hostname before domain validation prevents Pages from adding that domain.
+Pages' own access-policy control protects the default hostname and preview
+deployments; the custom domain uses a separate self-hosted Access application.
+
 Reason: a browser game necessarily downloads its JavaScript and media. Security
 headers and repository privacy cannot prevent an authorized visitor from
 saving those assets, and the legacy videos contain identifiable participants.

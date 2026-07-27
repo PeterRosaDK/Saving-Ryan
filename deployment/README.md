@@ -37,9 +37,14 @@ wrangler pages deploy dist \
   --commit-dirty=false
 ```
 
-The first deployment must be followed by Pages custom-domain association and
-an Access application covering both `ryan.petergpt.dk` and
-`saving-ryan.pages.dev`. Resolve exact existing targets before any write;
-never overwrite an existing Pages project, Access app, or DNS record.
+The first deployment must be followed by Pages custom-domain association.
+Cloudflare currently cannot validate a new Pages custom domain while Access is
+already active on that hostname, so add Access only after the custom domain and
+certificate are active. Then protect `ryan.petergpt.dk` with a self-hosted
+Access application and enable the Pages access policies for both
+`saving-ryan.pages.dev` and its preview deployments.
+
+Resolve exact existing targets before every write; never overwrite an existing
+Pages project, Access app, or DNS record.
 
 See [`docs/OPERATIONS.md`](../docs/OPERATIONS.md) for verification and rollback.

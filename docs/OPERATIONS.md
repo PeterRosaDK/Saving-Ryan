@@ -38,6 +38,10 @@ audio file. A nonexistent path must return the committed 404 response.
 Cloudflare credentials are operator secrets outside Git. The app itself has no
 environment variables.
 
+For a new project, associate and validate the Pages custom domain before
+creating its Access application. Afterwards, enable Access separately for the
+custom hostname, the production `pages.dev` hostname, and preview deployments.
+
 ## Recovery and rollback
 
 Source and historical assets are recovered from the private GitHub repository.
