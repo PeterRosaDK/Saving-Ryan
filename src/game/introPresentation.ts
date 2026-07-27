@@ -145,9 +145,22 @@ export const INTRO_SCORE = {
     alt: "Saving Ryan-holdet med teksten Nogle gange er projektarbejdet en dræber",
     startsAtFrame: 523,
     fullyVisibleAtFrame: 574,
-    rect: { centerX: 397, centerY: 298, width: 699, height: 603 },
+    rect: { centerX: 400, centerY: 300, width: 800, height: 600 },
   },
 } as const;
 
 export const INTRO_DURATION_MILLISECONDS =
   INTRO_SCORE.frames * INTRO_SCORE.millisecondsPerFrame;
+
+/*
+ * Recovered from the later Director movie's Tekst-Start cast member. The
+ * preceding sentence in that member ("Intro, der hurtigt gennemløber den
+ * første dag.") is a production direction, so it is retained in the audit
+ * rather than shown to the player.
+ */
+export const START_PROLOGUE_PARAGRAPHS = [
+  "De seks studerende er sneet inde på universitetet, hvilket dog ikke generer dem. De har meget arbejde, der skal gøres. Dagen får dog en uheldig drejning, da gruppens onde ånd, Ryan, bliver slået ihjel.",
+  "Der er ikke andre end gruppens medlemmer til stede på universitetet, så gerningsmanden må findes internt i gruppen.",
+  "Jørgen ville ønske, han kunne gøre noget for at forhindre mordet, og hans ønske går i opfyldelse. Han får mulighed for at gennemleve dagen igen og igen, indtil han har opklaret mordet.",
+  "Han er den eneste af gruppemedlemmerne, der har sin hukommelse i behold, når dagen gentager sig, og den viden kan han måske bruge til at finde den skyldige…",
+] as const;

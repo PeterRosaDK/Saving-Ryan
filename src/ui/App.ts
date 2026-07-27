@@ -16,7 +16,9 @@ import {
   toSceneId,
 } from "../game/sceneRegistry";
 import {
+  INTRO_DURATION_MILLISECONDS,
   INTRO_SCORE,
+  START_PROLOGUE_PARAGRAPHS,
 } from "../game/introPresentation";
 import {
   DIRECTOR_STAGE,
@@ -310,21 +312,14 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
         </div>
         <audio
           data-intro-audio
+          autoplay
           preload="auto"
           src="${getIntroAudioUrl()}"
         ></audio>
         <div class="intro-controls">
-          <p aria-live="polite" data-intro-status>
-            Den originale intro er klar.
-          </p>
-          <div>
-            <button class="primary-action" type="button" data-play-intro>
-              Afspil intro
-            </button>
-            <button class="secondary-action" type="button" data-skip-intro>
-              Spring introen over
-            </button>
-          </div>
+          <button class="secondary-action" type="button" data-skip-intro>
+            Spring introen over
+          </button>
         </div>
       </section>
     </main>
@@ -332,37 +327,92 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
 
   const stage = root.querySelector<HTMLElement>(".intro-stage");
   const audio = root.querySelector<HTMLAudioElement>("[data-intro-audio]");
-  const playButton = root.querySelector<HTMLButtonElement>(
-    "[data-play-intro]",
-  );
   const skipButton = root.querySelector<HTMLButtonElement>(
     "[data-skip-intro]",
   );
-  const status = root.querySelector<HTMLElement>("[data-intro-status]");
+  let scoreComplete = false;
+  let prologueVisible = false;
 
-  playButton?.addEventListener("click", () => {
-    stage?.classList.add("is-playing");
-    playButton.hidden = true;
-    if (status) {
-      status.textContent =
-        "Introen afspilles. Du kan gå videre når som helst.";
+  const beginGame = (): void => {
+    store.dispatch({ type: "INTRO_FINISHED" });
+  };
+  const showPrologue = (): void => {
+    if (prologueVisible) {
+      return;
     }
-    void audio?.play().catch(() => {
-      if (status?.isConnected) {
-        status.textContent =
-          "Introen afspilles uden lyd, fordi browseren blokerede lyden.";
+    prologueVisible = true;
+    audio?.pause();
+    root.innerHTML = `
+      <main class="app-shell">
+        <section
+          class="stage story-prologue"
+          aria-labelledby="story-prologue-title"
+          tabindex="0"
+        >
+          <article>
+            <p class="eyebrow">Den første dag</p>
+            <h1 id="story-prologue-title">Mordet, der endnu ikke er sket</h1>
+            ${START_PROLOGUE_PARAGRAPHS.map(
+              (paragraph) => `<p>${paragraph}</p>`,
+            ).join("")}
+            <p class="prologue-continue">Klik for at begynde</p>
+          </article>
+        </section>
+      </main>
+    `;
+
+    const prologue = root.querySelector<HTMLElement>(".story-prologue");
+    prologue?.addEventListener("click", beginGame, { once: true });
+    prologue?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        beginGame();
       }
     });
+    prologue?.focus();
+  };
+  const finishScore = (): void => {
+    if (!stage?.isConnected) {
+      return;
+    }
+    scoreComplete = true;
+    stage.classList.add("is-complete");
+    stage.ariaLabel = "Introen er færdig. Klik for at fortsætte.";
+  };
+
+  stage?.classList.add("is-playing");
+  void audio?.play().catch(() => {
+    // The visual score still starts immediately if audible autoplay is blocked.
   });
-  skipButton?.addEventListener("click", () => {
-    audio?.pause();
-    store.dispatch({ type: "INTRO_FINISHED" });
+  window.setTimeout(finishScore, INTRO_DURATION_MILLISECONDS);
+
+  stage?.addEventListener("click", () => {
+    if (scoreComplete) {
+      showPrologue();
+      return;
+    }
+
+    if (audio?.paused) {
+      void audio.play().catch(() => {});
+    }
+  });
+  skipButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    showPrologue();
   });
 }
 
-function renderKnowledge(state: GameState): string {
-  const discoveries = Object.entries(state.knowledge).filter(([, known]) => known)
+export function getNotebookKnowledgeIds(
+  state: Pick<GameState, "knowledge">,
+): KnowledgeId[] {
+  return Object.entries(state.knowledge).filter(
+    ([id, known]) => known && id !== "ryan_was_murdered",
+  )
     .map(([id]) => id as KnowledgeId);
+}
+
+function renderKnowledge(state: GameState): string {
+  const discoveries = getNotebookKnowledgeIds(state);
 
   if (discoveries.length === 0) {
     return "<p class=\"empty-state\">Du har endnu ikke samlet nogen spor.</p>";
@@ -488,7 +538,6 @@ function renderDialogue(
           <h1>${person}</h1>
         </div>
         <dl class="status-strip">
-          <div><dt>Scene</dt><dd>${scene.id}</dd></div>
           <div><dt>Tid</dt><dd>${scene.time.name}</dd></div>
           <div><dt>Dag</dt><dd>${state.loop}</dd></div>
         </dl>
@@ -505,13 +554,11 @@ function renderDialogue(
           <p class="eyebrow">Hvad vil du spørge om?</p>
           <h2 id="dialogue-title">Tal med ${person}</h2>
           <div class="dialogue-options" data-dialogue-options></div>
-          <p class="dialogue-status" aria-live="polite" data-dialogue-status>
-            ${
-              refusesFurtherDialogue
-                ? `${person} vil ikke tale mere med Jørgen i dag efter anklagen.`
-                : "Tidligere spørgsmål er dæmpet, men kan stilles igen."
-            }
-          </p>
+          <p class="dialogue-status" aria-live="polite" data-dialogue-status>${
+            refusesFurtherDialogue
+              ? `${person} vil ikke tale mere med Jørgen i dag efter anklagen.`
+              : ""
+          }</p>
           <button
             class="secondary-action"
             type="button"
@@ -714,7 +761,6 @@ function renderExploration(
           <h1>${scene.location.name}</h1>
         </div>
         <dl class="status-strip">
-          <div><dt>Scene</dt><dd>${scene.id}</dd></div>
           <div><dt>Tid</dt><dd>${scene.time.name}</dd></div>
           <div><dt>Dag</dt><dd>${state.loop}</dd></div>
         </dl>
@@ -735,9 +781,7 @@ function renderExploration(
             alt="Original scene fra ${scene.location.name}"
           />
           <div data-film-loop></div>
-          <p class="hotspot-info" aria-live="polite" data-hotspot-info>
-            Bevæg markøren over scenen
-          </p>
+          <p class="hotspot-info" aria-live="polite" data-hotspot-info></p>
           <div class="hotspot-layer" data-hotspot-layer></div>
           <div class="legacy-help" data-legacy-help hidden>
             <div role="dialog" aria-modal="true" aria-labelledby="legacy-help-title">
@@ -791,7 +835,7 @@ function renderExploration(
 
   const hotspotLayer = root.querySelector<HTMLElement>("[data-hotspot-layer]");
   const infoBox = root.querySelector<HTMLElement>("[data-hotspot-info]");
-  const defaultHotspotLabel = "Bevæg markøren over scenen";
+  const defaultHotspotLabel = "";
   const appendHotspot = (hotspot: HTMLButtonElement): void => {
     hotspotLayer?.append(hotspot);
     if (infoBox) {
@@ -955,6 +999,8 @@ function renderExploration(
   appendHotspot(clockHotspot);
 
   root.querySelector("[data-dismiss]")?.addEventListener("click", () => {
+    clockAudio.pause();
+    clockAudio.currentTime = 0;
     void completePendingTransition(root, store, narrativeHost);
   });
 }
@@ -981,6 +1027,11 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
   root.replaceChildren(appView, mediaHost, musicAudio, clockAudio);
 
   const unsubscribe = store.subscribe((state) => {
+    if (state.pendingTransition === null) {
+      clockAudio.pause();
+      clockAudio.currentTime = 0;
+    }
+
     musicPlayer.setLocation(
       state.phase === "exploration" || state.phase === "dialogue"
         ? state.location

@@ -9,6 +9,7 @@ import {
 } from "../src/app/types";
 import { SCENES, toSceneId } from "../src/game/sceneRegistry";
 import { reduceGameState } from "../src/game/stateMachine";
+import { getNotebookKnowledgeIds } from "../src/ui/App";
 
 function finishIntro(state = createInitialGameState()): GameState {
   return reduceGameState(state, { type: "INTRO_FINISHED" });
@@ -43,6 +44,16 @@ describe("legacy game state", () => {
       expect(started.knowledge.ryan_was_murdered).toBe(true);
     },
   );
+
+  it("keeps the time-loop premise out of the notebook's found clues", () => {
+    const started = finishIntro();
+
+    expect(started.knowledge.ryan_was_murdered).toBe(true);
+    expect(getNotebookKnowledgeIds(started)).not.toContain(
+      "ryan_was_murdered",
+    );
+    expect(getNotebookKnowledgeIds(started)).toEqual([]);
+  });
 
   it("moves between locations without advancing time and applies entry effects", () => {
     const initial: GameState = {

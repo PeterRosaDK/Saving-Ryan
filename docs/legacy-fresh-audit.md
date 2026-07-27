@@ -137,8 +137,10 @@ state rather than a silent failure.
 - The dialogue-shadow optimization is unnecessary in the web renderer.
 - The `BarbaraHilfeVoiceover` distinction may become a text cue later, but no new
   knowledge effects are needed.
-- The later start/meta frame is not used because it would insert an unfinished
-  screen before the already playable game.
+- The later `Tekst-Start` frame has now been restored as a prologue between the
+  cinematic intro and A1. Its first sentence, "Intro, der hurtigt gennemløber
+  den første dag.", is treated as a production direction rather than
+  player-facing copy; the remaining four paragraphs are reproduced faithfully.
 - No story mechanics, phase 9 rules, or Laura ending logic were replaced by the
   later build.
 

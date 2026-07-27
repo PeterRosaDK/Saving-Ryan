@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   INTRO_DURATION_MILLISECONDS,
   INTRO_SCORE,
+  START_PROLOGUE_PARAGRAPHS,
 } from "../src/game/introPresentation";
 import {
   LOCATION_TRANSITION_EVENTS,
@@ -119,7 +120,26 @@ describe("Director presentation parity", () => {
       image: "intro-slut",
       startsAtFrame: 523,
       fullyVisibleAtFrame: 574,
+      rect: {
+        centerX: 400,
+        centerY: 300,
+        width: 800,
+        height: 600,
+      },
     });
+  });
+
+  it("restores the later Tekst-Start prologue without its production note", () => {
+    expect(START_PROLOGUE_PARAGRAPHS).toHaveLength(4);
+    expect(START_PROLOGUE_PARAGRAPHS.join(" ")).toContain(
+      "De seks studerende er sneet inde på universitetet",
+    );
+    expect(START_PROLOGUE_PARAGRAPHS.join(" ")).toContain(
+      "gennemleve dagen igen og igen",
+    );
+    expect(START_PROLOGUE_PARAGRAPHS.join(" ")).not.toContain(
+      "Intro, der hurtigt gennemløber",
+    );
   });
 
   it("serves the extracted original intro sound", () => {

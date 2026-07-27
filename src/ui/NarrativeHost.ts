@@ -54,8 +54,10 @@ export class NarrativeHost {
       <div class="media-frame">
         <video
           data-video-player
-          controls
           playsinline
+          disablepictureinpicture
+          disableremoteplayback
+          controlslist="nodownload nofullscreen noplaybackrate"
           preload="metadata"
         ></video>
         <div class="text-cue" data-text-cue hidden>
