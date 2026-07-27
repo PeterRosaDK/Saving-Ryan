@@ -527,6 +527,27 @@ Only after conversion parity:
   ending/epilogue boundary;
 - keep text cues as the first fallback for missing presentation assets.
 
+Completed:
+
+- the confession gate requires both the report's motive
+  (`ryan_left_laura`) and strong necklace connection
+  (`necklace_connects_laura_to_scene`);
+- the three existing Laura accusation clips express zero, one, or both case
+  pillars, and only the strongest accusation produces the text confession;
+- the confession supplies Laura's report-backed passage explanation while the
+  original narrow C-room book interaction remains physically discoverable;
+- warning Ryan remains insufficient by itself, but establishes that Jørgen must
+  intervene rather than rely on an unsupported warning;
+- after an ordinary Director day reset, the C1 passage becomes the minimal
+  text-backed prevention route;
+- prevention records that Ryan was saved, enters a clear epilogue, applies only
+  once, and offers a full reset to the intro;
+- the full reducer golden path covers intro → investigation → confession → new
+  loop → warning → prevention → epilogue.
+
+Source classifications and unused-asset decisions are recorded in
+[`docs/canonical-laura-completion.md`](docs/canonical-laura-completion.md).
+
 ### Phase 9 — Expand time-loop and observation mechanics
 
 Only after the canonical Laura story is complete:

@@ -6,6 +6,11 @@ completion work and the deferred expansion phases. Its primary sources are
 `Legacy/Decompiled/DirectorDump.txt`, the supplied media casts, and
 `Legacy/Projektet.pdf`.
 
+This parity snapshot is preserved by the annotated tag
+`legacy-restoration-v1` at commit `8e79537`. The gaps listed below were closed
+after that baseline in phase 8 and are documented separately in
+`docs/canonical-laura-completion.md`.
+
 ## Restored runtime
 
 ### Intro
@@ -112,7 +117,7 @@ tested, and do not require the deferred time/case abstractions.
   Safari and Firefox remains production hardening rather than a known narrative
   defect.
 
-## Gaps in the intended Laura story
+## Gaps in the intended Laura story at the tagged baseline
 
 The supplied Director game never completes the full report design:
 

@@ -1,10 +1,12 @@
 # Saving Ryan
 
-Modern HTML5/TypeScript restoration of a Director 8 interactive mystery.
+Modern HTML5/TypeScript restoration and canonical completion of a Director 8
+interactive mystery.
 
 ## Current status
 
-The Director restoration is playable and under final parity hardening:
+The tagged Director restoration is preserved as `legacy-restoration-v1`, and
+the canonical Laura story is now playable from intro to epilogue:
 
 - legacy Director files and the original report are preserved in `Legacy/`;
 - converted MP4 files are served from `public/Video/`;
@@ -27,7 +29,8 @@ The Director restoration is playable and under final parity hardening:
   interaction, the original `LauraSuspekt` and `BarbaraHacker` sequences, and
   the necklace evidence;
 - a reducer-level golden-path test now reaches Lauras confession through the
-  actual scene and dialogue actions;
+  actual scene and dialogue actions, begins another day, prevents the murder,
+  reaches the epilogue, and resets to the intro;
 - question and answer cues play sequentially and update the same tested state
   machine used by exploration;
 - all 20 transition narrations use the recovered `Spillet.dir` wording;
@@ -56,6 +59,9 @@ The parity boundary, remaining unknowns, and original Laura gaps are in
 [docs/legacy-restoration-status.md](docs/legacy-restoration-status.md).
 The recovered intro sound and missing production music are inventoried in
 [docs/audio-assets.md](docs/audio-assets.md).
+The phase 8 knowledge gate, reconstructed bridges, ending, and unused-asset
+decisions are in
+[docs/canonical-laura-completion.md](docs/canonical-laura-completion.md).
 
 ## Commands
 
@@ -90,6 +96,5 @@ tools/        Director inspection and asset conversion utilities
 
 The current interface renders the original intro, room photographs, primitive
 character animations, score-positioned hotspots, clocks, special stills, and
-dialogue portraits. After the remaining restoration unknowns are accepted, the
-next canonical Laura work is to connect the discovered passage to the next-loop
-prevention and ending boundary.
+dialogue portraits. Missing confession, prevention, and epilogue media use
+intentional text cues through the same narrative host.

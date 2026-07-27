@@ -30,10 +30,12 @@ Slot 16 is deliberately a multi-step dialogue status, not a boolean fact.
 Slots absent from the decompiled handlers have not been given speculative
 meanings.
 
-Slots 6 and 18 are now set by their original scene actions: listening under the
-table in B2 and pulling the book hotspot in C1–C4. Laura's confession does not
-set slot 18; passage discovery remains an independent, physically available
-investigation branch as described by the report.
+Slots 6 and 18 are set by their original scene actions: listening under the
+table in B2 and pulling the book hotspot in C1–C4. Passage discovery remains an
+independent, physically available investigation branch as described by the
+report. Phase 8 additionally lets the successful Laura confession reveal the
+same passage fact, because the report says her explanation is how Jørgen learns
+the murder route.
 
 ## Normalized Director defects
 
@@ -80,3 +82,18 @@ Marie's route is also kept as the report describes it: the first
 the Ryan/Laura relationship known uses `Marie-Fortrolighed2` and reveals that
 Ryan left Laura. Knowing both facts before the first conversation no longer
 skips the confidence exchange.
+
+## Phase 8 accusation and warning gates
+
+The three existing Laura accusation clips are selected by the strength of the
+case:
+
+- `Peter-BeskyldLaura1`: neither motive nor strong evidence;
+- `Peter-BeskyldLaura2`: one of the two pillars;
+- `Peter-BeskyldLaura3`: both `ryan_left_laura` and
+  `necklace_connects_laura_to_scene`.
+
+Only the third variant receives the report-backed text confession and applies
+`laura_confessed` plus `secret_passage_exists`. Warning Ryan records that he
+dismissed the warning, but is not itself a solution. The complete continuation
+is documented in `docs/canonical-laura-completion.md`.
