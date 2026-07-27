@@ -11,10 +11,16 @@ The first conversion slice is underway:
 - 90 supplied BMP originals are preserved in `Legacy/Billeder/`;
 - 93 web-ready PNG assets are served from `public/assets/images/`;
 - the A1–E4 location/time model is implemented as a typed state machine;
+- waiting is a two-step transition, so narration and special sequences complete
+  before the time slot changes;
 - knowledge persists when evening wraps into another morning;
+- intro completion establishes the murder knowledge required by the investigation;
+- the first five legacy clues use typed, declarative scene interactions;
 - transition narration recovered from `Spillet.dir` is wired into a runnable UI;
 - all 20 original room photographs are rendered in the exploration stage;
-- the Director-to-MP4 filename aliases are represented explicitly.
+- all 81 Director video members and 93 PNG members are closed, file-validated
+  catalogues;
+- the persistent media host is isolated from ordinary gameplay rerenders.
 
 See [roadmap.md](roadmap.md) for the complete migration plan.
 The image comparison and provenance notes are in
@@ -43,7 +49,7 @@ Legacy/       original Director movies and project report
 public/Video/ browser-ready MP4 files
 public/assets/ web-ready image derivatives
 src/app/      global state and store
-src/game/     scene registry, transitions, and state machine
+src/game/     scene registry, interactions, transitions, and state machine
 src/media/    media manifests and compatibility aliases
 src/ui/       DOM rendering
 tests/        state and manifest tests

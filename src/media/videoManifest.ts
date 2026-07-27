@@ -1,14 +1,105 @@
-const MEMBER_ALIASES: Readonly<Record<string, string>> = {
-  "Peter-BeskyldDavid1": "Peter-BeskyldDavid",
-  "Peter-BeskyldMarie1": "Peter-BeskyldMarie",
-  "Peter-omRyanDie": "Peter-omRyanDatid",
-};
+import { getPublicUrl } from "./publicUrl";
 
-export function resolveVideoMember(memberName: string): string {
-  return MEMBER_ALIASES[memberName] ?? memberName;
+// Director member name -> converted file. This is intentionally a closed
+// catalogue: dialogue data cannot create plausible URLs from misspelled names.
+export const VIDEO_FILES = {
+  BarbaraHacker: "BarbaraHacker.mp4",
+  "Barbara-omAlibi": "Barbara-omAlibi.mp4",
+  "Barbara-omBarbara": "Barbara-omBarbara.mp4",
+  "Barbara-omDavid": "Barbara-omDavid.mp4",
+  "Barbara-omFormodning": "Barbara-omFormodning.mp4",
+  "Barbara-omHilfe1": "Barbara-omHilfe1.mp4",
+  "Barbara-omHilfe2": "Barbara-omHilfe2.mp4",
+  "Barbara-omLaura": "Barbara-omLaura.mp4",
+  "Barbara-omMarie": "Barbara-omMarie.mp4",
+  "Barbara-omRyan": "Barbara-omRyan.mp4",
+  "Barbara-omRyanDie": "Barbara-omRyanDie.mp4",
+  "Barbara-VedIkke": "Barbara-VedIkke.mp4",
+  "David-omAlibi": "David-omAlibi.mp4",
+  "David-omBarbara": "David-omBarbara.mp4",
+  "David-omBarbaraOgComputere": "David-omBarbaraOgComputere.mp4",
+  "David-omDavid": "David-omDavid.mp4",
+  "David-omFormodning": "David-omFormodning.mp4",
+  "David-omLaura": "David-omLaura.mp4",
+  "David-omMarie": "David-omMarie.mp4",
+  "David-omRyan": "David-omRyan.mp4",
+  "David-omRyanDie": "David-omRyanDie.mp4",
+  "David-VedIkke": "David-VedIkke.mp4",
+  "Laura-omAlibi": "Laura-omAlibi.mp4",
+  "Laura-omBarbara": "Laura-omBarbara.mp4",
+  "Laura-omBarbaraOgRyan": "Laura-omBarbaraOgRyan.mp4",
+  "Laura-omDavid": "Laura-omDavid.mp4",
+  "Laura-omFormodning": "Laura-omFormodning.mp4",
+  "Laura-omLaura": "Laura-omLaura.mp4",
+  "Laura-omMarie": "Laura-omMarie.mp4",
+  "Laura-omRyan": "Laura-omRyan.mp4",
+  "Laura-omRyanDie": "Laura-omRyanDie.mp4",
+  LauraSuspekt: "LauraSuspekt.mp4",
+  "Laura-VedIkke": "Laura-VedIkke.mp4",
+  "Marie-Fortrolighed": "Marie-Fortrolighed.mp4",
+  "Marie-Fortrolighed2": "Marie-Fortrolighed2.mp4",
+  "Marie-omAlibi": "Marie-omAlibi.mp4",
+  "Marie-omBarbara": "Marie-omBarbara.mp4",
+  "Marie-omDavid": "Marie-omDavid.mp4",
+  "Marie-omFormodning": "Marie-omFormodning.mp4",
+  "Marie-omLaura": "Marie-omLaura.mp4",
+  "Marie-omMarie": "Marie-omMarie.mp4",
+  "Marie-omRyan": "Marie-omRyan.mp4",
+  "Marie-omRyanDie": "Marie-omRyanDie.mp4",
+  "Marie-VedIkke": "Marie-VedIkke.mp4",
+  "Peter-BeskyldBarbara1": "Peter-BeskyldBarbara1.mp4",
+  "Peter-BeskyldBarbara2": "Peter-BeskyldBarbara2.mp4",
+  "Peter-BeskyldBarbara3": "Peter-BeskyldBarbara3.mp4",
+  "Peter-BeskyldDavid1": "Peter-BeskyldDavid.mp4",
+  "Peter-BeskyldLaura1": "Peter-BeskyldLaura1.mp4",
+  "Peter-BeskyldLaura2": "Peter-BeskyldLaura2.mp4",
+  "Peter-BeskyldLaura3": "Peter-BeskyldLaura3.mp4",
+  "Peter-BeskyldMarie1": "Peter-BeskyldMarie.mp4",
+  "Peter-BeskyldMarie2": "Peter-BeskyldMarie2.mp4",
+  "Peter-GangGruppe": "Peter-GangGruppe.mp4",
+  "Peter-GangKantine": "Peter-GangKantine.mp4",
+  "Peter-GangLab": "Peter-GangLab.mp4",
+  "Peter-GangLaese": "Peter-GangLaese.mp4",
+  "Peter-omAlibi": "Peter-omAlibi.mp4",
+  "Peter-omBarbara": "Peter-omBarbara.mp4",
+  "Peter-omBarbaraOgComputere": "Peter-omBarbaraOgComputere.mp4",
+  "Peter-omBarbaraOgRyan": "Peter-omBarbaraOgRyan.mp4",
+  "Peter-omDavid": "Peter-omDavid.mp4",
+  "Peter-omFormodning": "Peter-omFormodning.mp4",
+  "Peter-omHalskaede": "Peter-omHalskaede.mp4",
+  "Peter-omLaura": "Peter-omLaura.mp4",
+  "Peter-omMarie": "Peter-omMarie.mp4",
+  "Peter-omPeter": "Peter-omPeter.mp4",
+  "Peter-omRyan": "Peter-omRyan.mp4",
+  "Peter-omRyanDie": "Peter-omRyanDatid.mp4",
+  "Peter-omRyanOgMarie": "Peter-omRyanOgMarie.mp4",
+  "Ryan-Advarsel1": "Ryan-Advarsel1.mp4",
+  "Ryan-Advarsel2": "Ryan-Advarsel2.mp4",
+  "Ryan-omBarbara": "Ryan-omBarbara.mp4",
+  "Ryan-omDavid": "Ryan-omDavid.mp4",
+  "Ryan-omLaura": "Ryan-omLaura.mp4",
+  "Ryan-omMarie": "Ryan-omMarie.mp4",
+  "Ryan-omRyan": "Ryan-omRyan.mp4",
+  "Ryan-omSara": "Ryan-omSara.mp4",
+  "Ryan-omSaraOgDavid": "Ryan-omSaraOgDavid.mp4",
+  "Ryan-omSaraOgLaura": "Ryan-omSaraOgLaura.mp4",
+  "Ryan-VedIkke": "Ryan-VedIkke.mp4",
+} as const;
+
+export type VideoClipId = keyof typeof VIDEO_FILES;
+
+export const VIDEO_CLIP_IDS = Object.keys(VIDEO_FILES) as VideoClipId[];
+
+export function resolveVideoMember(clipId: VideoClipId): string {
+  return VIDEO_FILES[clipId].replace(/\.mp4$/, "");
 }
 
-export function getVideoUrl(memberName: string): string {
-  const fileName = resolveVideoMember(memberName);
-  return `/Video/${encodeURIComponent(fileName)}.mp4`;
+export function getVideoUrl(
+  clipId: VideoClipId,
+  baseUrl?: string,
+): string {
+  return getPublicUrl(
+    `Video/${encodeURIComponent(VIDEO_FILES[clipId])}`,
+    baseUrl,
+  );
 }

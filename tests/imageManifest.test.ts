@@ -1,3 +1,5 @@
+import { readdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { SCENES } from "../src/game/sceneRegistry";
 import {
@@ -5,6 +7,7 @@ import {
   FILM_LOOP_FRAMES,
   getImageUrl,
   getSceneBackgroundUrl,
+  IMAGE_MEMBERS,
 } from "../src/media/imageManifest";
 
 describe("image asset manifest", () => {
@@ -17,9 +20,12 @@ describe("image asset manifest", () => {
     expect(urls.at(-1)).toBe("/assets/images/sektorE4.png");
   });
 
-  it("keeps Director cast names intact in URLs", () => {
+  it("keeps Director cast names intact and respects the app base path", () => {
     expect(getImageUrl("sektorB2-RyanBarbara1")).toBe(
       "/assets/images/sektorB2-RyanBarbara1.png",
+    );
+    expect(getImageUrl("sektorB2-RyanBarbara1", "/saving-ryan/")).toBe(
+      "/saving-ryan/assets/images/sektorB2-RyanBarbara1.png",
     );
   });
 
@@ -31,7 +37,7 @@ describe("image asset manifest", () => {
     ]);
   });
 
-  it("records all 12 legacy film loops and their component frames", () => {
+  it("records all 12 legacy film loops with typed component frames", () => {
     expect(Object.keys(FILM_LOOP_FRAMES)).toHaveLength(12);
     expect(FILM_LOOP_FRAMES.LoopA1).toEqual([
       "sektorA1-Laura1",
@@ -39,5 +45,19 @@ describe("image asset manifest", () => {
       "sektorA1-Laura3",
     ]);
     expect(FILM_LOOP_FRAMES.LoopC4).toHaveLength(2);
+  });
+
+  it("matches the complete PNG directory without missing or unused files", () => {
+    const imageDirectory = fileURLToPath(
+      new URL("../public/assets/images", import.meta.url),
+    );
+    const actualMembers = readdirSync(imageDirectory)
+      .filter((fileName) => fileName.endsWith(".png"))
+      .map((fileName) => fileName.replace(/\.png$/, ""))
+      .sort();
+
+    expect(IMAGE_MEMBERS).toHaveLength(93);
+    expect(new Set(IMAGE_MEMBERS).size).toBe(93);
+    expect([...IMAGE_MEMBERS].sort()).toEqual(actualMembers);
   });
 });

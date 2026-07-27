@@ -53,7 +53,8 @@ Spillet.dir
         v
 20 scene markers A1..E4
   move: change A..E and retain 1..4
-  wait: retain A..E and advance 1..4
+  wait: retain the source scene while narration/special sequences run
+  complete transition: retain A..E and advance 1..4
   4 -> 1: begin another day, retain investigation knowledge
 ```
 
@@ -152,51 +153,36 @@ Start with layered DOM elements rather than committing the whole game to a canva
 - canvas can still be added for a specific visual effect, but should not own game
   logic or accessibility.
 
-## New global state contract
+## Current global state contract
 
 The old globals should be replaced by explicit, serializable state. The exact names
 can evolve, but the separation between permanent knowledge and per-loop state is
 essential.
 
 ```ts
-type AppPhase =
-  | "intro"
-  | "exploration"
-  | "dialogue"
-  | "cutscene"
-  | "accusation"
-  | "ending";
-
-type LocationId = "A" | "B" | "C" | "D" | "E";
-type TimeSlot = 1 | 2 | 3 | 4;
-
 interface GameState {
+  version: 1;
   phase: AppPhase;
   location: LocationId;
   timeSlot: TimeSlot;
   loop: number;
 
-  // Persists when time wraps from slot 4 to slot 1.
-  knowledge: Record<KnowledgeId, KnowledgeStatus>;
+  // Simple known/unknown facts persist across loops.
+  knowledge: Record<KnowledgeId, boolean>;
 
-  // Resets or changes as a new day begins.
   loopState: {
-    seenTransitions: string[];
-    activeCharacters: CharacterId[];
+    seenTransitions: SceneId[];
   };
 
-  dialogue: {
-    person: CharacterId | null;
-    returnScene: SceneId | null;
-    askedTopics: string[];
-  };
-
-  media: {
-    activeVideo: string | null;
-    queuedVideos: string[];
-  };
+  // The source scene remains active until narration and any special sequence
+  // have completed.
+  pendingTransition: PendingTransition | null;
 }
 ```
+
+Dialogue progress and transient media state are deliberately not speculated into
+this contract yet. The dialogue phase will introduce typed option IDs and explicit
+repeat rules. Runtime media state will not be serialized as durable game progress.
 
 Use semantic knowledge IDs such as:
 
@@ -216,9 +202,9 @@ Use semantic knowledge IDs such as:
 - `necklace_connects_laura_to_scene`
 - `laura_confessed`
 
-Do not carry forward `"Nej"`, `"Ah"`, and `"Ok"` as magic strings. Use an enum such
-as `"unknown" | "discovered" | "confirmed"` only where multiple stages are genuinely
-required.
+Do not carry forward `"Nej"`, `"Ah"`, and `"Ok"` as magic strings. Simple facts are
+booleans. Barbara's legacy `"Ah"` helper state is a specific multi-step sequence
+and will be modelled separately rather than generalized to all knowledge.
 
 ## Legacy Lingo-to-web mapping
 
@@ -255,6 +241,8 @@ Implement one `VideoPlayer` service that:
 Media audit results:
 
 - 81 MP4 files are present;
+- the manifest is a closed `VideoClipId` catalogue and tests it against the
+  complete directory;
 - all 81 contain H.264 video at 352×288 with `yuv420p`;
 - all contain mono AAC audio;
 - 79 use 32 kHz audio and 2 use 44.1 kHz audio;
@@ -301,6 +289,7 @@ Current extraction status:
 - `BlankPortrait`, `titel-ryan`, and `titel-saving` were decoded from the Director
   casts because BMP sources were absent;
 - 93 PNG derivatives are available under `public/assets/images/`;
+- the PNG manifest is closed and file-validated, including typed film-loop frames;
 - all 20 A1–E4 background photographs are connected to the exploration stage;
 - the 12 film-loop frame groups are identified, while placement and timing still
   await score translation.

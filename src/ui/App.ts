@@ -197,12 +197,35 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
 }
 
 export function mountApp(root: HTMLElement, store: GameStore): () => void {
-  return store.subscribe((state) => {
+  const appView = document.createElement("div");
+  appView.dataset.appView = "";
+
+  const mediaHost = document.createElement("section");
+  mediaHost.className = "media-host";
+  mediaHost.dataset.mediaHost = "";
+  mediaHost.hidden = true;
+  mediaHost.setAttribute("aria-label", "Videoafspiller");
+
+  const video = document.createElement("video");
+  video.dataset.videoPlayer = "";
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  mediaHost.append(video);
+
+  root.replaceChildren(appView, mediaHost);
+
+  const unsubscribe = store.subscribe((state) => {
     if (state.phase === "intro") {
-      renderIntro(root, store);
+      renderIntro(appView, store);
       return;
     }
 
-    renderExploration(root, state, store);
+    renderExploration(appView, state, store);
   });
+
+  return () => {
+    unsubscribe();
+    root.replaceChildren();
+  };
 }

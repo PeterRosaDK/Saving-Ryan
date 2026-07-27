@@ -1,6 +1,9 @@
 import type { SceneId } from "../app/types";
 
-// Recovered from "Script Vent" in Legacy/Spillet.dir.
+// Editorially normalized display copy based on "Script Vent" in Spillet.dir.
+// It is not a verbatim transcription. The unedited Lingo remains in
+// Legacy/Decompiled/DirectorDump.txt so conversion and editorial changes can be
+// reviewed separately.
 export const TRANSITION_TEXT: Readonly<Record<SceneId, string>> = {
   A1: "Laura rejser sig og går ud mod gangen.",
   A2: "Pludselig hører du Ryans stemme. Et øjeblik senere falder han ned fra afsatsen.",
