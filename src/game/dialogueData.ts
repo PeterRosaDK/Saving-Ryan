@@ -192,7 +192,6 @@ function getSpecialChoices(
           ? {
               effects: [
                 { type: "LEARN", id: "laura_confessed" },
-                { type: "LEARN", id: "secret_passage_exists" },
               ],
             }
           : {},

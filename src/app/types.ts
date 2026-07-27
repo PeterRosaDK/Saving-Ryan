@@ -72,6 +72,8 @@ export type SceneInteractionId =
   | "witness_laura_computer_activity"
   | "inspect_ryans_body_and_necklace"
   | "inspect_girlfriend_letter"
+  | "eavesdrop_barbara_and_ryan"
+  | "inspect_secret_passage_book"
   | "inspect_barbaras_computer";
 
 export type SceneInteractionTrigger = "enter" | "manual" | "wait";

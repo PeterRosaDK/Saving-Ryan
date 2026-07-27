@@ -15,7 +15,7 @@ The first conversion slice is underway:
   before the time slot changes;
 - knowledge persists when evening wraps into another morning;
 - intro completion establishes the murder knowledge required by the investigation;
-- the first five legacy clues use typed, declarative scene interactions;
+- verified legacy clues use typed, declarative scene interactions;
 - Director dialogue choices are a closed, typed catalogue with prerequisites,
   time-sensitive clips, repeat history, and explicit dead ends;
 - the intended Laura motive/evidence route is an executable semantic knowledge
@@ -82,5 +82,5 @@ tools/        Director inspection and asset conversion utilities
 
 The current interface renders the original room photographs, primitive character
 animations, score-positioned hotspots, clocks, and dialogue portraits. The next
-scene-restoration work is to connect the still-unmodelled legacy special hotspots,
-including listening under the table and the book/secret passage.
+canonical Laura work is to connect the discovered passage to the next-loop
+prevention and ending boundary.

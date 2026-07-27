@@ -30,6 +30,11 @@ Slot 16 is deliberately a multi-step dialogue status, not a boolean fact.
 Slots absent from the decompiled handlers have not been given speculative
 meanings.
 
+Slots 6 and 18 are now set by their original scene actions: listening under the
+table in B2 and pulling the book hotspot in C1–C4. Laura's confession does not
+set slot 18; passage discovery remains an independent, physically available
+investigation branch as described by the report.
+
 ## Normalized Director defects
 
 - The missing `Dialog()` call in Ryan's self-topic no longer suppresses the

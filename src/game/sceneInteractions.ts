@@ -92,6 +92,30 @@ export const SCENE_INTERACTIONS = {
       "Koden Intruder virker. I Barbaras filer finder du ændrede eksamenskarakterer.",
     ),
   },
+  eavesdrop_barbara_and_ryan: {
+    id: "eavesdrop_barbara_and_ryan",
+    scenes: ["B2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Kryb ind under bordet og lyt",
+    requires: [],
+    effects: [{ type: "LEARN", id: "barbara_and_ryan_argued" }],
+    cue: textCue(
+      "Du kravler ind under bordet og overværer et skænderi mellem Ryan og Barbara. Det lyder, som om Ryan afpresser Barbara.",
+    ),
+  },
+  inspect_secret_passage_book: {
+    id: "inspect_secret_passage_book",
+    scenes: ["C1", "C2", "C3", "C4"],
+    kind: "special",
+    trigger: "manual",
+    label: "Kig nærmere på bogen",
+    requires: [],
+    effects: [{ type: "LEARN", id: "secret_passage_exists" }],
+    cue: textCue(
+      "Du hiver i bogen og opdager pludselig, at den i virkeligheden er en mystisk kontakt, der aktiverer en hemmelig dørmekanisme. En skydedør glider til side.",
+    ),
+  },
 } as const satisfies Record<SceneInteractionId, SceneInteraction>;
 
 export function getSceneInteraction(

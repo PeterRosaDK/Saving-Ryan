@@ -150,6 +150,29 @@ describe("legacy game state", () => {
     expect(bodyInspected.knowledge.killer_dropped_necklace).toBe(true);
   });
 
+  it("connects the B2 eavesdropping and C-room book hotspots", () => {
+    const atB2: GameState = {
+      ...finishIntro(),
+      location: "B",
+      timeSlot: 2,
+    };
+    const eavesdropped = reduceGameState(atB2, {
+      type: "PERFORM_INTERACTION",
+      id: "eavesdrop_barbara_and_ryan",
+    });
+    expect(eavesdropped.knowledge.barbara_and_ryan_argued).toBe(true);
+
+    const atC2: GameState = {
+      ...eavesdropped,
+      location: "C",
+    };
+    const passageFound = reduceGameState(atC2, {
+      type: "PERFORM_INTERACTION",
+      id: "inspect_secret_passage_book",
+    });
+    expect(passageFound.knowledge.secret_passage_exists).toBe(true);
+  });
+
   it("preserves learned facts when evening wraps into another morning", () => {
     let state: GameState = {
       ...finishIntro(),

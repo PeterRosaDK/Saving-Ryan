@@ -81,6 +81,19 @@ describe("verified scene content", () => {
     expect(getScenePresentation("B1").interactions).toEqual([]);
   });
 
+  it("places the remaining special hotspots at their Director coordinates", () => {
+    expect(getScenePresentation("B2").interactions).toContainEqual({
+      interactionId: "eavesdrop_barbara_and_ryan",
+      rect: { x: 445, y: 235, width: 146, height: 118 },
+    });
+    for (const sceneId of ["C1", "C2", "C3", "C4"] as const) {
+      expect(getScenePresentation(sceneId).interactions).toContainEqual({
+        interactionId: "inspect_secret_passage_book",
+        rect: { x: 117, y: 294, width: 14, height: 46 },
+      });
+    }
+  });
+
   it("represents unfinished inspect scenes as text cues", () => {
     expect(getSceneInteraction("inspect_girlfriend_letter").cue).toEqual({
       kind: "text",
@@ -89,6 +102,14 @@ describe("verified scene content", () => {
     expect(getSceneInteraction("inspect_barbaras_computer").cue).toEqual({
       kind: "text",
       text: "Koden Intruder virker. I Barbaras filer finder du ændrede eksamenskarakterer.",
+    });
+    expect(getSceneInteraction("eavesdrop_barbara_and_ryan").cue).toEqual({
+      kind: "text",
+      text: "Du kravler ind under bordet og overværer et skænderi mellem Ryan og Barbara. Det lyder, som om Ryan afpresser Barbara.",
+    });
+    expect(getSceneInteraction("inspect_secret_passage_book").cue).toEqual({
+      kind: "text",
+      text: "Du hiver i bogen og opdager pludselig, at den i virkeligheden er en mystisk kontakt, der aktiverer en hemmelig dørmekanisme. En skydedør glider til side.",
     });
   });
 

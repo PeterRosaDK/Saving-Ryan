@@ -435,6 +435,9 @@ Current foundation:
   per-tick frame changes;
 - the letter, body/necklace, and password-protected Barbara-computer inspections
   are playable, with text cues standing in for unfinished presentation;
+- the B2 table and C1–C4 book hotspots use their original score rectangles and
+  recovered Director text, unlocking the Barbara/Ryan conflict and secret
+  passage facts respectively;
 - Barbara's computer is available in score-confirmed scenes B2/B3 and cannot
   reveal the forged grades until David has supplied the `Intruder` clue.
 
@@ -469,8 +472,11 @@ Current completion:
   Laura's confession;
 - `LauraSuspekt` is connected to the B4 transition and `BarbaraHacker` remains
   the second stage of Barbara's help;
-- passage interaction, next-loop prevention, and epilogue presentation remain
-  the next canonical Laura work.
+- the book independently reveals the secret passage from every C scene, matching
+  Director's `BetingetLink[18]` behavior rather than treating it as an effect of
+  Laura's confession;
+- next-loop prevention and epilogue presentation remain the next canonical Laura
+  work.
 
 ### Phase 7 — Conversion hardening
 
@@ -502,9 +508,10 @@ Only after conversion parity:
    `BetingetLink[18]`. The web model must not reproduce this out-of-range defect.
 2. Several Lingo branches contain likely typos or incomplete IDs, including
    `VedIkk`, `Peter-omMarieOgRyan`, and legacy/member filename differences.
-3. The report says the secret passage should be physically available from the start
-   but nearly impossible to discover without knowledge. This should become an
-   explicit design rule, not an accidental tiny hotspot.
+3. The report says the secret passage should be physically available from the
+   start but nearly impossible to discover without knowledge. The web version
+   keeps the original narrow book rectangle while making it keyboard-focusable
+   and exposing its label on focus/rollover.
 4. `Video.dir` and `Billeder.dir` are referenced by old absolute Windows `.cst`
    paths. The web app must use manifests and relative URLs only.
 5. The Director score reports a very large channel count due to old-format parsing;

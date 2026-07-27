@@ -55,6 +55,10 @@ describe("playable Laura golden path", () => {
       type: "PERFORM_INTERACTION",
       id: "inspect_barbaras_computer",
     });
+    dispatch({
+      type: "PERFORM_INTERACTION",
+      id: "eavesdrop_barbara_and_ryan",
+    });
 
     wait();
     wait();
@@ -72,6 +76,10 @@ describe("playable Laura golden path", () => {
     closeDialogue();
 
     move("C");
+    dispatch({
+      type: "PERFORM_INTERACTION",
+      id: "inspect_secret_passage_book",
+    });
     talk("Ryan");
     ask("Ryan", "about_sarah");
     closeDialogue();
@@ -97,6 +105,7 @@ describe("playable Laura golden path", () => {
       barbara_is_computer_expert: true,
       barbara_hacker_alias_intruder: true,
       barbara_forged_grades: true,
+      barbara_and_ryan_argued: true,
       laura_hid_computer_activity: true,
       laura_owns_polar_bear_necklace: true,
       ryan_has_girlfriend_sarah: true,

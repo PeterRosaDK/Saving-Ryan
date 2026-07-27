@@ -12,6 +12,7 @@ export const INVESTIGATION_STEP_IDS = [
   "ask_ryan_about_sarah",
   "witness_ryan_bullying_marie",
   "eavesdrop_barbara_and_ryan",
+  "discover_secret_passage",
   "earn_maries_confidence",
   "observe_laura_at_computer",
   "get_barbaras_help",
@@ -69,6 +70,11 @@ export const INVESTIGATION_STEPS = {
     requires: [],
     effects: ["barbara_and_ryan_argued"],
   },
+  discover_secret_passage: {
+    id: "discover_secret_passage",
+    requires: [],
+    effects: ["secret_passage_exists"],
+  },
   earn_maries_confidence: {
     id: "earn_maries_confidence",
     requires: [
@@ -102,7 +108,7 @@ export const INVESTIGATION_STEPS = {
   accuse_laura: {
     id: "accuse_laura",
     requires: ["ryan_left_laura", "necklace_connects_laura_to_scene"],
-    effects: ["laura_confessed", "secret_passage_exists"],
+    effects: ["laura_confessed"],
   },
 } as const satisfies Record<InvestigationStepId, InvestigationStep>;
 

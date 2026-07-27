@@ -417,6 +417,7 @@ describe("legacy dialogue rules", () => {
       "read_sarah_letter",
       "ask_ryan_about_sarah",
       "witness_ryan_bullying_marie",
+      "discover_secret_passage",
       "earn_maries_confidence",
       "observe_barbara_programming",
       "ask_david_about_barbara",
@@ -445,6 +446,23 @@ describe("legacy dialogue rules", () => {
     expect(
       accusation.state.knowledge.secret_passage_exists,
     ).toBe(true);
+  });
+
+  it("keeps passage discovery independent from Laura's confession", () => {
+    const ready = learnKnowledge(
+      startedState({ timeSlot: 3 }),
+      ["ryan_left_laura", "necklace_connects_laura_to_scene"],
+    );
+    const accusation = executeDialogueChoice(
+      ready,
+      "Laura",
+      "accuse",
+    );
+
+    expect(accusation.state.knowledge.laura_confessed).toBe(true);
+    expect(
+      accusation.state.knowledge.secret_passage_exists,
+    ).toBe(false);
   });
 
   it("makes every required motive and evidence fact reachable", () => {

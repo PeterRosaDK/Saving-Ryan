@@ -189,13 +189,35 @@ const INTERACTIONS = {
     interactionId: "inspect_ryans_body_and_necklace",
     rect: hotspotRect(158, 383, 413, 119),
   }],
-  B2: [{
-    interactionId: "inspect_barbaras_computer",
-    rect: hotspotRect(283, 244, 94, 104),
-  }],
+  B2: [
+    {
+      interactionId: "inspect_barbaras_computer",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+    {
+      interactionId: "eavesdrop_barbara_and_ryan",
+      rect: hotspotRect(445, 235, 146, 118),
+    },
+  ],
   B3: [{
     interactionId: "inspect_barbaras_computer",
     rect: hotspotRect(283, 244, 94, 104),
+  }],
+  C1: [{
+    interactionId: "inspect_secret_passage_book",
+    rect: hotspotRect(117, 294, 14, 46),
+  }],
+  C2: [{
+    interactionId: "inspect_secret_passage_book",
+    rect: hotspotRect(117, 294, 14, 46),
+  }],
+  C3: [{
+    interactionId: "inspect_secret_passage_book",
+    rect: hotspotRect(117, 294, 14, 46),
+  }],
+  C4: [{
+    interactionId: "inspect_secret_passage_book",
+    rect: hotspotRect(117, 294, 14, 46),
   }],
   D4: [{
     interactionId: "inspect_girlfriend_letter",
