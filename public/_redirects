@@ -1,0 +1,3 @@
+/health /health/ready.json 200
+/health/live /health/live.json 200
+/health/ready /health/ready.json 200

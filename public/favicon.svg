@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Saving Ryan">
+  <rect width="512" height="512" rx="96" fill="#101414"/>
+  <circle cx="256" cy="256" r="190" fill="#18201f" stroke="#d8a244" stroke-width="16"/>
+  <text x="256" y="322" fill="#f28e7c" font-family="Georgia, serif" font-size="210" font-weight="700" text-anchor="middle">SR</text>
+</svg>
