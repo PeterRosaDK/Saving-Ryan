@@ -63,6 +63,7 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
   necklace_connects_laura_to_scene: "Halskæden forbinder Laura med gerningsstedet",
   laura_confessed: "Laura har tilstået",
   ryan_dismissed_warning: "Ryan afviser advarslen",
+  ryan_was_saved: "Mordet på Ryan er forhindret",
 };
 
 function button(
@@ -489,6 +490,49 @@ function renderDialogue(
     });
 }
 
+function renderEnding(
+  root: HTMLElement,
+  state: GameState,
+  store: GameStore,
+): void {
+  root.innerHTML = `
+    <main class="app-shell ending-shell">
+      <section class="ending-card" aria-labelledby="ending-title">
+        <div class="ending-image">
+          <img
+            src="${getSceneBackgroundUrl("A1")}"
+            alt="Kantinen efter det afværgede mord"
+          />
+        </div>
+        <div class="ending-copy">
+          <p class="eyebrow">Sagen er opklaret</p>
+          <h1 id="ending-title">Ryan er reddet</h1>
+          <p>
+            For første gang fortsætter dagen uden mordet. Jørgen kendte
+            motivet, beviset og vejen til afsatsen, og nåede derfor at
+            standse Laura, før hun kunne skubbe Ryan.
+          </p>
+          <p>
+            Tidsløkken har ført Jørgen tilbage til det øjeblik, hvor hans
+            viden kunne ændre udfaldet.
+          </p>
+          <dl class="status-strip ending-status">
+            <div><dt>Dage</dt><dd>${state.loop}</dd></div>
+            <div><dt>Udfald</dt><dd>Ryan lever</dd></div>
+          </dl>
+          <button class="primary-action" type="button" data-restart>
+            Spil igen fra introen
+          </button>
+        </div>
+      </section>
+    </main>
+  `;
+
+  root.querySelector("[data-restart]")?.addEventListener("click", () => {
+    store.dispatch({ type: "RESET_GAME" });
+  });
+}
+
 async function playSceneInteraction(
   interaction: SceneInteraction,
   store: GameStore,
@@ -575,6 +619,14 @@ function renderExploration(
     (interaction) =>
       canPerformSceneInteraction(state, interaction) ||
       interaction.blockedCue !== undefined,
+  );
+  const replacedInteractionIds = new Set(
+    manualInteractions.flatMap(
+      (interaction) => interaction.replaces ?? [],
+    ),
+  );
+  const visibleManualInteractions = manualInteractions.filter(
+    (interaction) => !replacedInteractionIds.has(interaction.id),
   );
   const transitionText = state.pendingTransition
     ? TRANSITION_TEXT[state.pendingTransition.transitionId]
@@ -681,7 +733,7 @@ function renderExploration(
   });
 
   presentation.interactions.forEach(({ interactionId, rect }) => {
-    const interaction = manualInteractions.find(
+    const interaction = visibleManualInteractions.find(
       ({ id }) => id === interactionId,
     );
     if (interaction) {
@@ -754,6 +806,11 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
 
     if (state.phase === "dialogue") {
       renderDialogue(appView, state, store, narrativeHost);
+      return;
+    }
+
+    if (state.phase === "ending") {
+      renderEnding(appView, state, store);
       return;
     }
 

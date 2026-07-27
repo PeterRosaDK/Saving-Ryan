@@ -505,6 +505,8 @@ describe("legacy dialogue rules", () => {
       "necklace_connects_laura_to_scene",
       "laura_confessed",
       "secret_passage_exists",
+      "ryan_dismissed_warning",
+      "ryan_was_saved",
     ];
 
     expect(

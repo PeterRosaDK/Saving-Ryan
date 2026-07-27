@@ -19,6 +19,7 @@ export const INVESTIGATION_STEP_IDS = [
   "inspect_murder_necklace",
   "warn_ryan",
   "accuse_laura",
+  "prevent_ryans_murder",
 ] as const;
 
 export type InvestigationStepId = (typeof INVESTIGATION_STEP_IDS)[number];
@@ -115,6 +116,15 @@ export const INVESTIGATION_STEPS = {
     id: "accuse_laura",
     requires: ["ryan_left_laura", "necklace_connects_laura_to_scene"],
     effects: ["laura_confessed", "secret_passage_exists"],
+  },
+  prevent_ryans_murder: {
+    id: "prevent_ryans_murder",
+    requires: [
+      "laura_confessed",
+      "secret_passage_exists",
+      "ryan_dismissed_warning",
+    ],
+    effects: ["ryan_was_saved"],
   },
 } as const satisfies Record<InvestigationStepId, InvestigationStep>;
 

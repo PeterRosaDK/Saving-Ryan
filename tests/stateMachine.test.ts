@@ -248,6 +248,67 @@ describe("legacy game state", () => {
     expect(nextDay.loopState.seenTransitions).toEqual([]);
   });
 
+  it("only completes the story from the morning passage with confession, passage, and warning knowledge", () => {
+    const atPassage: GameState = {
+      ...finishIntro(),
+      location: "C",
+      timeSlot: 1,
+      loop: 2,
+    };
+    const withoutCase = reduceGameState(atPassage, {
+      type: "PERFORM_INTERACTION",
+      id: "prevent_ryans_murder",
+    });
+    expect(withoutCase).toBe(atPassage);
+
+    const ready: GameState = {
+      ...atPassage,
+      knowledge: {
+        ...atPassage.knowledge,
+        laura_confessed: true,
+        secret_passage_exists: true,
+        ryan_dismissed_warning: true,
+      },
+    };
+    const ending = reduceGameState(ready, {
+      type: "PERFORM_INTERACTION",
+      id: "prevent_ryans_murder",
+    });
+
+    expect(ending.phase).toBe("ending");
+    expect(ending.knowledge.ryan_was_saved).toBe(true);
+    expect(
+      reduceGameState(ending, {
+        type: "PERFORM_INTERACTION",
+        id: "prevent_ryans_murder",
+      }),
+    ).toBe(ending);
+  });
+
+  it("does not run the prevention interaction outside C1", () => {
+    const atC2: GameState = {
+      ...finishIntro(),
+      location: "C",
+      timeSlot: 2,
+    };
+    const ready: GameState = {
+      ...atC2,
+      knowledge: {
+        ...atC2.knowledge,
+        laura_confessed: true,
+        secret_passage_exists: true,
+        ryan_dismissed_warning: true,
+      },
+    };
+
+    expect(
+      reduceGameState(ready, {
+        type: "PERFORM_INTERACTION",
+        id: "prevent_ryans_murder",
+      }),
+    ).toBe(ready);
+  });
+
   it("rejects exploration actions outside exploration or during a transition", () => {
     const intro = createInitialGameState();
     expect(reduceGameState(intro, { type: "WAIT" })).toBe(intro);

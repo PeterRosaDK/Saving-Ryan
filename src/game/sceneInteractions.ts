@@ -27,6 +27,8 @@ export interface SceneInteraction {
   cue?: NarrativeCue;
   blockedCue?: NarrativeCue;
   specialSequence?: SpecialSequenceId;
+  replaces?: readonly SceneInteractionId[];
+  concludesStory?: boolean;
 }
 
 export const SCENE_INTERACTIONS = {
@@ -138,6 +140,24 @@ export const SCENE_INTERACTIONS = {
     cue: textCue(
       "Du hiver i bogen og opdager pludselig, at den i virkeligheden er en mystisk kontakt, der aktiverer en hemmelig dørmekanisme. En skydedør glider til side.",
     ),
+  },
+  prevent_ryans_murder: {
+    id: "prevent_ryans_murder",
+    scenes: ["C1"],
+    kind: "special",
+    trigger: "manual",
+    label: "Brug passagen og stands Laura",
+    requires: [
+      "laura_confessed",
+      "secret_passage_exists",
+      "ryan_dismissed_warning",
+    ],
+    effects: [{ type: "LEARN", id: "ryan_was_saved" }],
+    cue: textCue(
+      "Du trækker i bogen, åbner den skjulte dør og følger passagen op mod afsatsen. Denne gang når du frem først. Da Laura viser sig, står du allerede mellem hende og Ryan. Du griber ind, før hun kan nå ham, og hendes skjulte rute er afsløret. Ryan bliver ikke skubbet.",
+    ),
+    replaces: ["inspect_secret_passage_book"],
+    concludesStory: true,
   },
 } as const satisfies Record<SceneInteractionId, SceneInteraction>;
 

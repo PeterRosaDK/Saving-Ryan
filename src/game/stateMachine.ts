@@ -166,7 +166,13 @@ export function reduceGameState(
         return state;
       }
 
-      return applyEffects(state, interaction.effects);
+      const nextState = applyEffects(state, interaction.effects);
+      return interaction.concludesStory
+        ? {
+            ...nextState,
+            phase: "ending",
+          }
+        : nextState;
     }
 
     case "START_DIALOGUE": {

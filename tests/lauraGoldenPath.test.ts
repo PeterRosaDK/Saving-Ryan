@@ -7,7 +7,7 @@ import type {
 import { reduceGameState } from "../src/game/stateMachine";
 
 describe("playable Laura golden path", () => {
-  it("reaches Laura's confession through placed scenes and dialogue", () => {
+  it("plays from the intro through confession and a later-loop prevention to the epilogue", () => {
     let state = createInitialGameState();
     const dispatch = (action: GameAction): void => {
       state = reduceGameState(state, action);
@@ -76,10 +76,6 @@ describe("playable Laura golden path", () => {
     closeDialogue();
 
     move("C");
-    dispatch({
-      type: "PERFORM_INTERACTION",
-      id: "inspect_secret_passage_book",
-    });
     talk("Ryan");
     ask("Ryan", "about_sarah");
     closeDialogue();
@@ -100,6 +96,7 @@ describe("playable Laura golden path", () => {
     });
     talk("Laura");
     ask("Laura", "accuse");
+    closeDialogue();
 
     expect(state.knowledge).toMatchObject({
       barbara_is_computer_expert: true,
@@ -117,5 +114,28 @@ describe("playable Laura golden path", () => {
       laura_confessed: true,
       secret_passage_exists: true,
     });
+
+    wait();
+    wait();
+    expect(state.loop).toBe(3);
+    expect(state.timeSlot).toBe(1);
+
+    move("C");
+    talk("Ryan");
+    ask("Ryan", "warn_ryan");
+    closeDialogue();
+    expect(state.knowledge.ryan_dismissed_warning).toBe(true);
+
+    dispatch({
+      type: "PERFORM_INTERACTION",
+      id: "prevent_ryans_murder",
+    });
+
+    expect(state.phase).toBe("ending");
+    expect(state.knowledge.ryan_was_saved).toBe(true);
+    expect(state.knowledge.laura_confessed).toBe(true);
+
+    dispatch({ type: "RESET_GAME" });
+    expect(state).toEqual(createInitialGameState());
   });
 });

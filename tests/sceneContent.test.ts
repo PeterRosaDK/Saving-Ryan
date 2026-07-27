@@ -98,6 +98,10 @@ describe("verified scene content", () => {
         rect: { x: 117, y: 294, width: 14, height: 46 },
       });
     }
+    expect(getScenePresentation("C1").interactions).toContainEqual({
+      interactionId: "prevent_ryans_murder",
+      rect: { x: 117, y: 294, width: 14, height: 46 },
+    });
     for (const sceneId of ["D1", "D2", "D3", "D4"] as const) {
       expect(getScenePresentation(sceneId).interactions).toContainEqual({
         interactionId: "inspect_girlfriend_letter",
@@ -175,6 +179,37 @@ describe("verified scene content", () => {
     expect(
       canPerformSceneInteraction(
         learnKnowledge(initial, ["barbara_hacker_alias_intruder"]),
+        interaction,
+      ),
+    ).toBe(true);
+  });
+
+  it("only makes the passage a prevention route after the complete case and warning", () => {
+    const interaction = getSceneInteraction("prevent_ryans_murder");
+    const initial = createInitialGameState();
+
+    expect(interaction).toMatchObject({
+      scenes: ["C1"],
+      replaces: ["inspect_secret_passage_book"],
+      concludesStory: true,
+    });
+    expect(canPerformSceneInteraction(initial, interaction)).toBe(false);
+    expect(
+      canPerformSceneInteraction(
+        learnKnowledge(initial, [
+          "laura_confessed",
+          "secret_passage_exists",
+        ]),
+        interaction,
+      ),
+    ).toBe(false);
+    expect(
+      canPerformSceneInteraction(
+        learnKnowledge(initial, [
+          "laura_confessed",
+          "secret_passage_exists",
+          "ryan_dismissed_warning",
+        ]),
         interaction,
       ),
     ).toBe(true);

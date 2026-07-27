@@ -1,4 +1,4 @@
-export type AppPhase = "intro" | "exploration" | "dialogue";
+export type AppPhase = "intro" | "exploration" | "dialogue" | "ending";
 
 export type LocationId = "A" | "B" | "C" | "D" | "E";
 
@@ -25,6 +25,7 @@ export const KNOWLEDGE_IDS = [
   "necklace_connects_laura_to_scene",
   "laura_confessed",
   "ryan_dismissed_warning",
+  "ryan_was_saved",
 ] as const;
 
 export type KnowledgeId = (typeof KNOWLEDGE_IDS)[number];
@@ -75,6 +76,7 @@ export type SceneInteractionId =
   | "inspect_girlfriend_letter"
   | "eavesdrop_barbara_and_ryan"
   | "inspect_secret_passage_book"
+  | "prevent_ryans_murder"
   | "inspect_barbaras_computer";
 
 export type SceneInteractionTrigger = "enter" | "manual" | "wait";
