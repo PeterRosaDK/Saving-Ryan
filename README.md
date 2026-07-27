@@ -21,6 +21,9 @@ The first conversion slice is underway:
 - all 81 Director video members and 93 PNG members are closed, file-validated
   catalogues;
 - the persistent media host is isolated from ordinary gameplay rerenders.
+- the abort-safe `VideoPlayer` distinguishes completion, skip, autoplay blocking,
+  missing media, network/decode failures, and cancellation; dialogue orchestration
+  is the next integration step.
 
 See [roadmap.md](roadmap.md) for the complete migration plan.
 The image comparison and provenance notes are in

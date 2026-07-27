@@ -238,6 +238,18 @@ Implement one `VideoPlayer` service that:
 6. can play question and answer clips sequentially;
 7. restores the portrait/dialogue state after playback.
 
+Current foundation:
+
+- one persistent `<video>` element lives outside ordinary gameplay rerenders;
+- `VideoPlayer` uses a per-playback token, removes old listeners, and aborts a
+  previous session before starting another;
+- loading, playing, ended, skipped, autoplay-blocked, missing-media,
+  network-error, decode-error, and aborted are explicit states;
+- ended and skipped are distinct results, so dialogue data can define whether a
+  skipped clip still applies its effects;
+- sequential question/answer orchestration and the dialogue UI are not connected
+  yet.
+
 Media audit results:
 
 - 81 MP4 files are present;
