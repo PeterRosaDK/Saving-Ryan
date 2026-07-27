@@ -42,6 +42,13 @@ directories. Their casts, markers, and compiled Lingo were inspected directly.
 | `Legacy/Video.dir` | Video cast/catalogue | 81 named video members; no Lingo and no score |
 | `Legacy/Billeder.dir` | Image and animation cast | 86 members: room images, portraits, clocks, buttons, and Director film loops; no Lingo |
 
+A later recovered working copy was audited after phases 8 and 9. It retains the
+same story conditions and 81 video members, but adds eight music masters, a clock
+sound, a blue stage background, toolbar art, cursor art, help/playback scripts,
+and a 581-frame intro with a final group picture. Safe presentation improvements
+have been ported without replacing the tagged legacy baseline. See
+[`docs/legacy-fresh-audit.md`](docs/legacy-fresh-audit.md).
+
 The project report confirms the same design:
 
 - five locations × four times of day = 20 explorable scenes;
@@ -335,7 +342,8 @@ Current extraction status:
 - they cover 73 of the 74 bitmap members in `Billeder.dir`;
 - `BlankPortrait`, `titel-ryan`, and `titel-saving` were decoded from the Director
   casts because BMP sources were absent;
-- 93 PNG derivatives are available under `public/assets/images/`;
+- 109 PNG derivatives are available under `public/assets/images/`, including 16
+  interface/intro assets from the later recovered build;
 - the PNG manifest is closed and file-validated, including typed film-loop frames;
 - all 20 A1–E4 background photographs are connected at the Director score's
   640×480 rectangle inside the logical 800×600 stage;
@@ -415,8 +423,9 @@ Exit criterion: launch → intro → initialized A1 game scene works reliably.
 
 Current completion:
 
-- the 535-frame score timing, title art, six cast cards, and recovered placement
-  are represented declaratively;
+- the tagged baseline's 535-frame score was represented declaratively, then
+  extended to the later recovered 581-frame score with larger portraits and
+  `intro-slut`;
 - the original 30.444-second `intro` sound is extracted reproducibly from the
   Director split-sound chunks;
 - explicit play/skip controls satisfy browser autoplay rules and both hand off
@@ -598,6 +607,34 @@ disposition, timed dialogue, the optional richer A2 perspective, and
 case-specific event resolution are not required by the current Laura case and
 remain deferred until concrete later content needs them.
 
+### Later-build recovery — Completed
+
+Before alternative cases:
+
+- compare the readable later `spillet_decompiled.dir` and
+  `intro_decompiled.dir` movies against the restored web behavior, using their
+  compiled counterparts only as controls;
+- verify whether dialogue conditions, video footage, or scene art changed;
+- preserve and integrate the recovered music and interface assets;
+- keep uncertain historical mappings explicit and replaceable.
+
+Completed:
+
+- all shared room and character BMPs are unchanged, and no new video footage was
+  found;
+- the core dialogue-condition script is unchanged;
+- the blue background, toolbar, help frame, longer intro, music controls, clock
+  sound, and eight music masters are preserved in the web project;
+- five tracks are provisionally assigned by location, while tracks 36–38 remain
+  deliberately unmapped because the Director score contains no surviving
+  assignment;
+- music loops, can be muted, and ducks during narrative media;
+- a later `LauraSuspekt` regression was rejected in favor of the earlier,
+  knowledge-producing behavior.
+
+The source comparison, uncertainties, and reproducibility boundary are recorded
+in [`docs/legacy-fresh-audit.md`](docs/legacy-fresh-audit.md).
+
 ### Phase 10 — Add curated alternative cases
 
 Only after Laura is stable as the reference implementation:
@@ -609,7 +646,8 @@ Only after Laura is stable as the reference implementation:
 
 ### Later production improvements
 
-- improve sound and music;
+- audition and authoritatively identify the recovered music order;
+- create enhanced music derivatives while retaining the recovered masters;
 - broaden dialogue and alternative investigations;
 - commission or generate new assets with a documented art direction.
 

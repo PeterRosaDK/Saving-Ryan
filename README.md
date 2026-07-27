@@ -12,7 +12,9 @@ expanded time-loop mechanics are complete:
 - legacy Director files and the original report are preserved in `Legacy/`;
 - converted MP4 files are served from `public/Video/`;
 - 90 supplied BMP originals are preserved in `Legacy/Billeder/`;
-- 93 web-ready PNG assets are served from `public/assets/images/`;
+- 109 web-ready PNG assets are served from `public/assets/images/`;
+- eight recovered location-music masters and the original clock sound are served
+  from `public/assets/audio/`;
 - the A1–E4 location/time model is implemented as a typed state machine;
 - waiting is a two-step transition, so narration and special sequences complete
   before the time slot changes;
@@ -55,11 +57,17 @@ expanded time-loop mechanics are complete:
   characters, inspections, and the wait clock;
 - all 12 original film loops run as layered bitmap animations using their
   recovered 87-tick Director timelines;
-- all 81 Director video members and 93 PNG members are closed, file-validated
+- all 81 Director video members and 109 PNG members are closed, file-validated
   catalogues;
 - the two-frame body/necklace and trash/letter still sequences are restored;
 - Barbara's computer reproduces both the original locked and unlocked text;
-- the 535-frame intro uses the original title/credit images and extracted sound;
+- the later 581-frame intro uses the original title/credit images, recovered
+  group ending, and extracted sound;
+- the later Director interface supplies the blue stage background plus help,
+  music, and quit controls;
+- recovered music loops per location, ducks during narrative media, and can be
+  muted; the historical track order is isolated as a provisional mapping because
+  the saved Director score no longer contains it;
 - the persistent narrative host is isolated from ordinary gameplay rerenders and
   accepts video, Director still sequences, and intentional text-only cues;
 - the abort-safe `VideoPlayer` distinguishes completion, skip, autoplay blocking,
@@ -72,8 +80,10 @@ Dialogue normalization and conditional-link provenance are in
 [docs/dialogue-rules.md](docs/dialogue-rules.md).
 The parity boundary, remaining unknowns, and original Laura gaps are in
 [docs/legacy-restoration-status.md](docs/legacy-restoration-status.md).
-The recovered intro sound and missing production music are inventoried in
+The recovered intro, location music, and clock sound are inventoried in
 [docs/audio-assets.md](docs/audio-assets.md).
+The complete comparison with the later recovered Director working copy is in
+[docs/legacy-fresh-audit.md](docs/legacy-fresh-audit.md).
 The phase 8 knowledge gate, reconstructed bridges, ending, and unused-asset
 decisions are in
 [docs/canonical-laura-completion.md](docs/canonical-laura-completion.md).
@@ -103,7 +113,7 @@ Asset and Director inspection commands are documented under
 Legacy/       original Director movies and project report
 public/Video/ browser-ready MP4 files
 public/assets/ web-ready image derivatives
-public/assets/audio/ extracted Director intro sound
+public/assets/audio/ extracted Director intro, music, and effects
 src/app/      global state and store
 src/game/     scene registry, interactions, transitions, and state machine
 src/media/    media manifests and compatibility aliases

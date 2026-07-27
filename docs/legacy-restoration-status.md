@@ -11,11 +11,18 @@ This parity snapshot is preserved by the annotated tag
 after that baseline in phase 8 and are documented separately in
 `docs/canonical-laura-completion.md`.
 
+A later working copy was subsequently recovered from old hard disks. It adds
+music and interface polish but does not invalidate this tag: the tag remains the
+baseline for the originally supplied build. The later comparison and selectively
+ported presentation improvements are documented in
+`docs/legacy-fresh-audit.md`.
+
 ## Restored runtime
 
 ### Intro
 
-- The 535-frame, 20 fps `Intro.dir` score is represented by the original title,
+- At the tagged baseline, the 535-frame, 20 fps `Intro.dir` score is represented
+  by the original title,
   cast-credit, and half-character bitmaps.
 - The six credit sections begin at their recovered score frames: Barbara/Jane
   61, David/Søren 135, Marie/Bodil 210, Jørgen/Peter 285, Laura/Signe 360, and
@@ -105,9 +112,9 @@ tested, and do not require the deferred time/case abstractions.
   `Peter-GangLaese` exist in the video cast but have no recovered Lingo
   references. Their audio is quiet walking/location production sound, not the
   additional music mentioned in the report.
-- The report says that a couple of sparse, single-instrument pieces had been
-  composed, but the supplied Director files contain only the `intro` sound
-  member. No separate location-music sources survive in the repository; see
+- The originally supplied Director files contain only the `intro` sound member.
+  Eight music masters and a clock sound were later recovered from another
+  working copy; the missing historical scene assignment is documented in
   `docs/audio-assets.md`.
 - `sektorA4-Ryan1/2`, alternate accusation takes, `Ryan-omSara`, and
   `Ryan-omSaraOgDavid` appear to be unused or unfinished material. The active

@@ -39,8 +39,19 @@ decoded from `Intro.dir`:
 - `titel-ryan`
 - `titel-saving`
 
-The resulting web collection contains 93 PNG files: 90 conversions from supplied
+The tagged legacy restoration produced 93 PNG files: 90 conversions from supplied
 BMP originals and three Director extractions.
+
+A later recovered working copy added 16 source-backed derivatives:
+
+- `baggrund`;
+- six cursor states;
+- eight toolbar states;
+- `intro-slut`.
+
+The current web collection therefore contains 109 closed, manifest-validated PNG
+files. The 89 BMP files common to both supplied working copies are byte-identical.
+See `docs/legacy-fresh-audit.md` for the comparison and integration decisions.
 
 ## Source preference
 
