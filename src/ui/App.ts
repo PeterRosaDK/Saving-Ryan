@@ -15,9 +15,10 @@ import {
 } from "../game/sceneRegistry";
 import {
   DIRECTOR_STAGE,
+  directorHotspotRectStyle,
   directorRectStyle,
   getScenePresentation,
-  type DirectorRect,
+  type DirectorHotspotRect,
   type FilmLoopPresentation,
 } from "../game/scenePresentation";
 import {
@@ -75,7 +76,7 @@ function button(
 function hotspotButton(
   label: string,
   kind: "move" | "talk" | "inspect" | "wait",
-  rectangle: DirectorRect,
+  rectangle: DirectorHotspotRect,
   onClick: () => void,
 ): HTMLButtonElement {
   const element = button(
@@ -86,7 +87,7 @@ function hotspotButton(
   element.ariaLabel = label;
   element.title = label;
   element.dataset.hotspotLabel = label;
-  element.setAttribute("style", directorRectStyle(rectangle));
+  element.setAttribute("style", directorHotspotRectStyle(rectangle));
 
   if (kind === "wait") {
     const clock = document.createElement("img");
@@ -594,7 +595,12 @@ function renderExploration(
   const clockHotspot = hotspotButton(
     "Vent et tidsinterval",
     "wait",
-    presentation.clock,
+    {
+      x: presentation.clock.centerX - presentation.clock.width / 2,
+      y: presentation.clock.centerY - presentation.clock.height / 2,
+      width: presentation.clock.width,
+      height: presentation.clock.height,
+    },
     () => {
         store.dispatch({ type: "WAIT" });
     },

@@ -7,6 +7,7 @@ import {
 import { getSceneOccupants } from "../src/game/sceneOccupants";
 import {
   DIRECTOR_STAGE,
+  directorHotspotRectStyle,
   directorRectStyle,
   getScenePresentation,
 } from "../src/game/scenePresentation";
@@ -25,12 +26,12 @@ describe("verified scene content", () => {
     expect(getSceneOccupants("C4")).toEqual(["Barbara"]);
     expect(getScenePresentation("A1").characters).toContainEqual({
       person: "Laura",
-      rect: { centerX: 382, centerY: 186, width: 89, height: 157 },
+      rect: { x: 382, y: 186, width: 89, height: 157 },
     });
     expect(getScenePresentation("B1").navigation).toEqual([
       {
         target: "E",
-        rect: { centerX: 606, centerY: 364, width: 114, height: 174 },
+        rect: { x: 606, y: 364, width: 114, height: 174 },
       },
     ]);
     expect(getScenePresentation("E1").navigation.map(({ target }) => target))
@@ -46,6 +47,14 @@ describe("verified scene content", () => {
     expect(directorRectStyle(DIRECTOR_STAGE.background)).toBe(
       "left:10%;top:10%;width:80%;height:80%",
     );
+    expect(
+      directorHotspotRectStyle({
+        x: 382,
+        y: 186,
+        width: 89,
+        height: 157,
+      }),
+    ).toBe("left:47.75%;top:31%;width:11.125%;height:26.166666666666664%");
     expect(getScenePresentation("B1").filmLoop).toMatchObject({
       name: "LoopB1",
       ticks: 87,

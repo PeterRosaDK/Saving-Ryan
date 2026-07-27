@@ -14,6 +14,13 @@ export interface DirectorRect {
   height: number;
 }
 
+export interface DirectorHotspotRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface FilmLoopTimelineEntry {
   tick: number;
   frameIndex: number;
@@ -28,17 +35,17 @@ export interface FilmLoopPresentation {
 
 export interface NavigationHotspot {
   target: LocationId;
-  rect: DirectorRect;
+  rect: DirectorHotspotRect;
 }
 
 export interface CharacterHotspot {
   person: CharacterId;
-  rect: DirectorRect;
+  rect: DirectorHotspotRect;
 }
 
 export interface InteractionHotspot {
   interactionId: SceneInteractionId;
-  rect: DirectorRect;
+  rect: DirectorHotspotRect;
 }
 
 export interface ScenePresentation {
@@ -56,18 +63,27 @@ const rect = (
   height: number,
 ): DirectorRect => ({ centerX, centerY, width, height });
 
-const EXIT_TO_HALLWAY: Readonly<Record<Exclude<LocationId, "E">, DirectorRect>> = {
-  A: rect(81, 61, 226, 91),
-  B: rect(606, 364, 114, 174),
-  C: rect(561, 404, 157, 135),
-  D: rect(548, 331, 172, 209),
+const hotspotRect = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): DirectorHotspotRect => ({ x, y, width, height });
+
+const EXIT_TO_HALLWAY: Readonly<
+  Record<Exclude<LocationId, "E">, DirectorHotspotRect>
+> = {
+  A: hotspotRect(81, 61, 226, 91),
+  B: hotspotRect(606, 364, 114, 174),
+  C: hotspotRect(561, 404, 157, 135),
+  D: hotspotRect(548, 331, 172, 209),
 };
 
 const HALLWAY_DOORS: readonly NavigationHotspot[] = [
-  { target: "A", rect: rect(333, 219, 148, 131) },
-  { target: "B", rect: rect(106, 152, 85, 323) },
-  { target: "C", rect: rect(602, 96, 96, 445) },
-  { target: "D", rect: rect(253, 193, 35, 196) },
+  { target: "A", rect: hotspotRect(333, 219, 148, 131) },
+  { target: "B", rect: hotspotRect(106, 152, 85, 323) },
+  { target: "C", rect: hotspotRect(602, 96, 96, 445) },
+  { target: "D", rect: hotspotRect(253, 193, 35, 196) },
 ];
 
 const CLOCK_RECTS: Readonly<Record<TimeSlot, DirectorRect>> = {
@@ -95,7 +111,8 @@ const timeline = (
 
 /*
  * Coordinates and film-loop tick changes come from the supplied Director
- * score. Director stores sprite centres on an 800 × 600 stage.
+ * score. Bitmap and film-loop sprites are centre-registered, while the
+ * invisible shape members used as hotspots are top-left-registered.
  */
 const FILM_LOOPS = {
   A1: timeline("LoopA1", rect(433, 268, 136, 180), [
@@ -137,52 +154,52 @@ const FILM_LOOPS = {
 } as const satisfies Partial<Record<SceneId, FilmLoopPresentation>>;
 
 const CHARACTERS = {
-  A1: [{ person: "Laura", rect: rect(382, 186, 89, 157) }],
-  A3: [{ person: "Laura", rect: rect(506, 240, 122, 169) }],
-  A4: [{ person: "David", rect: rect(333, 176, 150, 204) }],
-  B1: [{ person: "Barbara", rect: rect(356, 194, 183, 335) }],
+  A1: [{ person: "Laura", rect: hotspotRect(382, 186, 89, 157) }],
+  A3: [{ person: "Laura", rect: hotspotRect(506, 240, 122, 169) }],
+  A4: [{ person: "David", rect: hotspotRect(333, 176, 150, 204) }],
+  B1: [{ person: "Barbara", rect: hotspotRect(356, 194, 183, 335) }],
   B2: [
-    { person: "Ryan", rect: rect(216, 110, 75, 101) },
-    { person: "Barbara", rect: rect(306, 133, 47, 102) },
+    { person: "Ryan", rect: hotspotRect(216, 110, 75, 101) },
+    { person: "Barbara", rect: hotspotRect(306, 133, 47, 102) },
   ],
   B4: [
-    { person: "Laura", rect: rect(467, 190, 95, 206) },
-    { person: "Marie", rect: rect(564, 174, 88, 166) },
+    { person: "Laura", rect: hotspotRect(467, 190, 95, 206) },
+    { person: "Marie", rect: hotspotRect(564, 174, 88, 166) },
   ],
-  C1: [{ person: "Ryan", rect: rect(301, 215, 177, 199) }],
-  C3: [{ person: "David", rect: rect(291, 256, 161, 162) }],
-  C4: [{ person: "Barbara", rect: rect(307, 242, 168, 184) }],
+  C1: [{ person: "Ryan", rect: hotspotRect(301, 215, 177, 199) }],
+  C3: [{ person: "David", rect: hotspotRect(291, 256, 161, 162) }],
+  C4: [{ person: "Barbara", rect: hotspotRect(307, 242, 168, 184) }],
   D1: [
-    { person: "Marie", rect: rect(455, 189, 112, 104) },
-    { person: "David", rect: rect(315, 190, 104, 105) },
+    { person: "Marie", rect: hotspotRect(455, 189, 112, 104) },
+    { person: "David", rect: hotspotRect(315, 190, 104, 105) },
   ],
-  D2: [{ person: "Marie", rect: rect(438, 168, 118, 119) }],
+  D2: [{ person: "Marie", rect: hotspotRect(438, 168, 118, 119) }],
   D3: [
-    { person: "Marie", rect: rect(446, 194, 118, 98) },
-    { person: "Barbara", rect: rect(318, 180, 109, 132) },
+    { person: "Marie", rect: hotspotRect(446, 194, 118, 98) },
+    { person: "Barbara", rect: hotspotRect(318, 180, 109, 132) },
   ],
   E2: [
-    { person: "Laura", rect: rect(445, 227, 57, 231) },
-    { person: "David", rect: rect(504, 211, 67, 261) },
+    { person: "Laura", rect: hotspotRect(445, 227, 57, 231) },
+    { person: "David", rect: hotspotRect(504, 211, 67, 261) },
   ],
 } as const satisfies Partial<Record<SceneId, readonly CharacterHotspot[]>>;
 
 const INTERACTIONS = {
   A3: [{
     interactionId: "inspect_ryans_body_and_necklace",
-    rect: rect(158, 383, 413, 119),
+    rect: hotspotRect(158, 383, 413, 119),
   }],
   B2: [{
     interactionId: "inspect_barbaras_computer",
-    rect: rect(283, 244, 94, 104),
+    rect: hotspotRect(283, 244, 94, 104),
   }],
   B3: [{
     interactionId: "inspect_barbaras_computer",
-    rect: rect(283, 244, 94, 104),
+    rect: hotspotRect(283, 244, 94, 104),
   }],
   D4: [{
     interactionId: "inspect_girlfriend_letter",
-    rect: rect(148, 384, 62, 24),
+    rect: hotspotRect(148, 384, 62, 24),
   }],
 } as const satisfies Partial<Record<SceneId, readonly InteractionHotspot[]>>;
 
@@ -213,6 +230,17 @@ export function directorRectStyle(rectangle: DirectorRect): string {
   return [
     `left:${(left / DIRECTOR_STAGE.width) * 100}%`,
     `top:${(top / DIRECTOR_STAGE.height) * 100}%`,
+    `width:${(rectangle.width / DIRECTOR_STAGE.width) * 100}%`,
+    `height:${(rectangle.height / DIRECTOR_STAGE.height) * 100}%`,
+  ].join(";");
+}
+
+export function directorHotspotRectStyle(
+  rectangle: DirectorHotspotRect,
+): string {
+  return [
+    `left:${(rectangle.x / DIRECTOR_STAGE.width) * 100}%`,
+    `top:${(rectangle.y / DIRECTOR_STAGE.height) * 100}%`,
     `width:${(rectangle.width / DIRECTOR_STAGE.width) * 100}%`,
     `height:${(rectangle.height / DIRECTOR_STAGE.height) * 100}%`,
   ].join(";");

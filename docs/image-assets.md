@@ -110,8 +110,11 @@ The score also confirms the composition model:
   horizontal and 60-pixel vertical stage margin;
 - film-loop members are replacement image patches laid over the room photograph,
   not transparent full-stage sprites;
-- sprite coordinates are stored as centre points and are converted to responsive
-  percentage rectangles by `directorRectStyle()`.
+- bitmap and film-loop sprites use centre registration, while the invisible
+  shape sprites used for hotspots use top-left registration;
+- the two registration modes are converted separately to responsive percentage
+  rectangles, preventing the interactive regions from drifting half their width
+  and height up and to the left.
 
 The original bitmap ordering maps the linked-score member numbers to the named
 frame assets. Director ink/blend behavior for the animation patches is currently
