@@ -1,10 +1,19 @@
 import type {
   GameEffect,
+  GameState,
+  KnowledgeId,
   SceneId,
   SceneInteractionId,
   SceneInteractionTrigger,
   SpecialSequenceId,
 } from "../app/types";
+import {
+  hasKnowledge,
+} from "./knowledgeGraph";
+import {
+  textCue,
+  type NarrativeCue,
+} from "../media/narrativeCue";
 
 export interface SceneInteraction {
   id: SceneInteractionId;
@@ -12,7 +21,9 @@ export interface SceneInteraction {
   kind: "observe" | "inspect" | "special";
   trigger: SceneInteractionTrigger;
   label: string;
+  requires: readonly KnowledgeId[];
   effects: readonly GameEffect[];
+  cue?: NarrativeCue;
   specialSequence?: SpecialSequenceId;
 }
 
@@ -23,6 +34,7 @@ export const SCENE_INTERACTIONS = {
     kind: "observe",
     trigger: "enter",
     label: "Læg mærke til Barbaras computerarbejde",
+    requires: [],
     effects: [{ type: "LEARN", id: "barbara_is_computer_expert" }],
   },
   witness_ryan_bullying_marie: {
@@ -31,6 +43,7 @@ export const SCENE_INTERACTIONS = {
     kind: "observe",
     trigger: "wait",
     label: "Overvær Ryan mobbe Marie",
+    requires: [],
     effects: [{ type: "LEARN", id: "ryan_bullied_marie" }],
   },
   witness_laura_computer_activity: {
@@ -39,6 +52,7 @@ export const SCENE_INTERACTIONS = {
     kind: "special",
     trigger: "wait",
     label: "Følg Lauras mistænkelige computeraktivitet",
+    requires: [],
     effects: [{ type: "LEARN", id: "laura_hid_computer_activity" }],
     specialSequence: "laura_suspect",
   },
@@ -48,7 +62,11 @@ export const SCENE_INTERACTIONS = {
     kind: "inspect",
     trigger: "manual",
     label: "Undersøg liget og halskæden",
+    requires: [],
     effects: [{ type: "LEARN", id: "killer_dropped_necklace" }],
+    cue: textCue(
+      "I Ryans hånd ligger en isbjørnehalskæde. Den må være revet af morderen under faldet.",
+    ),
   },
   inspect_girlfriend_letter: {
     id: "inspect_girlfriend_letter",
@@ -56,7 +74,23 @@ export const SCENE_INTERACTIONS = {
     kind: "inspect",
     trigger: "manual",
     label: "Læs brevet",
+    requires: [],
     effects: [{ type: "LEARN", id: "ryan_has_girlfriend_sarah" }],
+    cue: textCue(
+      "I papirkurven ligger et kærestebrev til Ryan. Det er underskrevet Sarah.",
+    ),
+  },
+  inspect_barbaras_computer: {
+    id: "inspect_barbaras_computer",
+    scene: "B1",
+    kind: "inspect",
+    trigger: "manual",
+    label: "Log ind på Barbaras computer",
+    requires: ["barbara_hacker_alias_intruder"],
+    effects: [{ type: "LEARN", id: "barbara_forged_grades" }],
+    cue: textCue(
+      "Koden Intruder virker. I Barbaras filer finder du ændrede eksamenskarakterer.",
+    ),
   },
 } as const satisfies Record<SceneInteractionId, SceneInteraction>;
 
@@ -74,4 +108,11 @@ export function getSceneInteractions(
     (interaction) =>
       interaction.scene === scene && interaction.trigger === trigger,
   );
+}
+
+export function canPerformSceneInteraction(
+  state: GameState,
+  interaction: SceneInteraction,
+): boolean {
+  return hasKnowledge(state, interaction.requires);
 }

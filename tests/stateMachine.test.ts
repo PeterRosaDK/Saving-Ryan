@@ -276,6 +276,108 @@ describe("legacy game state", () => {
     expect(state.knowledge.barbara_hacker_alias_intruder).toBe(true);
   });
 
+  it("only exposes Barbara's forged grades after the Intruder clue", () => {
+    let state = reduceGameState(finishIntro(), {
+      type: "MOVE_TO_LOCATION",
+      location: "B",
+    });
+    const blocked = reduceGameState(state, {
+      type: "PERFORM_INTERACTION",
+      id: "inspect_barbaras_computer",
+    });
+    expect(blocked).toBe(state);
+
+    state = reduceGameState(state, {
+      type: "MOVE_TO_LOCATION",
+      location: "D",
+    });
+    state = reduceGameState(state, {
+      type: "START_DIALOGUE",
+      person: "David",
+    });
+    state = reduceGameState(state, {
+      type: "COMPLETE_DIALOGUE_CHOICE",
+      person: "David",
+      topic: "barbara_and_computers",
+      completion: "ended",
+    });
+    state = reduceGameState(state, { type: "CLOSE_DIALOGUE" });
+    state = reduceGameState(state, {
+      type: "MOVE_TO_LOCATION",
+      location: "B",
+    });
+    state = reduceGameState(state, {
+      type: "PERFORM_INTERACTION",
+      id: "inspect_barbaras_computer",
+    });
+
+    expect(state.knowledge.barbara_forged_grades).toBe(true);
+  });
+
+  it("connects the report's Sarah-to-Marie motive route across a new day", () => {
+    let state: GameState = {
+      ...finishIntro(),
+      location: "D",
+      timeSlot: 4,
+    };
+    state = reduceGameState(state, {
+      type: "PERFORM_INTERACTION",
+      id: "inspect_girlfriend_letter",
+    });
+    expect(state.knowledge.ryan_has_girlfriend_sarah).toBe(true);
+
+    state = reduceGameState(state, { type: "WAIT" });
+    state = reduceGameState(state, { type: "COMPLETE_TRANSITION" });
+    state = reduceGameState(state, {
+      type: "MOVE_TO_LOCATION",
+      location: "C",
+    });
+    state = reduceGameState(state, {
+      type: "START_DIALOGUE",
+      person: "Ryan",
+    });
+    state = reduceGameState(state, {
+      type: "COMPLETE_DIALOGUE_CHOICE",
+      person: "Ryan",
+      topic: "about_sarah",
+      completion: "ended",
+    });
+    expect(state.knowledge.ryan_and_laura_were_together).toBe(true);
+
+    state = reduceGameState(state, { type: "CLOSE_DIALOGUE" });
+    state = reduceGameState(state, {
+      type: "MOVE_TO_LOCATION",
+      location: "E",
+    });
+    state = reduceGameState(state, { type: "WAIT" });
+    state = reduceGameState(state, { type: "COMPLETE_TRANSITION" });
+    expect(state.knowledge.ryan_bullied_marie).toBe(true);
+
+    state = reduceGameState(state, {
+      type: "MOVE_TO_LOCATION",
+      location: "D",
+    });
+    state = reduceGameState(state, {
+      type: "START_DIALOGUE",
+      person: "Marie",
+    });
+    state = reduceGameState(state, {
+      type: "COMPLETE_DIALOGUE_CHOICE",
+      person: "Marie",
+      topic: "marie_and_ryan",
+      completion: "ended",
+    });
+    expect(state.knowledge.ryan_left_laura).toBe(false);
+
+    state = reduceGameState(state, {
+      type: "COMPLETE_DIALOGUE_CHOICE",
+      person: "Marie",
+      topic: "marie_and_ryan",
+      completion: "ended",
+    });
+    expect(state.knowledge.ryan_left_laura).toBe(true);
+  });
+
   it("does not run a scene interaction from the wrong scene", () => {
     const atA1 = finishIntro();
     const unchanged = reduceGameState(atA1, {

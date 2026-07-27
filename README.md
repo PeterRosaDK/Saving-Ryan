@@ -22,6 +22,12 @@ The first conversion slice is underway:
   graph, including Barbara's multi-step help sequence;
 - the first playable dialogue slice connects Barbara in B1 and David/Marie in D1
   through portraits and repeatable topic choices;
+- report-backed talk placements now expose the Sarah → Ryan → Marie motive route;
+- the Barbara route continues through the protected `Intruder` computer
+  interaction, the original `LauraSuspekt` and `BarbaraHacker` sequences, and
+  the necklace evidence;
+- a reducer-level golden-path test now reaches Lauras confession through the
+  actual scene and dialogue actions;
 - question and answer cues play sequentially and update the same tested state
   machine used by exploration;
 - transition narration recovered from `Spillet.dir` is wired into a runnable UI;

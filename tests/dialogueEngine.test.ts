@@ -155,6 +155,40 @@ describe("legacy dialogue rules", () => {
     expect(videoClip(second.choice?.questionCue)).toBe("Ryan-Advarsel2");
   });
 
+  it("uses a text question and the existing Ryan clip for the Sarah clue", () => {
+    const state = learnKnowledge(startedState(), [
+      "ryan_has_girlfriend_sarah",
+    ]);
+    const choice = getAvailableDialogueChoices(state, "Ryan").find(
+      ({ topic }) => topic === "about_sarah",
+    );
+
+    expect(choice?.questionCue).toEqual({
+      kind: "text",
+      text: "Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
+    });
+    expect(videoClip(choice?.answerCue)).toBe("Ryan-omSaraOgLaura");
+
+    const answered = executeDialogueChoice(
+      state,
+      "Ryan",
+      "about_sarah",
+    );
+    expect(answered.state.knowledge.ryan_and_laura_were_together).toBe(
+      true,
+    );
+
+    const skipped = executeDialogueChoice(
+      state,
+      "Ryan",
+      "about_sarah",
+      "skipped",
+    );
+    expect(skipped.state.knowledge.ryan_and_laura_were_together).toBe(
+      true,
+    );
+  });
+
   it("unlocks David's useful computer answer and keeps the others as dead ends", () => {
     const state = learnKnowledge(startedState(), [
       "barbara_is_computer_expert",
@@ -245,6 +279,33 @@ describe("legacy dialogue rules", () => {
       "Marie-Fortrolighed2",
     );
     expect(confidence.state.knowledge.ryan_left_laura).toBe(true);
+  });
+
+  it("does not skip Marie's initial confidence exchange when both facts are already known", () => {
+    const ready = learnKnowledge(
+      startedState({ timeSlot: 2 }),
+      ["ryan_bullied_marie", "ryan_and_laura_were_together"],
+    );
+    const trust = executeDialogueChoice(
+      ready,
+      "Marie",
+      "marie_and_ryan",
+    );
+
+    expect(videoClip(trust.choice?.questionCue)).toBe(
+      "Marie-Fortrolighed",
+    );
+    expect(trust.state.knowledge.ryan_left_laura).toBe(false);
+
+    const confession = executeDialogueChoice(
+      trust.state,
+      "Marie",
+      "marie_and_ryan",
+    );
+    expect(videoClip(confession.choice?.questionCue)).toBe(
+      "Marie-Fortrolighed2",
+    );
+    expect(confession.state.knowledge.ryan_left_laura).toBe(true);
   });
 
   it("keeps necklace questions as explicit dead ends", () => {
@@ -431,7 +492,7 @@ describe("legacy dialogue rules", () => {
     }
   });
 
-  it("covers every recovered Director dialogue topic", () => {
+  it("covers every recovered and report-backed dialogue topic", () => {
     const knownEverything = learnKnowledge(
       startedState(),
       KNOWLEDGE_IDS,

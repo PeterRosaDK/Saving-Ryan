@@ -48,3 +48,24 @@ Asked choices are recorded but remain repeatable, matching the report's
 description of faded yet reusable dialogue options. Knowledge effects are not
 applied when playback is skipped unless a choice explicitly opts into that
 policy.
+
+## Report-backed completion of the motive route
+
+The Director runtime and the report diverge around Sarah:
+
+- `Spillet.dir` contains no reachable Sarah dialogue option;
+- `Video.dir` nevertheless contains `Ryan-omSara`,
+  `Ryan-omSaraOgDavid`, and `Ryan-omSaraOgLaura`;
+- the report explicitly requires the route
+  kærestebrev → Ryan dialogue → Ryan and Laura's former relationship.
+
+The web version therefore follows the report's intended knowledge flow and uses
+the existing `Ryan-omSaraOgLaura` answer. Because no matching Jørgen question
+clip exists, his question is an explicit text cue. It can later be upgraded to
+still image plus voice-over without changing the dialogue rule.
+
+Marie's route is also kept as the report describes it: the first
+`Marie-Fortrolighed` exchange earns her confidence, and only a later repeat with
+the Ryan/Laura relationship known uses `Marie-Fortrolighed2` and reveals that
+Ryan left Laura. Knowing both facts before the first conversation no longer
+skips the confidence exchange.

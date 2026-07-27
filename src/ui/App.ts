@@ -14,7 +14,12 @@ import {
   LOCATIONS,
   toSceneId,
 } from "../game/sceneRegistry";
-import { getSceneInteractions } from "../game/sceneInteractions";
+import {
+  canPerformSceneInteraction,
+  getSceneInteractions,
+  type SceneInteraction,
+} from "../game/sceneInteractions";
+import { getSpecialSequenceCue } from "../game/specialSequenceCues";
 import { TRANSITION_TEXT } from "../game/transitionText";
 import {
   getCharacterPortraitUrl,
@@ -269,13 +274,85 @@ function renderDialogue(
     });
 }
 
-function renderExploration(root: HTMLElement, state: GameState, store: GameStore): void {
+async function playSceneInteraction(
+  interaction: SceneInteraction,
+  store: GameStore,
+  narrativeHost: NarrativeHost,
+): Promise<void> {
+  if (interaction.cue) {
+    const result = await narrativeHost.play(interaction.cue);
+    if (!isCompletedPlayback(result.status)) {
+      return;
+    }
+  }
+
+  store.dispatch({
+    type: "PERFORM_INTERACTION",
+    id: interaction.id,
+  });
+}
+
+async function completePendingTransition(
+  root: HTMLElement,
+  store: GameStore,
+  narrativeHost: NarrativeHost,
+): Promise<void> {
+  const pending = store.getState().pendingTransition;
+  if (!pending) {
+    return;
+  }
+
+  if (!pending.specialSequence) {
+    store.dispatch({ type: "COMPLETE_TRANSITION" });
+    return;
+  }
+
+  const dismiss = root.querySelector<HTMLButtonElement>("[data-dismiss]");
+  const status = root.querySelector<HTMLElement>(
+    "[data-transition-status]",
+  );
+  if (dismiss) {
+    dismiss.disabled = true;
+  }
+  if (status) {
+    status.textContent = "Sekvensen begynder…";
+  }
+
+  const result = await narrativeHost.play(
+    getSpecialSequenceCue(pending.specialSequence),
+  );
+  if (isCompletedPlayback(result.status)) {
+    if (store.getState().pendingTransition === pending) {
+      store.dispatch({ type: "COMPLETE_TRANSITION" });
+    }
+    return;
+  }
+
+  if (result.status !== "aborted") {
+    if (dismiss?.isConnected) {
+      dismiss.disabled = false;
+    }
+    if (status?.isConnected) {
+      status.textContent =
+        PLAYBACK_ERROR_LABELS[result.status] ??
+        "Sekvensen blev afbrudt.";
+    }
+  }
+}
+
+function renderExploration(
+  root: HTMLElement,
+  state: GameState,
+  store: GameStore,
+  narrativeHost: NarrativeHost,
+): void {
   const sceneId = toSceneId(state.location, state.timeSlot);
   const scene = getScene(sceneId);
   const occupants = getSceneOccupants(sceneId);
   const manualInteractions = getSceneInteractions(sceneId, "manual").filter(
-    ({ effects }) =>
-      effects.some(
+    (interaction) =>
+      canPerformSceneInteraction(state, interaction) &&
+      interaction.effects.some(
         (effect) =>
           effect.type === "LEARN" && !state.knowledge[effect.id],
       ),
@@ -330,6 +407,7 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
                 <p class="eyebrow">Tiden går</p>
                 <h2 id="transition-title">${scene.time.name}</h2>
                 <p>${transitionText}</p>
+                <p class="transition-status" aria-live="polite" data-transition-status></p>
                 <button class="primary-action" type="button" data-dismiss>Fortsæt</button>
               </div>
             </div>`
@@ -354,10 +432,11 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
     manualInteractions.forEach((interaction) => {
       stageActions.append(
         button(interaction.label, "secondary-action", () => {
-          store.dispatch({
-            type: "PERFORM_INTERACTION",
-            id: interaction.id,
-          });
+          void playSceneInteraction(
+            interaction,
+            store,
+            narrativeHost,
+          );
         }),
       );
     });
@@ -387,7 +466,7 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
   });
 
   root.querySelector("[data-dismiss]")?.addEventListener("click", () => {
-    store.dispatch({ type: "COMPLETE_TRANSITION" });
+    void completePendingTransition(root, store, narrativeHost);
   });
 }
 
@@ -412,7 +491,7 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
       return;
     }
 
-    renderExploration(appView, state, store);
+    renderExploration(appView, state, store, narrativeHost);
   });
 
   return () => {

@@ -391,7 +391,12 @@ Current completion:
   graph and covered by reachability and dead-end tests;
 - the first playable UI route observes Barbara's expertise in B1, asks David
   about it in D1, and learns her `Intruder` alias through the same reducer used by
-  the tests.
+  the tests;
+- the report-backed Sarah topic uses a text question plus the existing
+  `Ryan-omSaraOgLaura` answer, because Director contains the answer asset but no
+  reachable question implementation;
+- Marie's confidence exchange is enforced as a real first step before her second
+  clip can reveal that Ryan left Laura.
 
 ### Phase 3 — Build the application shell and intro
 
@@ -413,6 +418,15 @@ Exit criterion: launch → intro → initialized A1 game scene works reliably.
 5. Translate the 20 transition descriptions currently stored in `Script Vent`.
 
 Exit criterion: the user can explore every room at every time and repeat the day.
+
+Current foundation:
+
+- talk actions are enabled only for occupants confirmed by Director transitions
+  and matching film-loop assets;
+- the letter, body/necklace, and password-protected Barbara-computer inspections
+  are playable, with text cues standing in for unfinished presentation;
+- Barbara's computer cannot reveal the forged grades until David has supplied
+  the `Intruder` clue.
 
 ### Phase 5 — Integrate video
 
@@ -437,6 +451,16 @@ referenced clip either plays or produces an actionable missing-media error.
 
 Exit criterion: the existing intended solution described in the report is playable
 from intro to its current endpoint.
+
+Current completion:
+
+- a complete reducer-level playthrough now follows placed scenes and dialogue
+  from the current intro handoff through both motive and evidence branches to
+  Laura's confession;
+- `LauraSuspekt` is connected to the B4 transition and `BarbaraHacker` remains
+  the second stage of Barbara's help;
+- passage interaction, next-loop prevention, and epilogue presentation remain
+  the next canonical Laura work.
 
 ### Phase 7 — Conversion hardening
 

@@ -8,6 +8,7 @@ import type {
 } from "../app/types";
 import type { VideoClipId } from "../media/videoManifest";
 import {
+  textCue,
   videoCue,
   type NarrativeCue,
 } from "../media/narrativeCue";
@@ -56,6 +57,7 @@ const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
   barbara_and_ryan: "Hvad foregår der mellem Barbara og Ryan?",
   ask_barbara_for_help: "Vil du hjælpe mig med Lauras computer?",
   warn_ryan: "Ryan, du er i fare.",
+  about_sarah: "Hvad skete der mellem Sarah, Laura og dig?",
 };
 
 function choiceId(
@@ -76,14 +78,34 @@ function defineChoice(
     effectsOnSkip?: boolean;
   } = {},
 ): DialogueChoice {
+  return defineCueChoice(
+    person,
+    topic,
+    videoCue(questionClip),
+    answerClip ? videoCue(answerClip) : null,
+    options,
+  );
+}
+
+function defineCueChoice(
+  person: CharacterId,
+  topic: DialogueTopicId,
+  questionCue: NarrativeCue,
+  answerCue: NarrativeCue | null,
+  options: {
+    requires?: readonly KnowledgeId[];
+    effects?: readonly GameEffect[];
+    effectsOnSkip?: boolean;
+  } = {},
+): DialogueChoice {
   return {
     id: choiceId(person, topic),
     person,
     topic,
     label: TOPIC_LABELS[topic],
     requires: options.requires ?? [],
-    questionCue: videoCue(questionClip),
-    answerCue: answerClip ? videoCue(answerClip) : null,
+    questionCue,
+    answerCue,
     effects: options.effects ?? [],
     repeatable: true,
     effectsOnSkip: options.effectsOnSkip ?? false,
@@ -217,7 +239,12 @@ function getSpecialChoices(
 
   if (state.timeSlot >= 2) {
     if (person === "Marie") {
-      const canConfide = state.knowledge.ryan_and_laura_were_together;
+      const hasEarnedTrust = state.dialogue.askedChoices.includes(
+        "Marie:marie_and_ryan",
+      );
+      const canConfide =
+        hasEarnedTrust &&
+        state.knowledge.ryan_and_laura_were_together;
       choices.push(
         defineChoice(
           person,
@@ -311,6 +338,29 @@ function getSpecialChoices(
   }
 
   if (person === "Ryan" && state.timeSlot <= 2) {
+    if (state.knowledge.ryan_has_girlfriend_sarah) {
+      choices.push(
+        defineCueChoice(
+          person,
+          "about_sarah",
+          textCue(
+            "Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
+          ),
+          videoCue("Ryan-omSaraOgLaura"),
+          {
+            requires: ["ryan_has_girlfriend_sarah"],
+            effects: [
+              {
+                type: "LEARN",
+                id: "ryan_and_laura_were_together",
+              },
+            ],
+            effectsOnSkip: true,
+          },
+        ),
+      );
+    }
+
     const wasAsked = state.dialogue.askedChoices.includes(
       "Ryan:warn_ryan",
     );

@@ -45,6 +45,7 @@ export const DIALOGUE_TOPIC_IDS = [
   "barbara_and_ryan",
   "ask_barbara_for_help",
   "warn_ryan",
+  "about_sarah",
 ] as const;
 
 export type DialogueTopicId = (typeof DIALOGUE_TOPIC_IDS)[number];
@@ -70,7 +71,8 @@ export type SceneInteractionId =
   | "witness_ryan_bullying_marie"
   | "witness_laura_computer_activity"
   | "inspect_ryans_body_and_necklace"
-  | "inspect_girlfriend_letter";
+  | "inspect_girlfriend_letter"
+  | "inspect_barbaras_computer";
 
 export type SceneInteractionTrigger = "enter" | "manual" | "wait";
 

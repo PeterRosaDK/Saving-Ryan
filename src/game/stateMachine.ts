@@ -7,6 +7,7 @@ import type {
 } from "../app/types";
 import { getScene, toSceneId } from "./sceneRegistry";
 import {
+  canPerformSceneInteraction,
   getSceneInteraction,
   getSceneInteractions,
 } from "./sceneInteractions";
@@ -159,7 +160,8 @@ export function reduceGameState(
       const sceneId = toSceneId(state.location, state.timeSlot);
       if (
         interaction.trigger !== "manual" ||
-        interaction.scene !== sceneId
+        interaction.scene !== sceneId ||
+        !canPerformSceneInteraction(state, interaction)
       ) {
         return state;
       }
