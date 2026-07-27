@@ -38,6 +38,9 @@ the canonical Laura story is now playable from intro to epilogue:
   `LauraSuspekt` cue and effects isolated from simultaneous locations;
 - the first successful search of Barbara's computer visibly costs one interval,
   while locked access and replay remain free;
+- characters remember asked questions and multi-stage conversations for the
+  current day, while the next morning resets that memory but preserves Jørgens
+  knowledge;
 - all 20 original room photographs are rendered at their original 640×480
   position inside the responsive 800×600 stage;
 - Director-score rectangles now drive rollover/focus hotspots for doors,

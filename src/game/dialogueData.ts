@@ -243,7 +243,7 @@ function getSpecialChoices(
   );
 
   if (person === "Marie") {
-    const hasEarnedTrust = state.dialogue.askedChoices.includes(
+    const hasEarnedTrust = state.loopState.dialogue.askedChoices.includes(
       "Marie:marie_and_ryan",
     );
     const canConfide =
@@ -306,9 +306,9 @@ function getSpecialChoices(
 
   if (
     person === "Barbara" &&
-    state.dialogue.barbaraHelp !== "completed"
+    state.loopState.dialogue.barbaraHelp !== "completed"
   ) {
-    const isReady = state.dialogue.barbaraHelp === "ready";
+    const isReady = state.loopState.dialogue.barbaraHelp === "ready";
     choices.push(
       defineChoice(
         person,
@@ -362,7 +362,7 @@ function getSpecialChoices(
       );
     }
 
-    const wasAsked = state.dialogue.askedChoices.includes(
+    const wasAsked = state.loopState.dialogue.askedChoices.includes(
       "Ryan:warn_ryan",
     );
     choices.push(

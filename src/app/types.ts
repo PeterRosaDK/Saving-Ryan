@@ -64,6 +64,9 @@ export type BarbaraHelpState =
 
 export interface DialogueProgress {
   activePerson: CharacterId | null;
+}
+
+export interface LoopDialogueState {
   askedChoices: DialogueChoiceId[];
   barbaraHelp: BarbaraHelpState;
 }
@@ -83,6 +86,7 @@ export type GameEffect = { type: "LEARN"; id: KnowledgeId };
 
 export interface LoopState {
   seenTransitions: SceneId[];
+  dialogue: LoopDialogueState;
 }
 
 export type TimeAdvanceCause =

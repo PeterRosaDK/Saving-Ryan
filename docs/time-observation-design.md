@@ -46,11 +46,10 @@ Other investigation effects come from scene entry, manual inspection, dialogue,
 or the `BarbaraHacker` special sequence. The first timed investigation action
 is now the successful initial search of Barbara's computer.
 
-`pendingTransition` now records whether time was advanced by the clock or an
-interaction. The current model still does not support multiple ordered
-transition cues, NPC-local memory, timed dialogue, or case-specific event
-resolution. Dialogue history and Barbara's help status also survive day reset
-today.
+`pendingTransition` records whether time was advanced by the clock or an
+interaction. Basic loop-local conversation memory is separated from permanent
+knowledge. The current model still does not support multiple ordered transition
+cues, NPC disposition, timed dialogue, or case-specific event resolution.
 
 Source-scene event effects are now applied before a new-day `loopState` reset,
 so later loop-local effects cannot be written into the wrong day.
@@ -185,7 +184,26 @@ knowledge effects, new-day reset, and idempotent completion.
 
 All current scene interactions declare `timeCost: 0 | 1`, and tests require
 every timed interaction to provide an elapsed-time cue. Timed dialogue, new
-C2/E2 observations, NPC memory, and case data remain outside this slice.
+C2/E2 observations, NPC disposition, and case data remain outside this slice.
+
+## First loop-local memory slice
+
+Conversation progress now belongs to `loopState.dialogue`:
+
+- asked choice IDs remain available for faded/repeat UI and same-day responses;
+- Marie remembers whether Jørgen has earned her confidence;
+- Ryan uses his second warning clip only after being warned earlier that day;
+- Barbara's request/ready/completed help state is local to the day.
+
+Ordinary time changes preserve this state. Evening-to-morning uses one
+`createInitialLoopState()` boundary to reset conversation history and transition
+history together. Permanent facts learned from those conversations remain in
+`knowledge`, so Ryan may forget the warning while Jørgen remembers that warning
+alone was ineffective.
+
+No trust score, anger, disposition, or false-accusation consequence is included
+yet. Tests cover same-day retention, new-day reset, Marie's trust restart,
+Ryan's warning restart, permanent knowledge, and the complete Laura path.
 
 ## Required future validation
 

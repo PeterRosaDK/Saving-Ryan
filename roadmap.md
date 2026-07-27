@@ -195,12 +195,14 @@ interface GameState {
 
   dialogue: {
     activePerson: CharacterId | null;
-    askedChoices: DialogueChoiceId[];
-    barbaraHelp: BarbaraHelpState;
   };
 
   loopState: {
     seenTransitions: SceneId[];
+    dialogue: {
+      askedChoices: DialogueChoiceId[];
+      barbaraHelp: BarbaraHelpState;
+    };
   };
 
   // The source scene remains active until narration and any special sequence
@@ -570,8 +572,11 @@ In progress:
   previews its destination time, advances through the shared gateway, and is
   free on replay;
 - locked computer access and all other current interactions remain free;
-- loop-local NPC memory, timed dialogue, and the proposed new C2/E2
-  observations remain separate later slices.
+- asked dialogue choices, Marie's trust stage, Ryan's warning stage, and
+  Barbara's help status now persist within a day and reset at the next morning;
+- permanent Jørgen knowledge remains intact across that reset;
+- disposition, accusation consequences, timed dialogue, and the proposed new
+  C2/E2 observations remain separate later slices.
 
 The approved but deferred design and Laura event matrix are recorded in
 [`docs/time-observation-design.md`](docs/time-observation-design.md). Do not

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createInitialGameState } from "../src/app/gameState";
+import {
+  createInitialGameState,
+  createInitialLoopState,
+} from "../src/app/gameState";
 import {
   KNOWLEDGE_IDS,
   type GameState,
@@ -276,7 +279,12 @@ describe("legacy game state", () => {
       location: "D",
       timeSlot: 4,
       loopState: {
+        ...createInitialLoopState(),
         seenTransitions: ["A1", "C3"],
+        dialogue: {
+          askedChoices: ["Marie:marie_and_ryan"],
+          barbaraHelp: "ready",
+        },
       },
     };
 
@@ -295,7 +303,33 @@ describe("legacy game state", () => {
     expect(toSceneId(nextDay.location, nextDay.timeSlot)).toBe("D1");
     expect(nextDay.loop).toBe(2);
     expect(nextDay.knowledge.ryan_has_girlfriend_sarah).toBe(true);
-    expect(nextDay.loopState.seenTransitions).toEqual([]);
+    expect(nextDay.loopState).toEqual(createInitialLoopState());
+  });
+
+  it("keeps conversation memory across time changes within the same day", () => {
+    let state: GameState = {
+      ...finishIntro(),
+      location: "D",
+      timeSlot: 1,
+    };
+    state = reduceGameState(state, {
+      type: "START_DIALOGUE",
+      person: "David",
+    });
+    state = reduceGameState(state, {
+      type: "COMPLETE_DIALOGUE_CHOICE",
+      person: "David",
+      topic: "about_laura",
+      completion: "ended",
+    });
+    state = reduceGameState(state, { type: "CLOSE_DIALOGUE" });
+    state = reduceGameState(state, { type: "WAIT" });
+    state = reduceGameState(state, { type: "COMPLETE_TRANSITION" });
+
+    expect(state.timeSlot).toBe(2);
+    expect(state.loopState.dialogue.askedChoices).toContain(
+      "David:about_laura",
+    );
   });
 
   it("only completes the story from the morning passage with confession, passage, and warning knowledge", () => {
@@ -451,7 +485,7 @@ describe("legacy game state", () => {
 
     expect(state.phase).toBe("dialogue");
     expect(state.dialogue.activePerson).toBe("David");
-    expect(state.dialogue.askedChoices).toContain(
+    expect(state.loopState.dialogue.askedChoices).toContain(
       "David:barbara_and_computers",
     );
     expect(state.knowledge.barbara_hacker_alias_intruder).toBe(true);

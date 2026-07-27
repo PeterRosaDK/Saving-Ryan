@@ -23,7 +23,7 @@ semantic state instead of array indexes:
 | `BetingetLink[12]` | `barbara_forged_grades` |
 | `BetingetLink[13]` | `laura_hid_computer_activity` |
 | `BetingetLink[14]` | `killer_dropped_necklace` |
-| `BetingetLink[16]` | `dialogue.barbaraHelp` |
+| `BetingetLink[16]` | `loopState.dialogue.barbaraHelp` |
 | `BetingetLink[18]` | `secret_passage_exists` |
 
 Slot 16 is deliberately a multi-step dialogue status, not a boolean fact.
@@ -51,10 +51,11 @@ the murder route.
 - Barbara's help keeps the legacy request/ready/completed sequence and only
   applies its discoveries after the hacker sequence completes.
 
-Asked choices are recorded but remain repeatable, matching the report's
-description of faded yet reusable dialogue options. Knowledge effects are not
-applied when playback is skipped unless a choice explicitly opts into that
-policy.
+Asked choices are recorded in loop-local dialogue state but remain repeatable,
+matching the report's description of faded yet reusable dialogue options. They
+and Barbara's helper stage reset the next morning; knowledge gained from a
+completed choice does not. Knowledge effects are not applied when playback is
+skipped unless a choice explicitly opts into that policy.
 
 The Director uses post-murder dialogue frames for alibi, theory, and accusation.
 Other conditional topics unlocked through `BetingetLink` remain available after

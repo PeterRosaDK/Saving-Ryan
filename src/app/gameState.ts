@@ -2,12 +2,23 @@ import {
   KNOWLEDGE_IDS,
   type GameState,
   type KnowledgeId,
+  type LoopState,
 } from "./types";
 
 function createInitialKnowledge(): Record<KnowledgeId, boolean> {
   return Object.fromEntries(
     KNOWLEDGE_IDS.map((id) => [id, false]),
   ) as Record<KnowledgeId, boolean>;
+}
+
+export function createInitialLoopState(): LoopState {
+  return {
+    seenTransitions: [],
+    dialogue: {
+      askedChoices: [],
+      barbaraHelp: "not_requested",
+    },
+  };
 }
 
 export function createInitialGameState(): GameState {
@@ -20,12 +31,8 @@ export function createInitialGameState(): GameState {
     knowledge: createInitialKnowledge(),
     dialogue: {
       activePerson: null,
-      askedChoices: [],
-      barbaraHelp: "not_requested",
     },
-    loopState: {
-      seenTransitions: [],
-    },
+    loopState: createInitialLoopState(),
     pendingTransition: null,
   };
 }

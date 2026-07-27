@@ -1,4 +1,7 @@
-import { createInitialGameState } from "../app/gameState";
+import {
+  createInitialGameState,
+  createInitialLoopState,
+} from "../app/gameState";
 import type {
   GameAction,
   GameEffect,
@@ -143,18 +146,19 @@ export function reduceGameState(
         loop: pending.beginsNewLoop
           ? effectState.loop + 1
           : effectState.loop,
-        loopState: {
-          seenTransitions: pending.beginsNewLoop
-            ? []
-            : seenClockEvent
-              ? [
-                  ...new Set([
-                    ...effectState.loopState.seenTransitions,
-                    seenClockEvent,
-                  ]),
-                ]
-              : effectState.loopState.seenTransitions,
-        },
+        loopState: pending.beginsNewLoop
+          ? createInitialLoopState()
+          : {
+              ...effectState.loopState,
+              seenTransitions: seenClockEvent
+                ? [
+                    ...new Set([
+                      ...effectState.loopState.seenTransitions,
+                      seenClockEvent,
+                    ]),
+                  ]
+                : effectState.loopState.seenTransitions,
+            },
         pendingTransition: null,
       };
 

@@ -116,7 +116,7 @@ describe("legacy dialogue rules", () => {
       "about_david",
     );
 
-    expect(first.state.dialogue.askedChoices).toEqual([
+    expect(first.state.loopState.dialogue.askedChoices).toEqual([
       "Laura:about_david",
     ]);
     expect(
@@ -128,7 +128,7 @@ describe("legacy dialogue rules", () => {
       "Laura",
       "about_david",
     );
-    expect(repeated.state.dialogue.askedChoices).toEqual([
+    expect(repeated.state.loopState.dialogue.askedChoices).toEqual([
       "Laura:about_david",
     ]);
   });
@@ -148,6 +148,34 @@ describe("legacy dialogue rules", () => {
       "warn_ryan",
     );
     expect(videoClip(second.choice?.questionCue)).toBe("Ryan-Advarsel2");
+  });
+
+  it("resets Ryan's remembered warning stage on a new day but keeps Jørgen's knowledge", () => {
+    const first = executeDialogueChoice(
+      startedState({
+        location: "C",
+        timeSlot: 1,
+      }),
+      "Ryan",
+      "warn_ryan",
+    ).state;
+    const waiting = reduceGameState(
+      {
+        ...first,
+        timeSlot: 4,
+      },
+      { type: "WAIT" },
+    );
+    const nextDay = reduceGameState(waiting, {
+      type: "COMPLETE_TRANSITION",
+    });
+    const warning = getAvailableDialogueChoices(nextDay, "Ryan").find(
+      ({ topic }) => topic === "warn_ryan",
+    );
+
+    expect(nextDay.knowledge.ryan_dismissed_warning).toBe(true);
+    expect(nextDay.loopState.dialogue.askedChoices).toEqual([]);
+    expect(videoClip(warning?.questionCue)).toBe("Ryan-Advarsel1");
   });
 
   it("does not learn that Ryan dismissed a skipped warning", () => {
@@ -314,6 +342,31 @@ describe("legacy dialogue rules", () => {
     expect(confession.state.knowledge.ryan_left_laura).toBe(true);
   });
 
+  it("requires Marie's confidence exchange again after a day reset", () => {
+    const ready = learnKnowledge(
+      startedState({
+        location: "D",
+        timeSlot: 4,
+      }),
+      ["ryan_bullied_marie", "ryan_and_laura_were_together"],
+    );
+    const trusted = executeDialogueChoice(
+      ready,
+      "Marie",
+      "marie_and_ryan",
+    ).state;
+    const nextDay = reduceGameState(
+      reduceGameState(trusted, { type: "WAIT" }),
+      { type: "COMPLETE_TRANSITION" },
+    );
+    const choice = getAvailableDialogueChoices(nextDay, "Marie").find(
+      ({ topic }) => topic === "marie_and_ryan",
+    );
+
+    expect(nextDay.knowledge.ryan_and_laura_were_together).toBe(true);
+    expect(videoClip(choice?.questionCue)).toBe("Marie-Fortrolighed");
+  });
+
   it("keeps necklace questions as explicit dead ends", () => {
     const state = learnKnowledge(
       startedState({ timeSlot: 3 }),
@@ -373,7 +426,7 @@ describe("legacy dialogue rules", () => {
     expect(
       skipped.state.knowledge.barbara_hacker_alias_intruder,
     ).toBe(true);
-    expect(skipped.state.dialogue.askedChoices).toContain(
+    expect(skipped.state.loopState.dialogue.askedChoices).toContain(
       "David:barbara_and_computers",
     );
   });
@@ -409,7 +462,7 @@ describe("legacy dialogue rules", () => {
     expect(videoClip(request.choice?.questionCue)).toBe(
       "Barbara-omHilfe1",
     );
-    expect(request.state.dialogue.barbaraHelp).toBe("ready");
+    expect(request.state.loopState.dialogue.barbaraHelp).toBe("ready");
 
     const help = executeDialogueChoice(
       request.state,
@@ -423,7 +476,7 @@ describe("legacy dialogue rules", () => {
       },
       answerCue: { kind: "video", clipId: "BarbaraHacker" },
     });
-    expect(help.state.dialogue.barbaraHelp).toBe("completed");
+    expect(help.state.loopState.dialogue.barbaraHelp).toBe("completed");
     expect(help.state.knowledge.laura_was_in_institution).toBe(true);
     expect(
       help.state.knowledge.laura_owns_polar_bear_necklace,

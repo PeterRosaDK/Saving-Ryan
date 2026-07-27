@@ -466,7 +466,9 @@ function renderDialogue(
 
   const options = root.querySelector("[data-dialogue-options]");
   choices.forEach((choice) => {
-    const asked = state.dialogue.askedChoices.includes(choice.id);
+    const asked = state.loopState.dialogue.askedChoices.includes(
+      choice.id,
+    );
     options?.append(
       button(
         choice.label,

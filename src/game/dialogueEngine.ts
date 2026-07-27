@@ -38,7 +38,7 @@ function advanceBarbaraHelp(
     return state;
   }
 
-  const current = state.dialogue.barbaraHelp;
+  const current = state.loopState.dialogue.barbaraHelp;
   const next =
     current === "ready"
       ? "completed"
@@ -50,9 +50,12 @@ function advanceBarbaraHelp(
     ? state
     : {
         ...state,
-        dialogue: {
-          ...state.dialogue,
-          barbaraHelp: next,
+        loopState: {
+          ...state.loopState,
+          dialogue: {
+            ...state.loopState.dialogue,
+            barbaraHelp: next,
+          },
         },
       };
 }
@@ -77,17 +80,22 @@ export function executeDialogueChoice(
     };
   }
 
-  const askedChoices = state.dialogue.askedChoices.includes(choice.id)
-    ? state.dialogue.askedChoices
-    : [...state.dialogue.askedChoices, choice.id];
+  const askedChoices = state.loopState.dialogue.askedChoices.includes(
+    choice.id,
+  )
+    ? state.loopState.dialogue.askedChoices
+    : [...state.loopState.dialogue.askedChoices, choice.id];
   let nextState =
-    askedChoices === state.dialogue.askedChoices
+    askedChoices === state.loopState.dialogue.askedChoices
       ? state
       : {
           ...state,
-          dialogue: {
-            ...state.dialogue,
-            askedChoices,
+          loopState: {
+            ...state.loopState,
+            dialogue: {
+              ...state.loopState.dialogue,
+              askedChoices,
+            },
           },
         };
 
