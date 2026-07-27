@@ -4,7 +4,7 @@ Modern HTML5/TypeScript restoration of a Director 8 interactive mystery.
 
 ## Current status
 
-The first conversion slice is underway:
+The Director restoration is playable and under final parity hardening:
 
 - legacy Director files and the original report are preserved in `Legacy/`;
 - converted MP4 files are served from `public/Video/`;
@@ -30,7 +30,7 @@ The first conversion slice is underway:
   actual scene and dialogue actions;
 - question and answer cues play sequentially and update the same tested state
   machine used by exploration;
-- transition narration recovered from `Spillet.dir` is wired into a runnable UI;
+- all 20 transition narrations use the recovered `Spillet.dir` wording;
 - all 20 original room photographs are rendered at their original 640×480
   position inside the responsive 800×600 stage;
 - Director-score rectangles now drive rollover/focus hotspots for doors,
@@ -39,8 +39,11 @@ The first conversion slice is underway:
   recovered 87-tick Director timelines;
 - all 81 Director video members and 93 PNG members are closed, file-validated
   catalogues;
+- the two-frame body/necklace and trash/letter still sequences are restored;
+- Barbara's computer reproduces both the original locked and unlocked text;
+- the 535-frame intro uses the original title/credit images and extracted sound;
 - the persistent narrative host is isolated from ordinary gameplay rerenders and
-  accepts both original video and intentional text-only fallback cues;
+  accepts video, Director still sequences, and intentional text-only cues;
 - the abort-safe `VideoPlayer` distinguishes completion, skip, autoplay blocking,
   missing media, network/decode failures, and cancellation.
 
@@ -49,6 +52,8 @@ The image comparison and provenance notes are in
 [docs/image-assets.md](docs/image-assets.md).
 Dialogue normalization and conditional-link provenance are in
 [docs/dialogue-rules.md](docs/dialogue-rules.md).
+The parity boundary, remaining unknowns, and original Laura gaps are in
+[docs/legacy-restoration-status.md](docs/legacy-restoration-status.md).
 
 ## Commands
 
@@ -72,6 +77,7 @@ Asset and Director inspection commands are documented under
 Legacy/       original Director movies and project report
 public/Video/ browser-ready MP4 files
 public/assets/ web-ready image derivatives
+public/assets/audio/ extracted Director intro sound
 src/app/      global state and store
 src/game/     scene registry, interactions, transitions, and state machine
 src/media/    media manifests and compatibility aliases
@@ -80,7 +86,8 @@ tests/        state and manifest tests
 tools/        Director inspection and asset conversion utilities
 ```
 
-The current interface renders the original room photographs, primitive character
-animations, score-positioned hotspots, clocks, and dialogue portraits. The next
-canonical Laura work is to connect the discovered passage to the next-loop
+The current interface renders the original intro, room photographs, primitive
+character animations, score-positioned hotspots, clocks, special stills, and
+dialogue portraits. After the remaining restoration unknowns are accepted, the
+next canonical Laura work is to connect the discovered passage to the next-loop
 prevention and ending boundary.

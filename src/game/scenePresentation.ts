@@ -52,6 +52,7 @@ export interface ScenePresentation {
   navigation: readonly NavigationHotspot[];
   characters: readonly CharacterHotspot[];
   interactions: readonly InteractionHotspot[];
+  quit?: DirectorHotspotRect;
   clock: DirectorRect;
   filmLoop?: FilmLoopPresentation;
 }
@@ -189,6 +190,10 @@ const INTERACTIONS = {
     interactionId: "inspect_ryans_body_and_necklace",
     rect: hotspotRect(158, 383, 413, 119),
   }],
+  A4: [{
+    interactionId: "inspect_ryans_body_and_necklace",
+    rect: hotspotRect(158, 383, 413, 119),
+  }],
   B2: [
     {
       interactionId: "inspect_barbaras_computer",
@@ -219,6 +224,18 @@ const INTERACTIONS = {
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
   }],
+  D1: [{
+    interactionId: "inspect_girlfriend_letter",
+    rect: hotspotRect(148, 384, 62, 24),
+  }],
+  D2: [{
+    interactionId: "inspect_girlfriend_letter",
+    rect: hotspotRect(148, 384, 62, 24),
+  }],
+  D3: [{
+    interactionId: "inspect_girlfriend_letter",
+    rect: hotspotRect(148, 384, 62, 24),
+  }],
   D4: [{
     interactionId: "inspect_girlfriend_letter",
     rect: hotspotRect(148, 384, 62, 24),
@@ -240,6 +257,10 @@ export function getScenePresentation(sceneId: SceneId): ScenePresentation {
     navigation: navigationFor(location),
     characters: CHARACTERS[sceneId as keyof typeof CHARACTERS] ?? [],
     interactions: INTERACTIONS[sceneId as keyof typeof INTERACTIONS] ?? [],
+    quit:
+      location === "A"
+        ? hotspotRect(641, 120, 80, 111)
+        : undefined,
     clock: CLOCK_RECTS[timeSlot],
     filmLoop: FILM_LOOPS[sceneId as keyof typeof FILM_LOOPS],
   };

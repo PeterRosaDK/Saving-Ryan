@@ -14,6 +14,10 @@ import {
   toSceneId,
 } from "../game/sceneRegistry";
 import {
+  INTRO_DURATION_MILLISECONDS,
+  INTRO_SCORE,
+} from "../game/introPresentation";
+import {
   DIRECTOR_STAGE,
   directorHotspotRectStyle,
   directorRectStyle,
@@ -32,8 +36,10 @@ import {
   getCharacterPortraitUrl,
   getClockImageUrl,
   getFilmLoopFrameUrls,
+  getImageUrl,
   getSceneBackgroundUrl,
 } from "../media/imageManifest";
+import { getIntroAudioUrl } from "../media/audioManifest";
 import type { VideoPlaybackResultStatus } from "../media/VideoPlayer";
 import { NarrativeHost } from "./NarrativeHost";
 
@@ -75,7 +81,7 @@ function button(
 
 function hotspotButton(
   label: string,
-  kind: "move" | "talk" | "inspect" | "wait",
+  kind: "move" | "talk" | "inspect" | "quit" | "wait",
   rectangle: DirectorHotspotRect,
   onClick: () => void,
 ): HTMLButtonElement {
@@ -179,27 +185,121 @@ function connectHotspotLabel(
 }
 
 function renderIntro(root: HTMLElement, store: GameStore): void {
+  const scoreElement = (
+    image: string,
+    alt: string,
+    style: string,
+    className = "",
+  ): string => `
+    <img
+      class="intro-score-element ${className}"
+      src="${getImageUrl(image as Parameters<typeof getImageUrl>[0])}"
+      alt="${alt}"
+      style="${style}"
+    />
+  `;
+  const titleDuration =
+    INTRO_SCORE.titleFrames * INTRO_SCORE.millisecondsPerFrame;
+  const titleElements = INTRO_SCORE.title.map(({ image, alt, rect }) =>
+    scoreElement(
+      image,
+      alt,
+      `${directorRectStyle(rect)};--intro-delay:0ms;--intro-duration:${titleDuration}ms`,
+      "intro-title-element",
+    )
+  ).join("");
+  const creditElements = INTRO_SCORE.credits.map((credit, index) => {
+    const startsAt =
+      (credit.startsAtFrame - 1) * INTRO_SCORE.millisecondsPerFrame;
+    const next = INTRO_SCORE.credits[index + 1];
+    const endsAt = next
+      ? (next.startsAtFrame - 1) * INTRO_SCORE.millisecondsPerFrame
+      : INTRO_DURATION_MILLISECONDS;
+    const timing =
+      `--intro-delay:${startsAt}ms;--intro-duration:${endsAt - startsAt}ms`;
+    return `
+      <div
+        class="intro-credit-card"
+        aria-label="${credit.character}, spillet af ${credit.actor}"
+        style="${timing}"
+      >
+        ${scoreElement(
+          credit.portrait.image,
+          "",
+          directorRectStyle(credit.portrait.rect),
+        )}
+        ${scoreElement(
+          credit.title.image,
+          "",
+          directorRectStyle(credit.title.rect),
+        )}
+        ${scoreElement(
+          credit.actorTitle.image,
+          "",
+          directorRectStyle(credit.actorTitle.rect),
+        )}
+      </div>
+    `;
+  }).join("");
+
   root.innerHTML = `
     <main class="app-shell">
       <section class="stage intro-stage" aria-labelledby="game-title">
-        <div class="storm" aria-hidden="true"></div>
-        <div class="intro-copy">
-          <p class="eyebrow">Et interaktivt mysterium</p>
-          <h1 id="game-title">Saving Ryan</h1>
-          <p class="lede">
-            En storm. Et mord. Den samme dag, igen og igen.
+        <h1 class="visually-hidden" id="game-title">Saving Ryan</h1>
+        <div class="intro-score" aria-label="Original Director-intro">
+          ${titleElements}
+          ${creditElements}
+        </div>
+        <audio
+          data-intro-audio
+          preload="auto"
+          src="${getIntroAudioUrl()}"
+        ></audio>
+        <div class="intro-controls">
+          <p aria-live="polite" data-intro-status>
+            Den originale intro er klar.
           </p>
+          <div>
+            <button class="primary-action" type="button" data-play-intro>
+              Afspil intro
+            </button>
+            <button class="secondary-action" type="button" data-skip-intro>
+              Spring introen over
+            </button>
+          </div>
         </div>
       </section>
     </main>
   `;
 
-  const introCopy = root.querySelector(".intro-copy");
-  introCopy?.append(
-    button("Begynd dagen", "primary-action", () => {
-      store.dispatch({ type: "INTRO_FINISHED" });
-    }),
+  const stage = root.querySelector<HTMLElement>(".intro-stage");
+  const audio = root.querySelector<HTMLAudioElement>("[data-intro-audio]");
+  const playButton = root.querySelector<HTMLButtonElement>(
+    "[data-play-intro]",
   );
+  const skipButton = root.querySelector<HTMLButtonElement>(
+    "[data-skip-intro]",
+  );
+  const status = root.querySelector<HTMLElement>("[data-intro-status]");
+
+  playButton?.addEventListener("click", () => {
+    stage?.classList.add("is-playing");
+    playButton.hidden = true;
+    if (status) {
+      status.textContent =
+        "Introen afspilles. Du kan gå videre når som helst.";
+    }
+    void audio?.play().catch(() => {
+      if (status?.isConnected) {
+        status.textContent =
+          "Introen afspilles uden lyd, fordi browseren blokerede lyden.";
+      }
+    });
+  });
+  skipButton?.addEventListener("click", () => {
+    audio?.pause();
+    store.dispatch({ type: "INTRO_FINISHED" });
+  });
 }
 
 function renderKnowledge(state: GameState): string {
@@ -393,17 +493,24 @@ async function playSceneInteraction(
   store: GameStore,
   narrativeHost: NarrativeHost,
 ): Promise<void> {
-  if (interaction.cue) {
-    const result = await narrativeHost.play(interaction.cue);
+  const canPerform = canPerformSceneInteraction(
+    store.getState(),
+    interaction,
+  );
+  const cue = canPerform ? interaction.cue : interaction.blockedCue;
+  if (cue) {
+    const result = await narrativeHost.play(cue);
     if (!isCompletedPlayback(result.status)) {
       return;
     }
   }
 
-  store.dispatch({
-    type: "PERFORM_INTERACTION",
-    id: interaction.id,
-  });
+  if (canPerform) {
+    store.dispatch({
+      type: "PERFORM_INTERACTION",
+      id: interaction.id,
+    });
+  }
 }
 
 async function completePendingTransition(
@@ -465,11 +572,8 @@ function renderExploration(
   const presentation = getScenePresentation(sceneId);
   const manualInteractions = getSceneInteractions(sceneId, "manual").filter(
     (interaction) =>
-      canPerformSceneInteraction(state, interaction) &&
-      interaction.effects.some(
-        (effect) =>
-          effect.type === "LEARN" && !state.knowledge[effect.id],
-      ),
+      canPerformSceneInteraction(state, interaction) ||
+      interaction.blockedCue !== undefined,
   );
   const transitionText = state.pendingTransition
     ? TRANSITION_TEXT[state.pendingTransition.transitionId]
@@ -591,6 +695,21 @@ function renderExploration(
       );
     }
   });
+
+  if (presentation.quit) {
+    appendHotspot(
+      hotspotButton(
+        "Forlad stedet (og spillet)",
+        "quit",
+        presentation.quit,
+        () => {
+          if (window.confirm("Vil du forlade spillet og begynde forfra?")) {
+            store.dispatch({ type: "RESET_GAME" });
+          }
+        },
+      ),
+    );
+  }
 
   const clockHotspot = hotspotButton(
     "Vent et tidsinterval",

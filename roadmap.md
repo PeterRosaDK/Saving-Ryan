@@ -381,8 +381,8 @@ Current completion:
 
 - the five base subjects and all recovered special topics are typed dialogue
   data with closed manifest clip IDs;
-- availability observes acquired knowledge and whether the murder has occurred
-  in the characters' current day;
+- availability observes acquired knowledge and the Director dialogue frame for
+  the current time; knowledge-unlocked topics survive later loops;
 - asked choices remain repeatable and skip effects follow an explicit per-choice
   policy;
 - Director's missing `Dialog()` call, `VedIkk` typo, and missing
@@ -410,6 +410,15 @@ Current completion:
 
 Exit criterion: launch → intro → initialized A1 game scene works reliably.
 
+Current completion:
+
+- the 535-frame score timing, title art, six cast cards, and recovered placement
+  are represented declaratively;
+- the original 30.444-second `intro` sound is extracted reproducibly from the
+  Director split-sound chunks;
+- explicit play/skip controls satisfy browser autoplay rules and both hand off
+  to the same tested A1 state.
+
 ### Phase 4 — Restore scenes and interactions
 
 1. Populate the 20-scene registry from A1–E4 markers.
@@ -433,8 +442,10 @@ Current foundation:
   users see a stable first animation pose;
 - all 12 layered bitmap film loops use their recovered score placement and
   per-tick frame changes;
-- the letter, body/necklace, and password-protected Barbara-computer inspections
-  are playable, with text cues standing in for unfinished presentation;
+- the body/necklace sequence is restored in A3/A4 and the trash/letter sequence
+  in D1–D4 using their original two-frame stills;
+- Barbara's computer remains clickable in B2/B3 and reproduces its original
+  locked or unlocked text according to the `Intruder` clue;
 - the B2 table and C1–C4 book hotspots use their original score rectangles and
   recovered Director text, unlocking the Barbara/Ryan conflict and secret
   passage facts respectively;
@@ -472,6 +483,8 @@ Current completion:
   Laura's confession;
 - `LauraSuspekt` is connected to the B4 transition and `BarbaraHacker` remains
   the second stage of Barbara's help;
+- the Director A/D still sequences, computer states, book, table, quit hotspot,
+  and all scored placements are restored and replayable;
 - the book independently reveals the secret passage from every C scene, matching
   Director's `BetingetLink[18]` behavior rather than treating it as an effect of
   Laura's confession;
@@ -489,6 +502,20 @@ Current completion:
 5. Create a production build and static-host deployment configuration.
 
 Exit criterion: the converted legacy scope is stable, testable, and deployable.
+
+Current completion:
+
+- reducer, dialogue, manifest, presentation, and golden-path regressions cover
+  the restored runtime;
+- a production Vite build succeeds;
+- a local Chrome smoke test verifies intro handoff, A1 hotspots, sequential
+  question/answer media, B4 → `LauraSuspekt` → new day, the D1 letter stills,
+  and the locked B2 computer path;
+- current Safari/Firefox smoke tests and the explicitly deferred save layer
+  remain outside this restoration commit.
+
+The detailed parity boundary is recorded in
+[`docs/legacy-restoration-status.md`](docs/legacy-restoration-status.md).
 
 ### Phase 8 — Close the canonical Laura story gaps
 

@@ -54,6 +54,12 @@ description of faded yet reusable dialogue options. Knowledge effects are not
 applied when playback is skipped unless a choice explicitly opts into that
 policy.
 
+The Director uses post-murder dialogue frames for alibi, theory, and accusation.
+Other conditional topics unlocked through `BetingetLink` remain available after
+an evening-to-morning loop because those links are not reset. The web rules
+retain that distinction: time selects the ordinary/post-murder dialogue frame
+and Ryan clips, while knowledge-unlocked topics remain permanent.
+
 ## Report-backed completion of the motive route
 
 The Director runtime and the report diverge around Sarah:

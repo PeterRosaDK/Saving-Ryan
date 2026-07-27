@@ -42,7 +42,7 @@ function videoClip(cue: NarrativeCue | null | undefined): string | null {
 }
 
 describe("legacy dialogue rules", () => {
-  it("starts with the five relationship topics and Ryan's warning", () => {
+  it("starts with Director's base topics and Ryan's warning", () => {
     const state = startedState();
 
     expect(topics(state, "Laura")).toEqual([
@@ -86,7 +86,7 @@ describe("legacy dialogue rules", () => {
     )).toEqual([]);
   });
 
-  it("only exposes alibi, theory, and accusation after the murder", () => {
+  it("uses Director's post-murder dialogue frames for alibi, theory, and accusation", () => {
     expect(topics(startedState({ timeSlot: 2 }), "Laura")).not.toContain(
       "alibi",
     );
@@ -95,22 +95,16 @@ describe("legacy dialogue rules", () => {
     );
   });
 
-  it("does not expose events before characters experience them in a new loop", () => {
+  it("keeps knowledge-unlocked topics available in a new loop", () => {
     const remembered = learnKnowledge(startedState(), [
       "ryan_bullied_marie",
       "barbara_and_ryan_argued",
     ]);
 
-    expect(topics(remembered, "Marie")).not.toContain(
+    expect(topics(remembered, "Marie")).toContain(
       "marie_and_ryan",
     );
-    expect(topics(remembered, "Laura")).not.toContain(
-      "barbara_and_ryan",
-    );
-
-    const afterEvents = { ...remembered, timeSlot: 2 as const };
-    expect(topics(afterEvents, "Marie")).toContain("marie_and_ryan");
-    expect(topics(afterEvents, "Laura")).toContain(
+    expect(topics(remembered, "Laura")).toContain(
       "barbara_and_ryan",
     );
   });
@@ -330,6 +324,26 @@ describe("legacy dialogue rules", () => {
       );
       expect(result.choice?.effects).toEqual([]);
     }
+  });
+
+  it("keeps the necklace topic available to living Ryan in a later loop", () => {
+    const state = learnKnowledge(startedState(), [
+      "killer_dropped_necklace",
+    ]);
+    const choice = getAvailableDialogueChoices(state, "Ryan").find(
+      ({ topic }) => topic === "necklace",
+    );
+
+    expect(choice).toMatchObject({
+      questionCue: {
+        kind: "video",
+        clipId: "Peter-omHalskaede",
+      },
+      answerCue: {
+        kind: "video",
+        clipId: "Ryan-VedIkke",
+      },
+    });
   });
 
   it("applies pre-playback Director effects when their clip is skipped", () => {

@@ -224,83 +224,77 @@ function getSpecialChoices(
     );
   }
 
-  if (afterMurder) {
-    choices.push(
-      defineChoice(
-        person,
-        "necklace",
-        "Peter-omHalskaede",
-        `${person}-VedIkke` as VideoClipId,
-        { requires: ["killer_dropped_necklace"] },
-      ),
+  choices.push(
+    defineChoice(
+      person,
+      "necklace",
+      "Peter-omHalskaede",
+      `${person}-VedIkke` as VideoClipId,
+      { requires: ["killer_dropped_necklace"] },
+    ),
+  );
+
+  if (person === "Marie") {
+    const hasEarnedTrust = state.dialogue.askedChoices.includes(
+      "Marie:marie_and_ryan",
     );
-  }
-
-  if (state.timeSlot >= 2) {
-    if (person === "Marie") {
-      const hasEarnedTrust = state.dialogue.askedChoices.includes(
-        "Marie:marie_and_ryan",
-      );
-      const canConfide =
-        hasEarnedTrust &&
-        state.knowledge.ryan_and_laura_were_together;
-      choices.push(
-        defineChoice(
-          person,
-          "marie_and_ryan",
-          canConfide ? "Marie-Fortrolighed2" : "Marie-Fortrolighed",
-          null,
-          canConfide
-            ? {
-                requires: [
-                  "ryan_bullied_marie",
-                  "ryan_and_laura_were_together",
-                ],
-                effects: [
-                  { type: "LEARN", id: "ryan_left_laura" },
-                ],
-                effectsOnSkip: true,
-              }
-            : { requires: ["ryan_bullied_marie"] },
-        ),
-      );
-    } else {
-      choices.push(
-        defineChoice(
-          person,
-          "marie_and_ryan",
-          "Peter-omRyanOgMarie",
-          `${person}-VedIkke` as VideoClipId,
-          { requires: ["ryan_bullied_marie"] },
-        ),
-      );
-    }
-  }
-
-  if (state.timeSlot >= 2) {
+    const canConfide =
+      hasEarnedTrust &&
+      state.knowledge.ryan_and_laura_were_together;
     choices.push(
       defineChoice(
         person,
-        "barbara_and_ryan",
-        "Peter-omBarbaraOgRyan",
-        person === "Laura"
-          ? "Laura-omBarbaraOgRyan"
-          : (`${person}-VedIkke` as VideoClipId),
-        person === "Laura"
+        "marie_and_ryan",
+        canConfide ? "Marie-Fortrolighed2" : "Marie-Fortrolighed",
+        null,
+        canConfide
           ? {
-              requires: ["barbara_and_ryan_argued"],
+              requires: [
+                "ryan_bullied_marie",
+                "ryan_and_laura_were_together",
+              ],
               effects: [
-                {
-                  type: "LEARN",
-                  id: "laura_acknowledged_barbara_and_ryan",
-                },
+                { type: "LEARN", id: "ryan_left_laura" },
               ],
               effectsOnSkip: true,
             }
-          : { requires: ["barbara_and_ryan_argued"] },
+          : { requires: ["ryan_bullied_marie"] },
+      ),
+    );
+  } else {
+    choices.push(
+      defineChoice(
+        person,
+        "marie_and_ryan",
+        "Peter-omRyanOgMarie",
+        `${person}-VedIkke` as VideoClipId,
+        { requires: ["ryan_bullied_marie"] },
       ),
     );
   }
+
+  choices.push(
+    defineChoice(
+      person,
+      "barbara_and_ryan",
+      "Peter-omBarbaraOgRyan",
+      person === "Laura"
+        ? "Laura-omBarbaraOgRyan"
+        : (`${person}-VedIkke` as VideoClipId),
+      person === "Laura"
+        ? {
+            requires: ["barbara_and_ryan_argued"],
+            effects: [
+              {
+                type: "LEARN",
+                id: "laura_acknowledged_barbara_and_ryan",
+              },
+            ],
+            effectsOnSkip: true,
+          }
+        : { requires: ["barbara_and_ryan_argued"] },
+    ),
+  );
 
   if (
     person === "Barbara" &&

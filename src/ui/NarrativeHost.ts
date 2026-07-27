@@ -4,15 +4,17 @@ import {
   type VideoPlaybackState,
 } from "../media/VideoPlayer";
 import type { NarrativeCue } from "../media/narrativeCue";
+import { getImageUrl } from "../media/imageManifest";
 
 export interface NarrativeCueResult {
   cue: NarrativeCue;
   status: VideoPlaybackResultStatus;
 }
 
-interface ActiveTextCue {
+interface ActivePanelCue {
   token: symbol;
-  cue: NarrativeCue & { kind: "text" };
+  cue: Extract<NarrativeCue, { kind: "text" | "stills" }>;
+  frameIndex: number;
   resolve: (result: NarrativeCueResult) => void;
 }
 
@@ -30,6 +32,7 @@ const VIDEO_STATUS_LABELS: Readonly<
 export class NarrativeHost {
   private readonly video: HTMLVideoElement;
   private readonly textPanel: HTMLElement;
+  private readonly stillImage: HTMLImageElement;
   private readonly textCopy: HTMLElement;
   private readonly continueButton: HTMLButtonElement;
   private readonly skipButton: HTMLButtonElement;
@@ -37,7 +40,7 @@ export class NarrativeHost {
   private readonly videoPlayer: VideoPlayer;
   private readonly unsubscribeVideo: () => void;
   private activeToken: symbol | null = null;
-  private activeText: ActiveTextCue | null = null;
+  private activePanel: ActivePanelCue | null = null;
 
   constructor(private readonly root: HTMLElement) {
     root.className = "media-host";
@@ -52,6 +55,7 @@ export class NarrativeHost {
           preload="metadata"
         ></video>
         <div class="text-cue" data-text-cue hidden>
+          <img class="still-cue-image" data-still-image hidden />
           <p data-text-copy></p>
           <button class="primary-action" type="button" data-text-continue>
             Fortsæt
@@ -70,6 +74,9 @@ export class NarrativeHost {
       "[data-video-player]",
     );
     this.textPanel = this.requireElement<HTMLElement>("[data-text-cue]");
+    this.stillImage = this.requireElement<HTMLImageElement>(
+      "[data-still-image]",
+    );
     this.textCopy = this.requireElement<HTMLElement>("[data-text-copy]");
     this.continueButton = this.requireElement<HTMLButtonElement>(
       "[data-text-continue]",
@@ -84,7 +91,7 @@ export class NarrativeHost {
     });
 
     this.continueButton.addEventListener("click", () => {
-      this.finishText("ended");
+      this.continuePanel();
     });
     this.skipButton.addEventListener("click", () => {
       this.skip();
@@ -97,19 +104,19 @@ export class NarrativeHost {
     this.activeToken = token;
     this.root.hidden = false;
 
-    if (cue.kind === "text") {
+    if (cue.kind === "text" || cue.kind === "stills") {
       this.video.hidden = true;
       this.textPanel.hidden = false;
-      this.textCopy.textContent = cue.text;
-      this.status.textContent = "Tekstsekvens";
-      this.continueButton.focus();
 
       return new Promise((resolve) => {
-        this.activeText = {
+        this.activePanel = {
           token,
           cue,
+          frameIndex: 0,
           resolve,
         };
+        this.renderPanelCue();
+        this.continueButton.focus();
       });
     }
 
@@ -129,8 +136,8 @@ export class NarrativeHost {
   }
 
   skip(): boolean {
-    if (this.activeText) {
-      this.finishText("skipped");
+    if (this.activePanel) {
+      this.finishPanel("skipped");
       return true;
     }
 
@@ -140,8 +147,8 @@ export class NarrativeHost {
   abort(): boolean {
     let aborted = false;
 
-    if (this.activeText) {
-      this.finishText("aborted");
+    if (this.activePanel) {
+      this.finishPanel("aborted");
       aborted = true;
     }
 
@@ -161,13 +168,65 @@ export class NarrativeHost {
     this.root.replaceChildren();
   }
 
-  private finishText(status: VideoPlaybackResultStatus): void {
-    const active = this.activeText;
+  private continuePanel(): void {
+    const active = this.activePanel;
     if (!active) {
       return;
     }
 
-    this.activeText = null;
+    if (
+      active.cue.kind === "stills" &&
+      active.frameIndex < active.cue.frames.length - 1
+    ) {
+      active.frameIndex += 1;
+      this.renderPanelCue();
+      return;
+    }
+
+    this.finishPanel("ended");
+  }
+
+  private renderPanelCue(): void {
+    const active = this.activePanel;
+    if (!active) {
+      return;
+    }
+
+    if (active.cue.kind === "text") {
+      this.stillImage.hidden = true;
+      this.stillImage.removeAttribute("src");
+      this.stillImage.alt = "";
+      this.textCopy.textContent = active.cue.text;
+      this.status.textContent = "Tekstsekvens";
+      this.continueButton.textContent = "Fortsæt";
+      return;
+    }
+
+    const frame = active.cue.frames[active.frameIndex];
+    if (!frame) {
+      throw new Error("Still-image cue has no frame to present.");
+    }
+    this.stillImage.hidden = false;
+    this.stillImage.src = getImageUrl(frame.image);
+    this.stillImage.alt = frame.alt;
+    this.textCopy.textContent = frame.text ?? "";
+    this.textCopy.hidden = frame.text === undefined;
+    this.status.textContent =
+      `Billedsekvens ${active.frameIndex + 1} af ${active.cue.frames.length}`;
+    this.continueButton.textContent =
+      active.frameIndex < active.cue.frames.length - 1
+        ? "Næste"
+        : "Fortsæt";
+  }
+
+  private finishPanel(status: VideoPlaybackResultStatus): void {
+    const active = this.activePanel;
+    if (!active) {
+      return;
+    }
+
+    this.activePanel = null;
+    this.textCopy.hidden = false;
     if (this.activeToken === active.token) {
       this.activeToken = null;
       this.root.hidden = true;

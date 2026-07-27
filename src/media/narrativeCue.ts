@@ -1,4 +1,5 @@
 import type { VideoClipId } from "./videoManifest";
+import type { ImageMemberName } from "./imageManifest";
 
 /*
  * Dialogue and special sequences address presentation through this small seam.
@@ -13,6 +14,14 @@ export type NarrativeCue =
   | {
       kind: "text";
       text: string;
+    }
+  | {
+      kind: "stills";
+      frames: readonly {
+        image: ImageMemberName;
+        alt: string;
+        text?: string;
+      }[];
     };
 
 export function videoCue(clipId: VideoClipId): NarrativeCue {
@@ -26,5 +35,18 @@ export function textCue(text: string): NarrativeCue {
   return {
     kind: "text",
     text,
+  };
+}
+
+export function stillsCue(
+  frames: Extract<NarrativeCue, { kind: "stills" }>["frames"],
+): NarrativeCue {
+  if (frames.length === 0) {
+    throw new Error("A still-image cue requires at least one frame.");
+  }
+
+  return {
+    kind: "stills",
+    frames,
   };
 }

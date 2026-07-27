@@ -82,6 +82,12 @@ describe("verified scene content", () => {
   });
 
   it("places the remaining special hotspots at their Director coordinates", () => {
+    for (const sceneId of ["A3", "A4"] as const) {
+      expect(getScenePresentation(sceneId).interactions).toContainEqual({
+        interactionId: "inspect_ryans_body_and_necklace",
+        rect: { x: 158, y: 383, width: 413, height: 119 },
+      });
+    }
     expect(getScenePresentation("B2").interactions).toContainEqual({
       interactionId: "eavesdrop_barbara_and_ryan",
       rect: { x: 445, y: 235, width: 146, height: 118 },
@@ -92,17 +98,65 @@ describe("verified scene content", () => {
         rect: { x: 117, y: 294, width: 14, height: 46 },
       });
     }
+    for (const sceneId of ["D1", "D2", "D3", "D4"] as const) {
+      expect(getScenePresentation(sceneId).interactions).toContainEqual({
+        interactionId: "inspect_girlfriend_letter",
+        rect: { x: 148, y: 384, width: 62, height: 24 },
+      });
+    }
   });
 
-  it("represents unfinished inspect scenes as text cues", () => {
-    expect(getSceneInteraction("inspect_girlfriend_letter").cue).toEqual({
-      kind: "text",
-      text: "I papirkurven ligger et kærestebrev til Ryan. Det er underskrevet Sarah.",
+  it("restores Director's two-frame body and letter sequences", () => {
+    expect(
+      getSceneInteraction("inspect_ryans_body_and_necklace").cue,
+    ).toEqual({
+      kind: "stills",
+      frames: [
+        {
+          image: "sektorA3-Ryan1",
+          alt: "Ryan ligger livløs på kantinens gulv.",
+        },
+        {
+          image: "sektorA3-Ryan2",
+          alt: "Et nærbillede af halskæden ved Ryans hånd.",
+          text:
+            "I Ryans hånd ligger en isbjørnehalskæde. Den må være revet af morderen under faldet.",
+        },
+      ],
     });
+    expect(getSceneInteraction("inspect_girlfriend_letter").cue).toEqual({
+      kind: "stills",
+      frames: [
+        {
+          image: "sektorD4-Brev1",
+          alt: "Et brev stikker op af papirkurven i grupperummet.",
+        },
+        {
+          image: "sektorD4-Brev2",
+          alt: "Kærestebrevet til Ryan er foldet ud.",
+          text:
+            "I papirkurven ligger et kærestebrev til Ryan. Det er underskrevet Sarah.",
+        },
+      ],
+    });
+  });
+
+  it("uses Director's locked and unlocked computer text", () => {
     expect(getSceneInteraction("inspect_barbaras_computer").cue).toEqual({
       kind: "text",
-      text: "Koden Intruder virker. I Barbaras filer finder du ændrede eksamenskarakterer.",
+      text:
+        "Du kaster et blik på Barbaras computer. Der er adgangskontrol på, så du prøver at bruge det navn, David fortalte dig. Det lykkes! Du kan se, at Barbara er inde i universitetets ellers utilgængelige filsystem over karakterer, og du kan desuden se, at hun tilsyneladende er inde under sit eget stamblad!",
     });
+    expect(
+      getSceneInteraction("inspect_barbaras_computer").blockedCue,
+    ).toEqual({
+      kind: "text",
+      text:
+        "Du kaster et blik på Barbaras computer. Desværre er der adgangskontrol på, og du kender ikke brugernavnet.",
+    });
+  });
+
+  it("keeps Director's text-only listen and book interactions", () => {
     expect(getSceneInteraction("eavesdrop_barbara_and_ryan").cue).toEqual({
       kind: "text",
       text: "Du kravler ind under bordet og overværer et skænderi mellem Ryan og Barbara. Det lyder, som om Ryan afpresser Barbara.",
@@ -131,5 +185,17 @@ describe("verified scene content", () => {
       kind: "video",
       clipId: "LauraSuspekt",
     });
+  });
+
+  it("restores the Director quit hotspot in all four canteen scenes", () => {
+    for (const sceneId of ["A1", "A2", "A3", "A4"] as const) {
+      expect(getScenePresentation(sceneId).quit).toEqual({
+        x: 641,
+        y: 120,
+        width: 80,
+        height: 111,
+      });
+    }
+    expect(getScenePresentation("B1").quit).toBeUndefined();
   });
 });

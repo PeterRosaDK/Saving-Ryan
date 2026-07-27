@@ -40,3 +40,11 @@ target_link_libraries(
     ZLIB::ZLIB
 )
 target_compile_features(saving_ryan_extract_bitmaps PRIVATE cxx_std_20)
+
+add_executable(saving_ryan_extract_sounds ExtractDirectorSounds.cpp)
+target_link_libraries(
+  saving_ryan_extract_sounds
+  PRIVATE
+    LibreShockwave::libreshockwave
+)
+target_compile_features(saving_ryan_extract_sounds PRIVATE cxx_std_20)

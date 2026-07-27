@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  stillsCue,
   textCue,
   videoCue,
 } from "../src/media/narrativeCue";
@@ -17,5 +18,35 @@ describe("narrative cues", () => {
       kind: "text",
       text: "Midlertidig scene: David tøver.",
     });
+  });
+
+  it("supports the original Director still-image sequences", () => {
+    expect(
+      stillsCue([
+        {
+          image: "sektorA3-Ryan1",
+          alt: "Ryan ligger på gulvet.",
+        },
+        {
+          image: "sektorA3-Ryan2",
+          alt: "Halskæden ses i nærbillede.",
+        },
+      ]),
+    ).toEqual({
+      kind: "stills",
+      frames: [
+        {
+          image: "sektorA3-Ryan1",
+          alt: "Ryan ligger på gulvet.",
+        },
+        {
+          image: "sektorA3-Ryan2",
+          alt: "Halskæden ses i nærbillede.",
+        },
+      ],
+    });
+    expect(() => stillsCue([])).toThrow(
+      "A still-image cue requires at least one frame.",
+    );
   });
 });

@@ -11,6 +11,7 @@ import {
   hasKnowledge,
 } from "./knowledgeGraph";
 import {
+  stillsCue,
   textCue,
   type NarrativeCue,
 } from "../media/narrativeCue";
@@ -24,6 +25,7 @@ export interface SceneInteraction {
   requires: readonly KnowledgeId[];
   effects: readonly GameEffect[];
   cue?: NarrativeCue;
+  blockedCue?: NarrativeCue;
   specialSequence?: SpecialSequenceId;
 }
 
@@ -58,27 +60,45 @@ export const SCENE_INTERACTIONS = {
   },
   inspect_ryans_body_and_necklace: {
     id: "inspect_ryans_body_and_necklace",
-    scenes: ["A3"],
+    scenes: ["A3", "A4"],
     kind: "inspect",
     trigger: "manual",
     label: "Undersøg liget og halskæden",
     requires: [],
     effects: [{ type: "LEARN", id: "killer_dropped_necklace" }],
-    cue: textCue(
-      "I Ryans hånd ligger en isbjørnehalskæde. Den må være revet af morderen under faldet.",
-    ),
+    cue: stillsCue([
+      {
+        image: "sektorA3-Ryan1",
+        alt: "Ryan ligger livløs på kantinens gulv.",
+      },
+      {
+        image: "sektorA3-Ryan2",
+        alt: "Et nærbillede af halskæden ved Ryans hånd.",
+        text:
+          "I Ryans hånd ligger en isbjørnehalskæde. Den må være revet af morderen under faldet.",
+      },
+    ]),
   },
   inspect_girlfriend_letter: {
     id: "inspect_girlfriend_letter",
-    scenes: ["D4"],
+    scenes: ["D1", "D2", "D3", "D4"],
     kind: "inspect",
     trigger: "manual",
-    label: "Læs brevet",
+    label: "Kig i papirkurven",
     requires: [],
     effects: [{ type: "LEARN", id: "ryan_has_girlfriend_sarah" }],
-    cue: textCue(
-      "I papirkurven ligger et kærestebrev til Ryan. Det er underskrevet Sarah.",
-    ),
+    cue: stillsCue([
+      {
+        image: "sektorD4-Brev1",
+        alt: "Et brev stikker op af papirkurven i grupperummet.",
+      },
+      {
+        image: "sektorD4-Brev2",
+        alt: "Kærestebrevet til Ryan er foldet ud.",
+        text:
+          "I papirkurven ligger et kærestebrev til Ryan. Det er underskrevet Sarah.",
+      },
+    ]),
   },
   inspect_barbaras_computer: {
     id: "inspect_barbaras_computer",
@@ -89,7 +109,10 @@ export const SCENE_INTERACTIONS = {
     requires: ["barbara_hacker_alias_intruder"],
     effects: [{ type: "LEARN", id: "barbara_forged_grades" }],
     cue: textCue(
-      "Koden Intruder virker. I Barbaras filer finder du ændrede eksamenskarakterer.",
+      "Du kaster et blik på Barbaras computer. Der er adgangskontrol på, så du prøver at bruge det navn, David fortalte dig. Det lykkes! Du kan se, at Barbara er inde i universitetets ellers utilgængelige filsystem over karakterer, og du kan desuden se, at hun tilsyneladende er inde under sit eget stamblad!",
+    ),
+    blockedCue: textCue(
+      "Du kaster et blik på Barbaras computer. Desværre er der adgangskontrol på, og du kender ikke brugernavnet.",
     ),
   },
   eavesdrop_barbara_and_ryan: {

@@ -15,6 +15,7 @@ cmake \
 cmake \
   --build /tmp/saving-ryan-director-tools \
   --target saving_ryan_director_dump saving_ryan_extract_bitmaps \
+    saving_ryan_extract_sounds \
   --parallel
 ```
 
@@ -46,3 +47,14 @@ Requirements:
 The extractor writes RGBA PNG files and retains Director cast names where possible.
 The separately supplied BMP files remain the preferred source because Director
 introduced minor color loss during import.
+
+## Extract embedded sounds
+
+```sh
+/tmp/saving-ryan-director-tools/saving_ryan_extract_sounds \
+  Legacy/Intro.dir \
+  public/assets/audio
+```
+
+The extractor preserves MP3 streams and converts Director PCM/ADPCM members to
+browser-compatible WAV files.

@@ -82,6 +82,29 @@ describe("legacy game state", () => {
     expect(completed.pendingTransition).toBeNull();
   });
 
+  it("executes all 20 Director Vent transitions without changing location", () => {
+    for (const scene of SCENES) {
+      const initial: GameState = {
+        ...finishIntro(),
+        location: scene.location.id,
+        timeSlot: scene.time.id,
+      };
+      const waiting = reduceGameState(initial, { type: "WAIT" });
+
+      expect(waiting.pendingTransition?.from).toBe(scene.id);
+      expect(waiting.pendingTransition?.transitionId).toBe(scene.id);
+
+      const completed = reduceGameState(waiting, {
+        type: "COMPLETE_TRANSITION",
+      });
+      expect(completed.location).toBe(scene.location.id);
+      expect(completed.timeSlot).toBe(
+        scene.time.id === 4 ? 1 : scene.time.id + 1,
+      );
+      expect(completed.loop).toBe(scene.time.id === 4 ? 2 : 1);
+    }
+  });
+
   it("runs B4 through the Laura Suspekt contract before beginning the next loop", () => {
     const initial: GameState = {
       ...finishIntro(),
@@ -144,6 +167,30 @@ describe("legacy game state", () => {
       timeSlot: 3,
     };
     const bodyInspected = reduceGameState(atBody, {
+      type: "PERFORM_INTERACTION",
+      id: "inspect_ryans_body_and_necklace",
+    });
+    expect(bodyInspected.knowledge.killer_dropped_necklace).toBe(true);
+  });
+
+  it("keeps Director's body and trash interactions in every scored scene", () => {
+    const atD1: GameState = {
+      ...finishIntro(),
+      location: "D",
+      timeSlot: 1,
+    };
+    const letterRead = reduceGameState(atD1, {
+      type: "PERFORM_INTERACTION",
+      id: "inspect_girlfriend_letter",
+    });
+    expect(letterRead.knowledge.ryan_has_girlfriend_sarah).toBe(true);
+
+    const atA4: GameState = {
+      ...letterRead,
+      location: "A",
+      timeSlot: 4,
+    };
+    const bodyInspected = reduceGameState(atA4, {
       type: "PERFORM_INTERACTION",
       id: "inspect_ryans_body_and_necklace",
     });
