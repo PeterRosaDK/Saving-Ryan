@@ -47,6 +47,21 @@ export function getNextTimeSlot(time: TimeSlot): TimeSlot {
   return NEXT_TIME_SLOT[time];
 }
 
+export function getWaitActionLabel(
+  location: LocationId,
+  time: TimeSlot,
+): string {
+  const scene = getScene(toSceneId(location, time));
+  const destination =
+    time === 4
+      ? "næste morgen"
+      : getScene(
+          toSceneId(location, getNextTimeSlot(time)),
+        ).time.name.toLowerCase();
+
+  return `Vent i ${scene.location.name.toLowerCase()} til ${destination}`;
+}
+
 export const SCENES: readonly SceneDefinition[] = LOCATIONS.flatMap((location) =>
   TIMES.map((time) => ({
     id: toSceneId(location.id, time.id),

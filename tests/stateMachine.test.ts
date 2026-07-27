@@ -406,6 +406,48 @@ describe("legacy game state", () => {
     );
   });
 
+  it("keeps ordinary dialogue and repeated questions free", () => {
+    let state: GameState = {
+      ...finishIntro(),
+      location: "D",
+      timeSlot: 1,
+    };
+
+    for (let repeat = 0; repeat < 2; repeat += 1) {
+      state = reduceGameState(state, {
+        type: "START_DIALOGUE",
+        person: "David",
+      });
+      state = reduceGameState(state, {
+        type: "COMPLETE_DIALOGUE_CHOICE",
+        person: "David",
+        topic: "about_laura",
+        completion: "ended",
+      });
+      state = reduceGameState(state, { type: "CLOSE_DIALOGUE" });
+    }
+
+    expect(toSceneId(state.location, state.timeSlot)).toBe("D1");
+    expect(state.pendingTransition).toBeNull();
+  });
+
+  it("supports unlimited day loops without a deadline state", () => {
+    let state: GameState = finishIntro();
+
+    for (let interval = 0; interval < 40; interval += 1) {
+      state = reduceGameState(state, { type: "WAIT" });
+      state = reduceGameState(state, {
+        type: "COMPLETE_TRANSITION",
+      });
+    }
+
+    expect(state.phase).toBe("exploration");
+    expect(state.loop).toBe(11);
+    expect(toSceneId(state.location, state.timeSlot)).toBe("A1");
+    expect(state.knowledge.ryan_was_murdered).toBe(true);
+    expect(state.pendingTransition).toBeNull();
+  });
+
   it("only completes the story from the morning passage with confession, passage, and warning knowledge", () => {
     const atPassage: GameState = {
       ...finishIntro(),

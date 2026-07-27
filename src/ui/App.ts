@@ -11,6 +11,7 @@ import type { DialogueChoice } from "../game/dialogueData";
 import {
   getNextTimeSlot,
   getScene,
+  getWaitActionLabel,
   LOCATIONS,
   toSceneId,
 } from "../game/sceneRegistry";
@@ -811,16 +812,7 @@ function renderExploration(
   }
 
   const clockHotspot = hotspotButton(
-    `Vent i ${scene.location.name.toLowerCase()} til ${
-      state.timeSlot === 4
-        ? "næste morgen"
-        : getScene(
-            toSceneId(
-              state.location,
-              getNextTimeSlot(state.timeSlot),
-            ),
-          ).time.name.toLowerCase()
-    }`,
+    getWaitActionLabel(state.location, state.timeSlot),
     "wait",
     {
       x: presentation.clock.centerX - presentation.clock.width / 2,

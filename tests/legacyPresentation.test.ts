@@ -9,6 +9,7 @@ import {
   LOCATION_TRANSITION_EVENTS,
   TRANSITION_TEXT,
 } from "../src/game/transitionEvents";
+import { getWaitActionLabel } from "../src/game/sceneRegistry";
 import { getIntroAudioUrl } from "../src/media/audioManifest";
 
 describe("Director presentation parity", () => {
@@ -79,6 +80,15 @@ describe("Director presentation parity", () => {
         },
       ],
     });
+  });
+
+  it("names both observation location and destination time on the clock", () => {
+    expect(getWaitActionLabel("C", 2)).toBe(
+      "Vent i læsesalen til eftermiddag",
+    );
+    expect(getWaitActionLabel("E", 4)).toBe(
+      "Vent i gangarealet til næste morgen",
+    );
   });
 
   it("models the 535-frame, 20 fps Director intro score", () => {
