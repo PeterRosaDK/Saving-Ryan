@@ -490,16 +490,44 @@ Current completion:
 
 Exit criterion: the converted legacy scope is stable, testable, and deployable.
 
-### Later phase — Finish and expand the game
+### Phase 8 — Close the canonical Laura story gaps
 
 Only after conversion parity:
 
 - replace `[meta]` transition text with new scenes or intentional prose;
-- complete missing intro/cutscene material;
+- complete originally intended but missing cutscene material;
+- connect passage discovery, prevention, the fate of Ryan, and the
+  ending/epilogue boundary;
+- keep text cues as the first fallback for missing presentation assets.
+
+### Phase 9 — Expand time-loop and observation mechanics
+
+Only after the canonical Laura story is complete:
+
+- consolidate location-dependent transition events;
+- add explicit time cost to selected significant actions;
+- add loop-local NPC memory and same-day accusation consequences;
+- add deliberate simultaneous observations and late-discovery loopbacks;
+- preserve unlimited loops and free ordinary navigation.
+
+The approved but deferred design and Laura event matrix are recorded in
+[`docs/time-observation-design.md`](docs/time-observation-design.md). Do not
+introduce this phase's abstractions during Director restoration or canonical gap
+completion.
+
+### Phase 10 — Add curated alternative cases
+
+Only after Laura is stable as the reference implementation:
+
+- add a minimal `CaseDefinition` boundary and persistent selected case;
+- keep Laura as the default and add **Mystisk case** separately;
+- introduce one hand-authored alternative murderer as a proof of concept;
+- extend to further curated cases only after narrative validation.
+
+### Later production improvements
+
 - improve sound and music;
 - broaden dialogue and alternative investigations;
-- keep Laura as the default canonical case and add the curated **Mystisk case**
-  mode one murderer at a time;
 - commission or generate new assets with a documented art direction.
 
 ## Known legacy defects and migration risks
