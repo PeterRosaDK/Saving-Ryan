@@ -5,6 +5,7 @@ import {
   LOCATIONS,
   toSceneId,
 } from "../game/sceneRegistry";
+import { getSceneBackgroundUrl } from "../media/imageManifest";
 
 const CLUES: Partial<Record<string, KnowledgeId>> = {
   B1: "barbara_is_computer_expert",
@@ -116,11 +117,16 @@ function renderExploration(root: HTMLElement, state: GameState, store: GameStore
 
       <section class="game-layout">
         <div class="stage exploration-stage" aria-label="${scene.location.name}, ${scene.time.name}">
-          <div class="scene-grid" aria-hidden="true"></div>
+          <img
+            class="scene-background"
+            src="${getSceneBackgroundUrl(scene.id)}"
+            alt="Original scene fra ${scene.location.name}"
+          />
+          <div class="scene-vignette" aria-hidden="true"></div>
           <div class="scene-copy">
             <p class="scene-code">${scene.id}</p>
             <h2>${scene.location.name}</h2>
-            <p>${scene.time.name}. De oprindelige Director-billeder bliver tilføjet i næste udtræksfase.</p>
+            <p>${scene.time.name}</p>
           </div>
           <div class="stage-actions" data-stage-actions></div>
         </div>

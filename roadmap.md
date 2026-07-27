@@ -294,6 +294,17 @@ The responsive web stage should retain the original 4:3 composition and scale as
 unit with `aspect-ratio: 4 / 3`; hotspot coordinates must use the same logical
 800×600 coordinate space.
 
+Current extraction status:
+
+- 90 separately supplied BMP originals are preserved under `Legacy/Billeder/`;
+- they cover 73 of the 74 bitmap members in `Billeder.dir`;
+- `BlankPortrait`, `titel-ryan`, and `titel-saving` were decoded from the Director
+  casts because BMP sources were absent;
+- 93 PNG derivatives are available under `public/assets/images/`;
+- all 20 A1–E4 background photographs are connected to the exploration stage;
+- the 12 film-loop frame groups are identified, while placement and timing still
+  await score translation.
+
 ## Step-by-step conversion plan
 
 ### Phase 0 — Preserve and inventory
