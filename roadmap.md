@@ -14,10 +14,10 @@ directories. Their casts, markers, and compiled Lingo were inspected directly.
 
 | Legacy file | Confirmed responsibility | Contents found |
 | --- | --- | --- |
-| `Intro.dir` | Opening timeline and handoff to the game | 800×600, 535 frames, 24 cast members, 3 scripts, intro sound, title/character bitmaps |
-| `Spillet.dir` | Main controller, navigation, dialogue, state, and special scenes | 800×600, 165 frames, 44 cast members, 19 scripts, 30 frame markers, external references to the video and image casts |
-| `Video.dir` | Video cast/catalogue | 81 named video members; no Lingo and no score |
-| `Billeder.dir` | Image and animation cast | 86 members: room images, portraits, clocks, buttons, and Director film loops; no Lingo |
+| `Legacy/Intro.dir` | Opening timeline and handoff to the game | 800×600, 535 frames, 24 cast members, 3 scripts, intro sound, title/character bitmaps |
+| `Legacy/Spillet.dir` | Main controller, navigation, dialogue, state, and special scenes | 800×600, 165 frames, 44 cast members, 19 scripts, 30 frame markers, external references to the video and image casts |
+| `Legacy/Video.dir` | Video cast/catalogue | 81 named video members; no Lingo and no score |
+| `Legacy/Billeder.dir` | Image and animation cast | 86 members: room images, portraits, clocks, buttons, and Director film loops; no Lingo |
 
 The project report confirms the same design:
 
@@ -32,7 +32,7 @@ The project report confirms the same design:
   missing scenes.
 
 Relevant report sections are pages 11–13, 18–28, 65–78, and 93–105 of
-`Projektet.pdf`.
+`Legacy/Projektet.pdf`.
 
 ## Confirmed legacy runtime flow
 
@@ -435,4 +435,3 @@ The conversion phase is complete when:
 - state-machine, knowledge-graph, manifest, and critical-path tests pass;
 - a static production build works without Director, Shockwave, Xtras, or absolute
   local file paths.
-
