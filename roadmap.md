@@ -551,7 +551,7 @@ Completed:
 Source classifications and unused-asset decisions are recorded in
 [`docs/canonical-laura-completion.md`](docs/canonical-laura-completion.md).
 
-### Phase 9 — Expand time-loop and observation mechanics
+### Phase 9 — Expand time-loop and observation mechanics — Completed
 
 Only after the canonical Laura story is complete:
 
@@ -561,7 +561,7 @@ Only after the canonical Laura story is complete:
 - add deliberate simultaneous observations and late-discovery loopbacks;
 - preserve unlimited loops and free ordinary navigation.
 
-In progress:
+Completed:
 
 - all 20 legacy wait transitions are consolidated as declarative,
   scene-keyed location events;
@@ -586,13 +586,17 @@ In progress:
   motive/evidence gate;
 - the clock hotspot now previews both observation location and destination
   time;
-- broader disposition, departures, cross-character warnings, and timed
-  dialogue remain separate later slices.
+- ordinary navigation, short dialogue, repeated dialogue, locked interactions,
+  and completed timed interactions remain free;
+- the reducer is verified across unlimited day loops without a deadline or
+  permanent softlock.
 
-The approved but deferred design and Laura event matrix are recorded in
-[`docs/time-observation-design.md`](docs/time-observation-design.md). Do not
-introduce this phase's abstractions during Director restoration or canonical gap
-completion.
+The completed design, Laura event matrix, validation evidence, and deliberate
+post-phase exclusions are recorded in
+[`docs/time-observation-design.md`](docs/time-observation-design.md). General
+disposition, timed dialogue, the optional richer A2 perspective, and
+case-specific event resolution are not required by the current Laura case and
+remain deferred until concrete later content needs them.
 
 ### Phase 10 — Add curated alternative cases
 

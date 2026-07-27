@@ -5,8 +5,9 @@ interactive mystery.
 
 ## Current status
 
-The tagged Director restoration is preserved as `legacy-restoration-v1`, and
-the canonical Laura story is now playable from intro to epilogue:
+The tagged Director restoration is preserved as `legacy-restoration-v1`, the
+canonical Laura story is playable from intro to epilogue, and phase 9's
+expanded time-loop mechanics are complete:
 
 - legacy Director files and the original report are preserved in `Legacy/`;
 - converted MP4 files are served from `public/Video/`;
@@ -76,6 +77,9 @@ The recovered intro sound and missing production music are inventoried in
 The phase 8 knowledge gate, reconstructed bridges, ending, and unused-asset
 decisions are in
 [docs/canonical-laura-completion.md](docs/canonical-laura-completion.md).
+The completed phase 9 event matrix, time-action rules, loop-local memory, and
+validation boundary are in
+[docs/time-observation-design.md](docs/time-observation-design.md).
 
 ## Commands
 
