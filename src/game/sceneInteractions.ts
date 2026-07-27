@@ -17,7 +17,7 @@ import {
 
 export interface SceneInteraction {
   id: SceneInteractionId;
-  scene: SceneId;
+  scenes: readonly SceneId[];
   kind: "observe" | "inspect" | "special";
   trigger: SceneInteractionTrigger;
   label: string;
@@ -30,7 +30,7 @@ export interface SceneInteraction {
 export const SCENE_INTERACTIONS = {
   notice_barbara_computer_expertise: {
     id: "notice_barbara_computer_expertise",
-    scene: "B1",
+    scenes: ["B1"],
     kind: "observe",
     trigger: "enter",
     label: "Læg mærke til Barbaras computerarbejde",
@@ -39,7 +39,7 @@ export const SCENE_INTERACTIONS = {
   },
   witness_ryan_bullying_marie: {
     id: "witness_ryan_bullying_marie",
-    scene: "E1",
+    scenes: ["E1"],
     kind: "observe",
     trigger: "wait",
     label: "Overvær Ryan mobbe Marie",
@@ -48,7 +48,7 @@ export const SCENE_INTERACTIONS = {
   },
   witness_laura_computer_activity: {
     id: "witness_laura_computer_activity",
-    scene: "B4",
+    scenes: ["B4"],
     kind: "special",
     trigger: "wait",
     label: "Følg Lauras mistænkelige computeraktivitet",
@@ -58,7 +58,7 @@ export const SCENE_INTERACTIONS = {
   },
   inspect_ryans_body_and_necklace: {
     id: "inspect_ryans_body_and_necklace",
-    scene: "A3",
+    scenes: ["A3"],
     kind: "inspect",
     trigger: "manual",
     label: "Undersøg liget og halskæden",
@@ -70,7 +70,7 @@ export const SCENE_INTERACTIONS = {
   },
   inspect_girlfriend_letter: {
     id: "inspect_girlfriend_letter",
-    scene: "D4",
+    scenes: ["D4"],
     kind: "inspect",
     trigger: "manual",
     label: "Læs brevet",
@@ -82,7 +82,7 @@ export const SCENE_INTERACTIONS = {
   },
   inspect_barbaras_computer: {
     id: "inspect_barbaras_computer",
-    scene: "B1",
+    scenes: ["B2", "B3"],
     kind: "inspect",
     trigger: "manual",
     label: "Log ind på Barbaras computer",
@@ -106,7 +106,8 @@ export function getSceneInteractions(
 ): readonly SceneInteraction[] {
   return Object.values(SCENE_INTERACTIONS).filter(
     (interaction) =>
-      interaction.scene === scene && interaction.trigger === trigger,
+      (interaction.scenes as readonly SceneId[]).includes(scene) &&
+      interaction.trigger === trigger,
   );
 }
 

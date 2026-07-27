@@ -93,7 +93,27 @@ supplied character/scene patches:
 - `LoopD2`
 - `LoopE2`
 
-The inferred frame associations are recorded in
-`src/media/imageManifest.ts`. Exact positions, registration points, timing, and
-Director ink behavior still need to be recovered from the score before the loops
-are rendered.
+The frame associations are recorded in `src/media/imageManifest.ts`. Their
+positions and frame changes were recovered from the linked film-loop scores and
+are recorded in `src/game/scenePresentation.ts`.
+
+Each loop lasts 87 Director ticks. The main movie runs at 25 fps, so one cycle is
+3.48 seconds. The timelines are intentionally non-uniform: for example,
+`LoopB1` changes frames at ticks 0, 10, 14, 57, and 61 instead of cycling evenly.
+The web renderer preserves these changes while honoring reduced-motion
+preferences.
+
+The score also confirms the composition model:
+
+- the stage is 800×600;
+- every 640×480 room photograph is centred at `(400, 300)`, leaving a 80-pixel
+  horizontal and 60-pixel vertical stage margin;
+- film-loop members are replacement image patches laid over the room photograph,
+  not transparent full-stage sprites;
+- sprite coordinates are stored as centre points and are converted to responsive
+  percentage rectangles by `directorRectStyle()`.
+
+The original bitmap ordering maps the linked-score member numbers to the named
+frame assets. Director ink/blend behavior for the animation patches is currently
+rendered as an ordinary replacement layer; visual comparison in the browser is
+still required before declaring pixel-level parity.

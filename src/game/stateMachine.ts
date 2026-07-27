@@ -160,7 +160,7 @@ export function reduceGameState(
       const sceneId = toSceneId(state.location, state.timeSlot);
       if (
         interaction.trigger !== "manual" ||
-        interaction.scene !== sceneId ||
+        !(interaction.scenes as readonly typeof sceneId[]).includes(sceneId) ||
         !canPerformSceneInteraction(state, interaction)
       ) {
         return state;

@@ -302,6 +302,8 @@ describe("legacy game state", () => {
       completion: "ended",
     });
     state = reduceGameState(state, { type: "CLOSE_DIALOGUE" });
+    state = reduceGameState(state, { type: "WAIT" });
+    state = reduceGameState(state, { type: "COMPLETE_TRANSITION" });
     state = reduceGameState(state, {
       type: "MOVE_TO_LOCATION",
       location: "B",

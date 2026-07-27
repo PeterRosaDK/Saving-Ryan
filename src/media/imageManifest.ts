@@ -171,6 +171,22 @@ export function getCharacterPortraitUrl(
   return getImageUrl(CHARACTER_PORTRAIT_MEMBERS[person], baseUrl);
 }
 
+export function getClockImageUrl(
+  timeSlot: 1 | 2 | 3 | 4,
+  baseUrl?: string,
+): string {
+  return getImageUrl(`ur${timeSlot}` as ImageMemberName, baseUrl);
+}
+
+export function getFilmLoopFrameUrls(
+  loopName: DirectorFilmLoopName,
+  baseUrl?: string,
+): readonly string[] {
+  return FILM_LOOP_FRAMES[loopName].map((member) =>
+    getImageUrl(member, baseUrl)
+  );
+}
+
 // These members were missing from the supplied BMP collection and were decoded
 // directly from the Director casts.
 export const DIRECTOR_EXTRACTED_MEMBERS = [
@@ -179,8 +195,8 @@ export const DIRECTOR_EXTRACTED_MEMBERS = [
   "titel-saving",
 ] as const satisfies readonly ImageMemberName[];
 
-// The frame associations are inferred from cast names and ordering. Their exact
-// placement and timing will be verified against the Director score.
+// The names and ordering match the bitmap members referenced by each linked
+// Director film loop. Placement and tick changes live in scenePresentation.ts.
 export const FILM_LOOP_FRAMES = {
   LoopA1: ["sektorA1-Laura1", "sektorA1-Laura2", "sektorA1-Laura3"],
   LoopA3: ["sektorA3-Laura1", "sektorA3-Laura2", "sektorA3-Laura3"],

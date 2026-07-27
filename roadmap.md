@@ -334,9 +334,11 @@ Current extraction status:
   casts because BMP sources were absent;
 - 93 PNG derivatives are available under `public/assets/images/`;
 - the PNG manifest is closed and file-validated, including typed film-loop frames;
-- all 20 A1–E4 background photographs are connected to the exploration stage;
-- the 12 film-loop frame groups are identified, while placement and timing still
-  await score translation.
+- all 20 A1–E4 background photographs are connected at the Director score's
+  640×480 rectangle inside the logical 800×600 stage;
+- all 12 film-loop frame groups, score rectangles, and non-uniform 87-tick
+  timelines are translated into declarative scene presentation data;
+- the main movie's 25 fps tempo drives the film-loop tick duration.
 
 ## Step-by-step conversion plan
 
@@ -421,12 +423,20 @@ Exit criterion: the user can explore every room at every time and repeat the day
 
 Current foundation:
 
-- talk actions are enabled only for occupants confirmed by Director transitions
-  and matching film-loop assets;
+- responsive DOM hotspots now use the original Director sprite rectangles and
+  reproduce the blend-style rollover as hover and keyboard-focus feedback;
+- the original door topology is restored: rooms A–D lead to corridor E, whose
+  four door hotspots lead back to A–D;
+- talk actions are enabled only for occupants confirmed by Director dialogue
+  sprites and matching film-loop assets;
+- the original `ur1`–`ur4` members provide the wait hotspot, and reduced-motion
+  users see a stable first animation pose;
+- all 12 layered bitmap film loops use their recovered score placement and
+  per-tick frame changes;
 - the letter, body/necklace, and password-protected Barbara-computer inspections
   are playable, with text cues standing in for unfinished presentation;
-- Barbara's computer cannot reveal the forged grades until David has supplied
-  the `Intruder` clue.
+- Barbara's computer is available in score-confirmed scenes B2/B3 and cannot
+  reveal the forged grades until David has supplied the `Intruder` clue.
 
 ### Phase 5 — Integrate video
 

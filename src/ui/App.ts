@@ -8,12 +8,18 @@ import {
   getAvailableDialogueChoices,
 } from "../game/dialogueEngine";
 import type { DialogueChoice } from "../game/dialogueData";
-import { getSceneOccupants } from "../game/sceneOccupants";
 import {
   getScene,
   LOCATIONS,
   toSceneId,
 } from "../game/sceneRegistry";
+import {
+  DIRECTOR_STAGE,
+  directorRectStyle,
+  getScenePresentation,
+  type DirectorRect,
+  type FilmLoopPresentation,
+} from "../game/scenePresentation";
 import {
   canPerformSceneInteraction,
   getSceneInteractions,
@@ -23,6 +29,8 @@ import { getSpecialSequenceCue } from "../game/specialSequenceCues";
 import { TRANSITION_TEXT } from "../game/transitionText";
 import {
   getCharacterPortraitUrl,
+  getClockImageUrl,
+  getFilmLoopFrameUrls,
   getSceneBackgroundUrl,
 } from "../media/imageManifest";
 import type { VideoPlaybackResultStatus } from "../media/VideoPlayer";
@@ -62,6 +70,111 @@ function button(
   element.disabled = disabled;
   element.addEventListener("click", onClick);
   return element;
+}
+
+function hotspotButton(
+  label: string,
+  kind: "move" | "talk" | "inspect" | "wait",
+  rectangle: DirectorRect,
+  onClick: () => void,
+): HTMLButtonElement {
+  const element = button(
+    "",
+    `scene-hotspot scene-hotspot--${kind}`,
+    onClick,
+  );
+  element.ariaLabel = label;
+  element.title = label;
+  element.dataset.hotspotLabel = label;
+  element.setAttribute("style", directorRectStyle(rectangle));
+
+  if (kind === "wait") {
+    const clock = document.createElement("img");
+    clock.alt = "";
+    clock.ariaHidden = "true";
+    element.append(clock);
+  }
+
+  return element;
+}
+
+function getActiveFilmFrame(
+  filmLoop: FilmLoopPresentation,
+  tick: number,
+): number {
+  let frameIndex = filmLoop.timeline[0]?.frameIndex ?? 0;
+
+  for (const entry of filmLoop.timeline) {
+    if (entry.tick > tick) {
+      break;
+    }
+    frameIndex = entry.frameIndex;
+  }
+
+  return frameIndex;
+}
+
+function renderFilmLoop(
+  host: HTMLElement,
+  filmLoop: FilmLoopPresentation,
+): void {
+  const container = document.createElement("div");
+  container.className = "director-film-loop";
+  container.ariaHidden = "true";
+  container.setAttribute("style", directorRectStyle(filmLoop.rect));
+
+  const frames = getFilmLoopFrameUrls(filmLoop.name).map((url) => {
+    const image = document.createElement("img");
+    image.src = url;
+    image.alt = "";
+    container.append(image);
+    return image;
+  });
+
+  host.append(container);
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    frames.forEach((frame, index) => {
+      frame.style.opacity =
+        index === getActiveFilmFrame(filmLoop, 0) ? "1" : "0";
+    });
+    return;
+  }
+
+  frames.forEach((frame, frameIndex) => {
+    const keyframes = Array.from(
+      { length: filmLoop.ticks + 1 },
+      (_, tick): Keyframe => ({
+        offset: tick / filmLoop.ticks,
+        opacity:
+          getActiveFilmFrame(filmLoop, tick) === frameIndex ? 1 : 0,
+        easing: "step-end",
+      }),
+    );
+
+    frame.animate(keyframes, {
+      duration: filmLoop.ticks * DIRECTOR_STAGE.tickMilliseconds,
+      iterations: Infinity,
+    });
+  });
+}
+
+function connectHotspotLabel(
+  hotspot: HTMLButtonElement,
+  infoBox: HTMLElement,
+  defaultLabel: string,
+): void {
+  const show = (): void => {
+    infoBox.textContent = hotspot.dataset.hotspotLabel ?? defaultLabel;
+  };
+  const reset = (): void => {
+    infoBox.textContent = defaultLabel;
+  };
+
+  hotspot.addEventListener("pointerenter", show);
+  hotspot.addEventListener("pointerleave", reset);
+  hotspot.addEventListener("focus", show);
+  hotspot.addEventListener("blur", reset);
 }
 
 function renderIntro(root: HTMLElement, store: GameStore): void {
@@ -348,7 +461,7 @@ function renderExploration(
 ): void {
   const sceneId = toSceneId(state.location, state.timeSlot);
   const scene = getScene(sceneId);
-  const occupants = getSceneOccupants(sceneId);
+  const presentation = getScenePresentation(sceneId);
   const manualInteractions = getSceneInteractions(sceneId, "manual").filter(
     (interaction) =>
       canPerformSceneInteraction(state, interaction) &&
@@ -379,16 +492,15 @@ function renderExploration(
         <div class="stage exploration-stage" aria-label="${scene.location.name}, ${scene.time.name}">
           <img
             class="scene-background"
+            style="${directorRectStyle(DIRECTOR_STAGE.background)}"
             src="${getSceneBackgroundUrl(scene.id)}"
             alt="Original scene fra ${scene.location.name}"
           />
-          <div class="scene-vignette" aria-hidden="true"></div>
-          <div class="scene-copy">
-            <p class="scene-code">${scene.id}</p>
-            <h2>${scene.location.name}</h2>
-            <p>${scene.time.name}</p>
-          </div>
-          <div class="stage-actions" data-stage-actions></div>
+          <div data-film-loop></div>
+          <p class="hotspot-info" aria-live="polite" data-hotspot-info>
+            Bevæg markøren over scenen
+          </p>
+          <div class="hotspot-layer" data-hotspot-layer></div>
         </div>
 
         <aside class="notebook" aria-labelledby="notebook-title">
@@ -397,8 +509,6 @@ function renderExploration(
           ${renderKnowledge(state)}
         </aside>
       </section>
-
-      <nav class="location-nav" aria-label="Gå til et andet lokale" data-location-nav></nav>
 
       ${
         transitionText
@@ -416,22 +526,61 @@ function renderExploration(
     </main>
   `;
 
-  const stageActions = root.querySelector("[data-stage-actions]");
-  if (stageActions) {
-    occupants.forEach((person) => {
-      stageActions.append(
-        button(`Tal med ${person}`, "talk-action", () => {
+  const filmLoopHost = root.querySelector<HTMLElement>("[data-film-loop]");
+  if (filmLoopHost && presentation.filmLoop) {
+    renderFilmLoop(filmLoopHost, presentation.filmLoop);
+  }
+
+  const hotspotLayer = root.querySelector<HTMLElement>("[data-hotspot-layer]");
+  const infoBox = root.querySelector<HTMLElement>("[data-hotspot-info]");
+  const defaultHotspotLabel = "Bevæg markøren over scenen";
+  const appendHotspot = (hotspot: HTMLButtonElement): void => {
+    hotspotLayer?.append(hotspot);
+    if (infoBox) {
+      connectHotspotLabel(hotspot, infoBox, defaultHotspotLabel);
+    }
+  };
+
+  presentation.navigation.forEach(({ target, rect }) => {
+    const targetLocation = LOCATIONS.find(({ id }) => id === target);
+    appendHotspot(
+      hotspotButton(
+        `Gå til ${targetLocation?.name ?? target}`,
+        "move",
+        rect,
+        () => {
+          store.dispatch({
+            type: "MOVE_TO_LOCATION",
+            location: target,
+          });
+        },
+      ),
+    );
+  });
+
+  presentation.characters.forEach(({ person, rect }) => {
+    appendHotspot(
+      hotspotButton(
+        `Tal med ${person}`,
+        "talk",
+        rect,
+        () => {
           store.dispatch({
             type: "START_DIALOGUE",
             person,
           });
-        }),
-      );
-    });
+        },
+      ),
+    );
+  });
 
-    manualInteractions.forEach((interaction) => {
-      stageActions.append(
-        button(interaction.label, "secondary-action", () => {
+  presentation.interactions.forEach(({ interactionId, rect }) => {
+    const interaction = manualInteractions.find(
+      ({ id }) => id === interactionId,
+    );
+    if (interaction) {
+      appendHotspot(
+        hotspotButton(interaction.label, "inspect", rect, () => {
           void playSceneInteraction(
             interaction,
             store,
@@ -439,31 +588,22 @@ function renderExploration(
           );
         }),
       );
-    });
-
-    stageActions.append(
-      button("Vent et tidsinterval", "clock-action", () => {
-        store.dispatch({ type: "WAIT" });
-      }),
-    );
-  }
-
-  const navigation = root.querySelector("[data-location-nav]");
-  LOCATIONS.forEach((location) => {
-    navigation?.append(
-      button(
-        location.shortName,
-        "location-action",
-        () => {
-          store.dispatch({
-            type: "MOVE_TO_LOCATION",
-            location: location.id,
-          });
-        },
-        location.id === state.location,
-      ),
-    );
+    }
   });
+
+  const clockHotspot = hotspotButton(
+    "Vent et tidsinterval",
+    "wait",
+    presentation.clock,
+    () => {
+        store.dispatch({ type: "WAIT" });
+    },
+  );
+  const clockImage = clockHotspot.querySelector("img");
+  if (clockImage) {
+    clockImage.src = getClockImageUrl(state.timeSlot);
+  }
+  appendHotspot(clockHotspot);
 
   root.querySelector("[data-dismiss]")?.addEventListener("click", () => {
     void completePendingTransition(root, store, narrativeHost);

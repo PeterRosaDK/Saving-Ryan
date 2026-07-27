@@ -31,7 +31,12 @@ The first conversion slice is underway:
 - question and answer cues play sequentially and update the same tested state
   machine used by exploration;
 - transition narration recovered from `Spillet.dir` is wired into a runnable UI;
-- all 20 original room photographs are rendered in the exploration stage;
+- all 20 original room photographs are rendered at their original 640×480
+  position inside the responsive 800×600 stage;
+- Director-score rectangles now drive rollover/focus hotspots for doors,
+  characters, inspections, and the wait clock;
+- all 12 original film loops run as layered bitmap animations using their
+  recovered 87-tick Director timelines;
 - all 81 Director video members and 93 PNG members are closed, file-validated
   catalogues;
 - the persistent narrative host is isolated from ordinary gameplay rerenders and
@@ -75,6 +80,7 @@ tests/        state and manifest tests
 tools/        Director inspection and asset conversion utilities
 ```
 
-The current interface renders the original room photographs and dialogue
-portraits. Director film-loop placement, character animation, and remaining
-verified talk/inspect hotspots are the next image integration steps.
+The current interface renders the original room photographs, primitive character
+animations, score-positioned hotspots, clocks, and dialogue portraits. The next
+scene-restoration work is to connect the still-unmodelled legacy special hotspots,
+including listening under the table and the book/secret passage.

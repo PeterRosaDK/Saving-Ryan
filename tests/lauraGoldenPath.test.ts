@@ -49,13 +49,13 @@ describe("playable Laura golden path", () => {
     talk("David");
     ask("David", "barbara_and_computers");
     closeDialogue();
+    wait();
     move("B");
     dispatch({
       type: "PERFORM_INTERACTION",
       id: "inspect_barbaras_computer",
     });
 
-    wait();
     wait();
     wait();
     move("D");
