@@ -22,6 +22,7 @@ export function createInitialLoopState(): LoopState {
     seenTransitions: [],
     dialogue: {
       askedChoices: [],
+      seenResponses: [],
       barbaraHelp: "not_requested",
       refusesFurtherDialogue: [],
     },

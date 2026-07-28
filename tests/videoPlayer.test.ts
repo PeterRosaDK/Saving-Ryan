@@ -100,6 +100,25 @@ describe("VideoPlayer", () => {
     expect(player.skip()).toBe(false);
   });
 
+  it("skips an actively playing video when its image is clicked", async () => {
+    const { element, player } = createPlayer();
+    const playback = player.play("Peter-omRyan");
+
+    element.dispatchEvent(new Event("click"));
+    expect(player.getState().status).toBe("loading");
+
+    element.dispatchEvent(new Event("loadedmetadata"));
+    await flushPromises();
+    expect(player.getState().status).toBe("playing");
+
+    element.dispatchEvent(new Event("click"));
+    await expect(playback).resolves.toEqual({
+      status: "skipped",
+      clipId: "Peter-omRyan",
+    });
+    expect(element.pauseCalls).toBe(1);
+  });
+
   it("reports autoplay blocking from play()", async () => {
     const { element, player } = createPlayer();
     element.playError = new DOMException(

@@ -11,6 +11,7 @@ import {
   executeDialogueChoice,
   getDialogueSequenceCompletion,
   getAvailableDialogueChoices,
+  hasSeenCurrentDialogueResponse,
 } from "../src/game/dialogueEngine";
 import {
   executeInvestigationStep,
@@ -129,6 +130,9 @@ describe("legacy dialogue rules", () => {
     expect(first.state.loopState.dialogue.askedChoices).toEqual([
       "Laura:about_david",
     ]);
+    expect(first.state.loopState.dialogue.seenResponses).toEqual([
+      "Laura:about_david",
+    ]);
     expect(
       topics(first.state, "Laura"),
     ).toContain("about_david");
@@ -139,6 +143,9 @@ describe("legacy dialogue rules", () => {
       "about_david",
     );
     expect(repeated.state.loopState.dialogue.askedChoices).toEqual([
+      "Laura:about_david",
+    ]);
+    expect(repeated.state.loopState.dialogue.seenResponses).toEqual([
       "Laura:about_david",
     ]);
   });
@@ -153,6 +160,7 @@ describe("legacy dialogue rules", () => {
       "warn_ryan",
     );
     expect(videoClip(first.choice?.questionCue)).toBe("Ryan-Advarsel1");
+    expect(first.choice?.responseKey).toBe("Ryan:warn_ryan:initial");
     expect(first.state.knowledge.ryan_dismissed_warning).toBe(true);
 
     const second = executeDialogueChoice(
@@ -161,6 +169,21 @@ describe("legacy dialogue rules", () => {
       "warn_ryan",
     );
     expect(videoClip(second.choice?.questionCue)).toBe("Ryan-Advarsel2");
+    expect(second.choice?.responseKey).toBe("Ryan:warn_ryan:repeat");
+    expect(
+      hasSeenCurrentDialogueResponse(first.state, second.choice!),
+    ).toBe(false);
+
+    const third = executeDialogueChoice(
+      second.state,
+      "Ryan",
+      "warn_ryan",
+    );
+    expect(videoClip(third.choice?.questionCue)).toBe("Ryan-Advarsel2");
+    expect(third.choice?.responseKey).toBe("Ryan:warn_ryan:repeat");
+    expect(
+      hasSeenCurrentDialogueResponse(second.state, third.choice!),
+    ).toBe(true);
   });
 
   it("resets Ryan's remembered warning stage on a new day but keeps Jørgen's knowledge", () => {
@@ -192,6 +215,7 @@ describe("legacy dialogue rules", () => {
 
     expect(nextDay.knowledge.ryan_dismissed_warning).toBe(true);
     expect(nextDay.loopState.dialogue.askedChoices).toEqual([]);
+    expect(nextDay.loopState.dialogue.seenResponses).toEqual([]);
     expect(videoClip(warning?.questionCue)).toBe("Ryan-Advarsel1");
   });
 
@@ -540,12 +564,16 @@ describe("legacy dialogue rules", () => {
       "ask_barbara_for_help",
     );
     expect(help.choice).toMatchObject({
+      responseKey: "Barbara:ask_barbara_for_help:ready",
       questionCue: {
         kind: "video",
         clipId: "Barbara-omHilfe2",
       },
       answerCue: { kind: "video", clipId: "BarbaraHacker" },
     });
+    expect(
+      hasSeenCurrentDialogueResponse(request.state, help.choice!),
+    ).toBe(false);
     expect(help.state.loopState.dialogue.barbaraHelp).toBe("completed");
     expect(help.state.knowledge.laura_was_in_institution).toBe(true);
     expect(

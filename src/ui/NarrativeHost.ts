@@ -63,6 +63,8 @@ export class NarrativeHost {
       <div class="media-frame">
         <video
           data-video-player
+          aria-label="Klik for at springe videoen over"
+          title="Klik for at springe videoen over"
           playsinline
           disablepictureinpicture
           disableremoteplayback

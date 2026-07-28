@@ -122,6 +122,7 @@ export interface DialogueProgress {
 
 export interface LoopDialogueState {
   askedChoices: DialogueChoiceId[];
+  seenResponses: string[];
   barbaraHelp: BarbaraHelpState;
   refusesFurtherDialogue: CharacterId[];
 }

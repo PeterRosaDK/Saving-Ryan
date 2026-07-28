@@ -84,7 +84,15 @@ export class VideoPlayer {
   };
   private readonly subscribers = new Set<StateSubscriber>();
 
-  constructor(private readonly video: HTMLVideoElement) {}
+  private readonly handleVideoClick = (): void => {
+    if (this.state.status === "playing") {
+      this.skip();
+    }
+  };
+
+  constructor(private readonly video: HTMLVideoElement) {
+    this.video.addEventListener("click", this.handleVideoClick);
+  }
 
   getState(): VideoPlaybackState {
     return this.state;
@@ -151,6 +159,7 @@ export class VideoPlayer {
   destroy(): void {
     this.abort();
     this.subscribers.clear();
+    this.video.removeEventListener("click", this.handleVideoClick);
     this.video.removeAttribute("src");
     this.video.load();
     this.state = {

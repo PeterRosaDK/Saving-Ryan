@@ -401,6 +401,7 @@ describe("legacy game state", () => {
         seenTransitions: ["A1", "C3"],
         dialogue: {
           askedChoices: ["Marie:marie_and_ryan"],
+          seenResponses: ["Marie:marie_and_ryan:initial"],
           barbaraHelp: "ready",
           refusesFurtherDialogue: ["Marie"],
         },

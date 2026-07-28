@@ -39,6 +39,15 @@ export function getAvailableDialogueChoices(
   );
 }
 
+export function hasSeenCurrentDialogueResponse(
+  state: Pick<GameState, "loopState">,
+  choice: Pick<DialogueChoice, "responseKey">,
+): boolean {
+  return state.loopState.dialogue.seenResponses.includes(
+    choice.responseKey,
+  );
+}
+
 function advanceBarbaraHelp(
   state: GameState,
   choice: DialogueChoice,
@@ -149,19 +158,24 @@ export function executeDialogueChoice(
   )
     ? state.loopState.dialogue.askedChoices
     : [...state.loopState.dialogue.askedChoices, choice.id];
-  let nextState =
-    askedChoices === state.loopState.dialogue.askedChoices
-      ? state
-      : {
-          ...state,
-          loopState: {
-            ...state.loopState,
-            dialogue: {
-              ...state.loopState.dialogue,
-              askedChoices,
-            },
-          },
-        };
+  const seenResponses =
+    state.loopState.dialogue.seenResponses.includes(choice.responseKey)
+      ? state.loopState.dialogue.seenResponses
+      : [
+          ...state.loopState.dialogue.seenResponses,
+          choice.responseKey,
+        ];
+  let nextState = {
+    ...state,
+    loopState: {
+      ...state.loopState,
+      dialogue: {
+        ...state.loopState.dialogue,
+        askedChoices,
+        seenResponses,
+      },
+    },
+  };
 
   const appliedEffects =
     completion === "ended" || choice.effectsOnSkip;

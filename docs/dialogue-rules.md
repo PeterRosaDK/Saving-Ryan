@@ -85,6 +85,13 @@ the Ryan/Laura relationship known uses `Marie-Fortrolighed2` and reveals that
 Ryan left Laura. Knowing both facts before the first conversation no longer
 skips the confidence exchange.
 
+Repeat styling follows stable response variants rather than the question ID alone.
+Ryan's second warning, Barbara's second help request, and Marie's second
+confidence exchange therefore retain the normal question color until their new
+response has been played. Only repeats that would now produce an already seen
+response use the faded style. Seen response variants reset each morning
+together with the rest of the conversation memory.
+
 ## Phase 8 accusation and warning gates
 
 The three existing Laura accusation clips are selected by the strength of the

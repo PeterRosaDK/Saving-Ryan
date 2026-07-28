@@ -7,6 +7,7 @@ import type {
 import {
   getDialogueSequenceCompletion,
   getAvailableDialogueChoices,
+  hasSeenCurrentDialogueResponse,
 } from "../game/dialogueEngine";
 import type { DialogueChoice } from "../game/dialogueData";
 import {
@@ -908,10 +909,11 @@ function renderDialogue(
     const asked = state.loopState.dialogue.askedChoices.includes(
       choice.id,
     );
+    const visuallyAsked = hasSeenCurrentDialogueResponse(state, choice);
     options?.append(
       button(
         `${choice.isNewTopic && !asked ? "Nyt emne · " : ""}${choice.label}`,
-        `dialogue-choice${asked ? " is-asked" : ""}`,
+        `dialogue-choice${visuallyAsked ? " is-asked" : ""}`,
         () => {
           void playDialogueChoice(
             choice,

@@ -53,6 +53,7 @@ export interface DialogueChoice {
   skipSummary?: string;
   accusationOutcome?: "wrong" | "premature" | "conclusive";
   isNewTopic?: boolean;
+  responseKey: string;
 }
 
 const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
@@ -98,6 +99,7 @@ function defineChoice(
     skipSummary?: string;
     accusationOutcome?: DialogueChoice["accusationOutcome"];
     isNewTopic?: boolean;
+    responseKey?: string;
   } = {},
 ): DialogueChoice {
   return defineCueChoice(
@@ -122,6 +124,7 @@ function defineCueChoice(
     skipSummary?: string;
     accusationOutcome?: DialogueChoice["accusationOutcome"];
     isNewTopic?: boolean;
+    responseKey?: string;
   } = {},
 ): DialogueChoice {
   return {
@@ -138,6 +141,7 @@ function defineCueChoice(
     skipSummary: options.skipSummary,
     accusationOutcome: options.accusationOutcome,
     isNewTopic: options.isNewTopic,
+    responseKey: options.responseKey ?? choiceId(person, topic),
   };
 }
 
@@ -305,8 +309,12 @@ function getLegacySpecialChoices(
                 { type: "LEARN", id: "ryan_left_laura" },
               ],
               effectsOnSkip: true,
+              responseKey: "Marie:marie_and_ryan:confidence",
             }
-          : { requires: ["ryan_bullied_marie"] },
+          : {
+              requires: ["ryan_bullied_marie"],
+              responseKey: "Marie:marie_and_ryan:initial",
+            },
       ),
     );
   } else {
@@ -369,10 +377,12 @@ function getLegacySpecialChoices(
                 },
               ],
               effectsOnSkip: false,
+              responseKey: "Barbara:ask_barbara_for_help:ready",
             }
           : {
               requires: ["laura_hid_computer_activity"],
               effectsOnSkip: true,
+              responseKey: "Barbara:ask_barbara_for_help:request",
             },
       ),
     );
@@ -425,6 +435,9 @@ function getLegacySpecialChoices(
                 id: "ryan_dismissed_warning",
               },
             ],
+            responseKey: wasAsked
+              ? "Ryan:warn_ryan:repeat"
+              : "Ryan:warn_ryan:initial",
           },
         ),
       );
