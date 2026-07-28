@@ -11,10 +11,10 @@ private GitHub repository
           |
           | Wrangler Direct Upload
           v
-  Cloudflare Pages + Access
+  Cloudflare Pages
           |
           v
-  ryan.petergpt.dk
+  public ryan.petergpt.dk
 ```
 
 `src/`, `index.html`, and `public/` are authoritative. `dist/` is generated and
@@ -24,8 +24,9 @@ intentionally ignored.
 
 The browser owns all game state. There is no backend, database, account system,
 analytics, external API, environment variable, or runtime secret. Pages serves
-the compiled module, CSS, images, video, and audio. Cloudflare Access is the
-only production authentication boundary.
+the compiled module, CSS, images, video, and audio. The custom production
+domain is public; Cloudflare Access remains only on `saving-ryan.pages.dev`
+and version-specific preview hostnames.
 
 The phase 10 case boundary lives in `src/game/caseDefinitions.ts`.
 `selectedCaseId` is top-level version 3 game state: the main menu selects it

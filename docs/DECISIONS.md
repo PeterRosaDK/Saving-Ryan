@@ -41,6 +41,18 @@ new game architecture.
 Collaborators do not need Cloudflare accounts. Add their exact email addresses
 to the Access allow policy; they authenticate with an emailed one-time code.
 
+## 2026-07-28 — Public custom domain, private test hostnames
+
+The public source release supersedes the custom-domain part of the private
+preview decision. `ryan.petergpt.dk` is public, while
+`saving-ryan.pages.dev` and `*.saving-ryan.pages.dev` remain protected by
+their separate Access applications. This gives players one canonical public
+address and preserves private technical deployment URLs for testing.
+
+The change removes only the self-hosted Access application for the custom
+domain. It does not change the Pages project, DNS, certificate, deployment, or
+test-hostname policies.
+
 ## 2026-07-28 — Static health endpoints
 
 `/health/live`, `/health/ready`, and `/health` proxy to bounded JSON assets.

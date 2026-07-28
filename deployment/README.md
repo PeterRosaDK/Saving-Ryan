@@ -11,8 +11,9 @@ the Mac Mini.
 - Build command: `npm ci && npm run build`
 - Output directory: `dist`
 - Custom domain: `ryan.petergpt.dk`
-- Exposure: `cloudflare-access`
-- Access allow-list: `peterrosadk@gmail.com`
+- Exposure: public custom domain
+- Test-hostname exposure: Cloudflare Access on `saving-ryan.pages.dev` and
+  `*.saving-ryan.pages.dev`
 - Liveness: `/health/live`
 - Readiness: `/health/ready`
 
@@ -38,11 +39,8 @@ wrangler pages deploy dist \
 ```
 
 The first deployment must be followed by Pages custom-domain association.
-Cloudflare currently cannot validate a new Pages custom domain while Access is
-already active on that hostname, so add Access only after the custom domain and
-certificate are active. Then protect `ryan.petergpt.dk` with a self-hosted
-Access application and enable the Pages access policies for both
-`saving-ryan.pages.dev` and its preview deployments.
+Keep the custom domain public. Protect `saving-ryan.pages.dev` and wildcard
+preview deployments with their separate self-hosted Access applications.
 
 Resolve exact existing targets before every write; never overwrite an existing
 Pages project, Access app, or DNS record.

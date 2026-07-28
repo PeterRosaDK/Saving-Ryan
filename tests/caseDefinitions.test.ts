@@ -6,6 +6,7 @@ import {
   calculateCaseScore,
   getDirectorsCutCaseOverride,
   getMysteryCaseIds,
+  isDirectorsCutQaMenuEnabled,
   selectDirectorsCutCase,
   selectMysteryCaseId,
 } from "../src/game/caseDefinitions";
@@ -93,6 +94,16 @@ describe("case registry and story modes", () => {
       source: "qa",
       requestedCaseId: "barbara",
     });
+  });
+
+  it("shows the hidden registry-driven QA picker only for ?qa=1", () => {
+    expect(isDirectorsCutQaMenuEnabled("?qa=1")).toBe(true);
+    expect(
+      isDirectorsCutQaMenuEnabled("?foo=bar&qa=1&dcCase=barbara"),
+    ).toBe(true);
+    expect(isDirectorsCutQaMenuEnabled("")).toBe(false);
+    expect(isDirectorsCutQaMenuEnabled("?qa=0")).toBe(false);
+    expect(isDirectorsCutQaMenuEnabled("?qa=true")).toBe(false);
   });
 
   it("falls back to normal registry selection for an unknown override", () => {

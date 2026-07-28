@@ -27,6 +27,7 @@ import {
   getDirectorsCutCaseOverride,
   getCaseDefinition,
   getMysteryCaseIds,
+  isDirectorsCutQaMenuEnabled,
   selectDirectorsCutCase,
 } from "../game/caseDefinitions";
 import {
@@ -316,6 +317,20 @@ function renderMainMenu(root: HTMLElement, store: GameStore): void {
   const directorsCut = getCaseDefinition(
     firstDirectorsCutCase ?? DEFAULT_CASE_ID,
   );
+  const qaMenuEnabled = isDirectorsCutQaMenuEnabled(
+    window.location.search,
+  );
+  const requestedCaseId = getDirectorsCutCaseOverride(
+    window.location.search,
+  );
+  const qaCaseOptions = getMysteryCaseIds()
+    .map((caseId) => {
+      const definition = getCaseDefinition(caseId);
+      return `<option value="${caseId}"${
+        requestedCaseId === caseId ? " selected" : ""
+      }>${definition.murderer}-sagen</option>`;
+    })
+    .join("");
 
   root.innerHTML = `
     <main class="app-shell menu-shell">
@@ -352,6 +367,20 @@ function renderMainMenu(root: HTMLElement, store: GameStore): void {
               <p id="mystery-case-description">
                 ${directorsCut.menu.description}
               </p>
+              ${
+                qaMenuEnabled
+                  ? `<div class="qa-case-picker">
+                      <label for="qa-case-select">Skjult testvalg</label>
+                      <select id="qa-case-select" data-qa-case-select>
+                        <option value=""${
+                          requestedCaseId === null ? " selected" : ""
+                        }>Tilfældig case</option>
+                        ${qaCaseOptions}
+                      </select>
+                      <small>Kun synlig med <code>?qa=1</code>. Valget opdaterer test-URL’en.</small>
+                    </div>`
+                  : ""
+              }
               <button
                 class="secondary-action"
                 type="button"
@@ -376,13 +405,26 @@ function renderMainMenu(root: HTMLElement, store: GameStore): void {
       });
     });
 
+  const qaCaseSelect =
+    root.querySelector<HTMLSelectElement>("[data-qa-case-select]");
+  qaCaseSelect?.addEventListener("change", () => {
+    const url = new URL(window.location.href);
+    const caseId = qaCaseSelect.value.trim();
+    if (caseId) {
+      url.searchParams.set("dcCase", caseId);
+    } else {
+      url.searchParams.delete("dcCase");
+    }
+    window.history.replaceState(null, "", url);
+  });
+
   root
     .querySelector("[data-start-mystery-case]")
     ?.addEventListener("click", () => {
       const selection = selectDirectorsCutCase({
-        requestedCaseId: getDirectorsCutCaseOverride(
-          window.location.search,
-        ),
+        requestedCaseId: qaCaseSelect
+          ? qaCaseSelect.value.trim() || null
+          : getDirectorsCutCaseOverride(window.location.search),
       });
       if (selection.caseId) {
         if (selection.source === "qa") {

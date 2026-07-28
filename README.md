@@ -139,7 +139,8 @@ The production target is a static Cloudflare Pages site:
 
 - Pages project: `saving-ryan`;
 - URL: `https://ryan.petergpt.dk`;
-- exposure: private preview through Cloudflare Access;
+- exposure: public custom domain; default and preview `pages.dev` hostnames
+  remain protected by Cloudflare Access;
 - build: `npm ci && npm run build`;
 - output: `dist/`;
 - liveness: `/health/live`;
@@ -147,8 +148,9 @@ The production target is a static Cloudflare Pages site:
 
 There is no production process, port, database, runtime data, log stream,
 environment variable, or Mac Mini dependency. The app uses no analytics or
-external application API; Cloudflare Pages and Access are the only external
-services and may incur cost according to the owner's plan and usage.
+external application API; Cloudflare Pages is the public host, while Access
+protects only technical test hostnames. These services may incur cost according
+to the owner's plan and usage.
 
 Operational verification, rollback, privacy, and deployment commands are in
 [`docs/OPERATIONS.md`](docs/OPERATIONS.md) and

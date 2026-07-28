@@ -23,6 +23,11 @@ Parameteren bruges kun, når spilleren vælger Director’s Cut, og kan derfor i
 ændre Original historie. Se `docs/david-playtest.md` og
 `docs/barbara-playtest.md`.
 
+`?qa=1` viser desuden en skjult registry-drevet vælger på titelskærmen med
+**Tilfældig case** og én mulighed pr. aktiv Director’s Cut-case. Valget
+opdaterer `dcCase` i URL’en og bruger derefter den samme selector som direkte
+QA-links. Almindelige spillere ser aldrig morderlisten.
+
 ## Registry
 
 `src/game/caseDefinitions.ts` er den centrale liste. En case angiver stabilt ID,

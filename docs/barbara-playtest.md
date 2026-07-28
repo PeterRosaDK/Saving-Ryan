@@ -6,7 +6,14 @@ produktionsmedier er placeholders i det centrale
 
 ## Målrettet start
 
-Brug:
+Den skjulte testmenu er den nemmeste indgang:
+
+```text
+https://ryan.petergpt.dk/?qa=1
+```
+
+Vælg **Barbara-sagen** og derefter **Director’s Cut**. Menuen genereres fra det
+aktive registry. Det direkte link virker fortsat:
 
 ```text
 /?dcCase=barbara

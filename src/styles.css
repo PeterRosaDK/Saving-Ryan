@@ -140,6 +140,39 @@ button {
   background: rgba(13, 18, 18, 0.82);
 }
 
+.qa-case-picker {
+  display: grid;
+  width: 100%;
+  gap: 8px;
+  margin: 12px 0 24px;
+  padding: 14px;
+  border: 1px solid rgba(194, 161, 94, 0.45);
+  background: rgba(194, 161, 94, 0.08);
+}
+
+.qa-case-picker label {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.qa-case-picker select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--paper);
+  background: #111817;
+  font: inherit;
+}
+
+.qa-case-picker small {
+  color: rgba(244, 240, 231, 0.62);
+  line-height: 1.45;
+}
+
 .intro-score {
   position: absolute;
   inset: 0;

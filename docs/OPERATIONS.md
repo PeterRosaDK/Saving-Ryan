@@ -27,20 +27,21 @@ audio file. A nonexistent path must return the committed 404 response.
 
 - URL: `https://ryan.petergpt.dk`
 - Pages fallback: `https://saving-ryan.pages.dev`
+- Exposure: public custom domain; Access-protected fallback and previews
 - Pages project: `saving-ryan`
 - Repository: `https://github.com/PeterRosaDK/Saving-Ryan`
 - Build output: `dist`
 - Runtime data/logs: none
-- External service: Cloudflare Pages and Access
+- External service: Cloudflare Pages and Access on test hostnames
 - Possible cost: subject to the owner's Cloudflare plan and usage
 - Privacy: no analytics or application-side user data collection
 
 Cloudflare credentials are operator secrets outside Git. The app itself has no
 environment variables.
 
-For a new project, associate and validate the Pages custom domain before
-creating its Access application. Afterwards, enable Access separately for the
-custom hostname, the production `pages.dev` hostname, and preview deployments.
+For a new project, associate and validate the Pages custom domain first.
+Production is public. Enable Access separately only for the production
+`pages.dev` hostname and wildcard preview deployments.
 
 ## Recovery and rollback
 
@@ -51,7 +52,8 @@ Dependencies are restored with `npm ci`; the build is restored with
 To roll back production, select the last known-good Pages deployment in
 Cloudflare and use **Rollback**, or check out that Git commit, rebuild, and
 upload the resulting `dist/`. Do not delete the current deployment, Pages
-project, custom domain, DNS record, or Access application during rollback.
+project, custom domain, DNS record, or the two test-hostname Access
+applications during rollback.
 
 The local ignored `Legacy Fresh/` forensic folder is not reproducible from this
 repository and remains the owner's separately preserved source material.

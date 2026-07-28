@@ -13,13 +13,13 @@ npm run dev
 Åbn derefter:
 
 ```text
-http://localhost:5173/?dcCase=david
+http://localhost:5173/?qa=1
 ```
 
-Vælg **Director’s Cut**. Query-parameteren tvinger den aktive registry-case
-`david`; den påvirker ikke **Original historie**. Browserkonsollen bekræfter
-QA-valget. Uden parameter vælges en aktiv Director’s Cut-case normalt via
-registryet.
+Vælg **David-sagen** i den skjulte testmenu og derefter **Director’s Cut**.
+Det direkte link `?dcCase=david` virker fortsat. Ingen af parametrene påvirker
+**Original historie**. Browserkonsollen bekræfter QA-valget. Uden parameter
+vælges en aktiv Director’s Cut-case normalt via registryet.
 
 Production build og lokal production-preview:
 

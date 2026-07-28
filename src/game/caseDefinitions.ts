@@ -134,6 +134,10 @@ export function getDirectorsCutCaseOverride(
   return value ? value : null;
 }
 
+export function isDirectorsCutQaMenuEnabled(search: string): boolean {
+  return new URLSearchParams(search).get("qa")?.trim() === "1";
+}
+
 export function selectDirectorsCutCase({
   requestedCaseId = null,
   randomValue = Math.random(),
