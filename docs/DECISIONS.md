@@ -46,3 +46,14 @@ to the Access allow policy; they authenticate with an emailed one-time code.
 `/health/live`, `/health/ready`, and `/health` proxy to bounded JSON assets.
 For a static application, deployment availability is both liveness and
 readiness; there are no dynamic dependencies to probe.
+
+## 2026-07-28 — Accepted location-music mapping
+
+The current location mapping is the accepted product mapping: `28` for the
+canteen, `29` for the computer room, `31` for the reading room, `34` for the
+group room, and `35` for the corridor. Tracks `36`–`38` remain preserved but
+unused.
+
+The recovered Director files do not prove this historical order, so the
+provenance caveat remains documented. It is not an open product task, requires
+no further listening pass, and does not block phase 10.

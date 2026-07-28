@@ -61,9 +61,10 @@ available Director data alone.
 
 ## Browser mapping
 
-The browser implementation keeps the uncertainty in one replaceable table:
+The Director provenance remains incomplete, but the current browser mapping was
+accepted as the product mapping on 2026-07-28:
 
-| Location | Provisional track |
+| Location | Accepted track |
 | --- | --- |
 | A — Kantinen | `28` |
 | B — Computerrummet | `29` |
@@ -72,9 +73,9 @@ The browser implementation keeps the uncertainty in one replaceable table:
 | E — Gangarealet | `35` |
 
 Tracks `36`, `37`, and `38` remain preserved but deliberately unmapped. This is
-a production reconstruction, not recovered legacy truth. Changing the five
-entries in `src/media/musicManifest.ts` changes the whole game consistently
-without touching scene or state logic.
+a product decision rather than recovered legacy truth. It is not an open task
+before phase 10 and needs no further listening or identification pass. The five
+entries remain centralized in `src/media/musicManifest.ts`.
 
 Location music loops during exploration, follows the player's current room, can
 be toggled with the recovered note button, and is attenuated while dialogue or a
@@ -100,6 +101,6 @@ improved in Suno:
 4. update only the declarative mapping;
 5. retain rights/provenance notes beside the derivative.
 
-Before enhancement, a human listening pass should name the eight compositions
-and decide whether `36`–`38` are alternatives, transitions, or intended room
-tracks. That is the remaining authoritative mapping gap.
+Enhancement does not reopen the accepted location mapping. Tracks `36`–`38`
+remain archival and unused unless a later, separately approved content change
+gives one of them a specific role.

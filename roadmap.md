@@ -628,9 +628,9 @@ Completed:
 - the core dialogue-condition script is unchanged;
 - the blue background, toolbar, help frame, longer intro, music controls, clock
   sound, and eight music masters are preserved in the web project;
-- five tracks are provisionally assigned by location, while tracks 36–38 remain
-  deliberately unmapped because the Director score contains no surviving
-  assignment;
+- the current five-track location mapping is accepted as the product mapping,
+  while tracks 36–38 remain deliberately unused because the Director score
+  contains no surviving assignment;
 - music loops, can be muted, and ducks during narrative media;
 - a later `LauraSuspekt` regression was rejected in favor of the earlier,
   knowledge-producing behavior.
@@ -649,7 +649,6 @@ Only after Laura is stable as the reference implementation:
 
 ### Later production improvements
 
-- audition and authoritatively identify the recovered music order;
 - create enhanced music derivatives while retaining the recovered masters;
 - broaden dialogue and alternative investigations;
 - commission or generate new assets with a documented art direction.

@@ -86,11 +86,11 @@ The later directory contains eight original PCM WAV masters plus the clock sound
 
 | ID | Duration | Current status |
 | --- | ---: | --- |
-| `28` | 23.228 s | Provisionally assigned to the canteen |
-| `29` | 52.138 s | Provisionally assigned to the computer room |
-| `31` | 56.142 s | Provisionally assigned to the reading room |
-| `34` | 24.688 s | Provisionally assigned to the group room |
-| `35` | 17.164 s | Provisionally assigned to the corridor |
+| `28` | 23.228 s | Assigned to the canteen |
+| `29` | 52.138 s | Assigned to the computer room |
+| `31` | 56.142 s | Assigned to the reading room |
+| `34` | 24.688 s | Assigned to the group room |
+| `35` | 17.164 s | Assigned to the corridor |
 | `36` | 15.611 s | Preserved, not assigned |
 | `37` | 16.736 s | Preserved, not assigned |
 | `38` | 14.808 s | Preserved, not assigned |
@@ -102,11 +102,11 @@ However, neither decompiled Lingo nor the saved score starts a track or retains
 a track-to-location reference. The projector is a Director stub and supplies no
 additional mapping.
 
-The five location assignments above are therefore a conservative reconstruction
-from the first five recovered masters, not claimed historical fact. They live in
-one table in `src/media/musicManifest.ts`; changing the table is sufficient to
-correct the order. Tracks 36–38 are committed unchanged for listening, future
-identification, and Suno-derived work.
+The five location assignments above are a reconstruction from the first five
+recovered masters, not claimed historical fact. The owner accepted this as the
+current product mapping on 2026-07-28, so no further identification work is
+required before phase 10. Tracks 36–38 remain committed unchanged as unused
+archival masters.
 
 ## Improvements incorporated
 
@@ -135,8 +135,6 @@ it with sound, instead of silently running ahead of the recovered audio.
 
 ## Deferred or rejected changes
 
-- The provisional music order needs an authoritative listening note.
-- Tracks 36–38 need identification before they are used.
 - The recovered cursor bitmaps are preserved but not activated because their
   opaque Director-era backgrounds do not translate cleanly to browser cursors;
   hotspot rollover remains clearer and keyboard accessible.

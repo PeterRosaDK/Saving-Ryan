@@ -12,7 +12,7 @@ import {
 } from "../src/media/musicManifest";
 
 describe("Legacy Fresh music manifest", () => {
-  it("keeps the provisional location mapping explicit and replaceable", () => {
+  it("pins the accepted location mapping and unused archival tracks", () => {
     expect(LOCATION_MUSIC_TRACKS).toEqual({
       A: "28",
       B: "29",

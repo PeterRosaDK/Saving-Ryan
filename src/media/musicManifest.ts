@@ -17,8 +17,8 @@ export type LegacyMusicTrackId = (typeof LEGACY_MUSIC_TRACK_IDS)[number];
 /*
  * Legacy Fresh contains the eight masters and music-control Lingo, but neither
  * spillet_decompiled.dir nor its score retains a track-to-frame assignment.
- * Keep this provisional reconstruction in one declarative table so it can be
- * corrected after an authoritative listening note or older score is found.
+ * The owner accepted this reconstruction as the current product mapping on
+ * 2026-07-28. Keep it declarative while preserving the provenance caveat.
  */
 export const LOCATION_MUSIC_TRACKS = {
   A: "28",

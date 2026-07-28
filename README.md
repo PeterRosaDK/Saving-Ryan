@@ -68,9 +68,9 @@ expanded time-loop mechanics are complete:
 - the later Director interface supplies the blue stage background plus help,
   music, and quit controls;
 - recovered music loops per location, ducks during narrative media, and can be
-  muted; it also resumes after browser-induced media interruption, while the
-  historical track order remains a provisional mapping because the saved
-  Director score no longer contains it;
+  muted; it also resumes after browser-induced media interruption. The current
+  location mapping is accepted as the product mapping, while its incomplete
+  historical provenance remains documented;
 - the persistent narrative host is isolated from ordinary gameplay rerenders and
   accepts video, Director still sequences, and intentional text-only cues;
 - the abort-safe `VideoPlayer` distinguishes completion, skip, autoplay blocking,
