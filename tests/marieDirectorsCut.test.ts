@@ -58,7 +58,12 @@ const MARIE_FACTS = [
 
 describe("Director's Cut: Marie", () => {
   it("registers Marie for uniform selection, supports QA, and never overrides Original", () => {
-    expect(getMysteryCaseIds()).toEqual(["david", "barbara", "marie"]);
+    expect(getMysteryCaseIds()).toEqual([
+      "david",
+      "barbara",
+      "marie",
+      "jorgen",
+    ]);
     expect(
       selectDirectorsCutCase({
         requestedCaseId: getDirectorsCutCaseOverride(
@@ -74,10 +79,10 @@ describe("Director's Cut: Marie", () => {
     expect(selectDirectorsCutCase({ randomValue: 0 }).caseId).toBe(
       "david",
     );
-    expect(selectDirectorsCutCase({ randomValue: 0.4 }).caseId).toBe(
+    expect(selectDirectorsCutCase({ randomValue: 0.3 }).caseId).toBe(
       "barbara",
     );
-    expect(selectDirectorsCutCase({ randomValue: 0.999 }).caseId).toBe(
+    expect(selectDirectorsCutCase({ randomValue: 0.6 }).caseId).toBe(
       "marie",
     );
     const original = reduceGameState(createInitialGameState(), {

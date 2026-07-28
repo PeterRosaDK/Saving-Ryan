@@ -200,6 +200,62 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
     "Plan: Sikr Maries arbejde og stands mødet ved passagen",
   marie_work_secured:
     "Maries arbejde er tidsstemplet og anerkendt foran gruppen",
+  jorgen_prior_loop_reference_ready:
+    "En faktisk rute fra det foregående loop er registreret",
+  jorgen_note_references_previous_loop:
+    "En anonym besked beskriver en handling, som kun jeg burde kunne huske",
+  jorgen_unknown_knows_routes:
+    "Den ukendte kender mine ruter og vaner",
+  jorgen_other_remembers_conclusion:
+    "Nogen ud over mig husker dagene.",
+  jorgen_login_used:
+    "Mit login blev brugt ved læsesalen uden min tilstedeværelse",
+  jorgen_lookalike_seen:
+    "Et vidne så en person, der lignede mig, ved læsesalen",
+  jorgen_player_alibi:
+    "Mine egne registrerede handlinger placerer mig et andet sted",
+  jorgen_identity_used_conclusion:
+    "Den ukendte bruger min identitet.",
+  jorgen_npc_alibis_hold:
+    "Alle de mennesker, jeg kan anklage, kan ikke have stået bag Ryan",
+  jorgen_passage_test_placed:
+    "Et dateret mærke er placeret i passagen med en kontrol udenfor",
+  jorgen_passage_marker_survived:
+    "Det daterede mærke inde i passagen overlevede reset",
+  jorgen_outside_control_reset:
+    "Kontrolmærket udenfor passagen blev nulstillet",
+  jorgen_unknown_in_passage_at_reset:
+    "Et bevaret fodspor viser, at den ukendte var i passagen under reset",
+  jorgen_passage_persistence_conclusion:
+    "Passagen står delvist uden for dagens reset.",
+  jorgen_fragment_in_ryan_hand:
+    "Ryan døde med en side fra mine egne noter i hånden",
+  jorgen_fragment_handwriting:
+    "Fragmentet er skrevet med min håndskrift",
+  jorgen_current_page_intact:
+    "Min tilsvarende noteside er stadig intakt",
+  jorgen_fragment_future_knowledge:
+    "Fragmentet indeholder viden, jeg først fik efter mordet",
+  jorgen_fragment_from_future_conclusion:
+    "Fragmentet kommer ikke fra min fortid. Det kommer fra min fremtid.",
+  jorgen_later_self_exists_conclusion:
+    "Hvis et menneske bliver i passagen under reset, kan næste morgen skabe en ny Jørgen uden at fjerne den gamle.",
+  jorgen_ryan_called_with_fragment:
+    "Ryan kaldte specifikt på mig, fordi nogen havde vist ham siden",
+  jorgen_future_self_murderer_conclusion:
+    "Morderen er mig — men ikke endnu.",
+  jorgen_revelation_completed:
+    "Jeg har konfronteret den senere Jørgen i passagen",
+  jorgen_reconstruction_recorded:
+    "Jørgens private paradoksrekonstruktion er gemt",
+  jorgen_prevention_plan:
+    "Plan: Plant en falsk forventning og vælg derefter en anden rute",
+  jorgen_decoy_planted:
+    "Den falske plan ligger, hvor min senere udgave vil læse den",
+  jorgen_later_self_dissolved:
+    "Den senere Jørgen forsvandt, da mordet blev forhindret",
+  jorgen_paradox_broken:
+    "Det selvskabte mordparadoks er brudt",
 };
 
 function button(
@@ -734,6 +790,7 @@ export function renderKnowledge(state: GameState): string {
   const hiddenSystemKnowledge = new Set<KnowledgeId>([
     caseContent.reconstructionKnowledgeId,
     caseContent.preventionPlanKnowledgeId,
+    ...(caseContent.hiddenKnowledge ?? []),
   ]);
   const facts = discoveries.filter(
     (id) => !conclusions.has(id) && !hiddenSystemKnowledge.has(id),
@@ -994,10 +1051,19 @@ function renderEnding(
     const score = calculateCaseScore(state);
     const title =
       score >= 1000
-        ? "Skarp efterforsker"
+        ? caseContent.result?.topRating ?? "Skarp efterforsker"
         : score >= 750
           ? "Sagen løst"
           : "Vedholdende detektiv";
+    const murdererLabel =
+      caseContent.result?.murdererLabel ?? definition.murderer;
+    const extraStatistics =
+      caseContent.result?.extraStatistics
+        ?.map(
+          ({ label, value }) =>
+            `<div><dt>${label}</dt><dd>${value}</dd></div>`,
+        )
+        .join("") ?? "";
     const playAgain = (): void => {
       store.dispatch({ type: "RESET_GAME" });
       const selection = selectDirectorsCutCase({
@@ -1028,7 +1094,7 @@ function renderEnding(
               .map((paragraph) => `<p>${paragraph}</p>`)
               .join("")}
             <dl class="result-grid">
-              <div><dt>Morder</dt><dd>${definition.murderer}</dd></div>
+              <div><dt>Morder</dt><dd>${murdererLabel}</dd></div>
               <div><dt>Dage brugt</dt><dd>${state.loop}</dd></div>
               <div><dt>Konfrontationer</dt><dd>${statistics.confrontations}</dd></div>
               <div><dt>Forkerte anklager</dt><dd>${statistics.wrongAccusations}</dd></div>
@@ -1036,6 +1102,7 @@ function renderEnding(
               <div><dt>Afgørende konklusioner</dt><dd>${caseContent.coreConclusions.length}/${caseContent.coreConclusions.length}</dd></div>
               <div><dt>Ekstra spor</dt><dd>${optionalFound}/${caseContent.optionalEvidence.length}</dd></div>
               <div><dt>Score</dt><dd>${score} · ${title}</dd></div>
+              ${extraStatistics}
             </dl>
             <p class="score-explanation">
               Par: ${definition.score.parDays} dage.

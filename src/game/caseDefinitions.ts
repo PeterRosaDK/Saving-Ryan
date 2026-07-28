@@ -11,7 +11,7 @@ export interface CaseDefinition {
   id: CaseId;
   mode: "original" | "directors_cut";
   enabled: boolean;
-  murderer: CharacterId;
+  murderer: CharacterId | "Jørgen";
   menu: {
     title: string;
     description: string;
@@ -100,6 +100,25 @@ export const CASE_DEFINITIONS: Readonly<
     },
     score: {
       parDays: 2,
+      base: 1000,
+      extraDayPenalty: 100,
+      wrongAccusationPenalty: 100,
+      prematureAccusationPenalty: 50,
+      optionalEvidenceBonus: 25,
+    },
+  },
+  jorgen: {
+    id: "jorgen",
+    mode: "directors_cut",
+    enabled: true,
+    murderer: "Jørgen",
+    menu: {
+      title: "Director’s Cut",
+      description:
+        "Spil en alternativ version, hvor morderen vælges tilfældigt blandt de tilgængelige Director’s Cut-sager.",
+    },
+    score: {
+      parDays: 4,
       base: 1000,
       extraDayPenalty: 100,
       wrongAccusationPenalty: 100,

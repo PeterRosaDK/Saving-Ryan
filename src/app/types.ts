@@ -6,7 +6,13 @@ export type AppPhase =
   | "reconstruction"
   | "ending";
 
-export const CASE_IDS = ["laura", "david", "barbara", "marie"] as const;
+export const CASE_IDS = [
+  "laura",
+  "david",
+  "barbara",
+  "marie",
+  "jorgen",
+] as const;
 
 export type CaseId = (typeof CASE_IDS)[number];
 
@@ -97,6 +103,34 @@ export const KNOWLEDGE_IDS = [
   "marie_reconstruction_recorded",
   "marie_prevention_plan",
   "marie_work_secured",
+  "jorgen_prior_loop_reference_ready",
+  "jorgen_note_references_previous_loop",
+  "jorgen_unknown_knows_routes",
+  "jorgen_other_remembers_conclusion",
+  "jorgen_login_used",
+  "jorgen_lookalike_seen",
+  "jorgen_player_alibi",
+  "jorgen_identity_used_conclusion",
+  "jorgen_npc_alibis_hold",
+  "jorgen_passage_test_placed",
+  "jorgen_passage_marker_survived",
+  "jorgen_outside_control_reset",
+  "jorgen_unknown_in_passage_at_reset",
+  "jorgen_passage_persistence_conclusion",
+  "jorgen_fragment_in_ryan_hand",
+  "jorgen_fragment_handwriting",
+  "jorgen_current_page_intact",
+  "jorgen_fragment_future_knowledge",
+  "jorgen_fragment_from_future_conclusion",
+  "jorgen_later_self_exists_conclusion",
+  "jorgen_ryan_called_with_fragment",
+  "jorgen_future_self_murderer_conclusion",
+  "jorgen_revelation_completed",
+  "jorgen_reconstruction_recorded",
+  "jorgen_prevention_plan",
+  "jorgen_decoy_planted",
+  "jorgen_later_self_dissolved",
+  "jorgen_paradox_broken",
 ] as const;
 
 export type KnowledgeId = (typeof KNOWLEDGE_IDS)[number];
@@ -127,6 +161,7 @@ export const DIALOGUE_TOPIC_IDS = [
   "marie_work",
   "marie_threat",
   "marie_location",
+  "jorgen_sighting",
 ] as const;
 
 export type DialogueTopicId = (typeof DIALOGUE_TOPIC_IDS)[number];
@@ -167,7 +202,16 @@ export type SceneInteractionId =
   | "inspect_marie_folder"
   | "inspect_marie_torn_page"
   | "inspect_marie_passage_trace"
-  | "secure_marie_work";
+  | "secure_marie_work"
+  | "inspect_jorgen_anonymous_note"
+  | "inspect_jorgen_login_audit"
+  | "review_jorgen_alibis"
+  | "place_jorgen_passage_test"
+  | "inspect_jorgen_passage_test"
+  | "compare_jorgen_notebook"
+  | "confront_later_jorgen"
+  | "plant_jorgen_decoy"
+  | "prevent_jorgen_murder";
 
 export type SceneInteractionTrigger = "enter" | "manual";
 
@@ -207,6 +251,7 @@ export interface CaseProgress {
   statistics: CaseStatistics;
   reconstructionAvailable: boolean;
   reconstructionCompleted: boolean;
+  previousLoopTransitions: SceneId[];
 }
 
 export interface GameState {

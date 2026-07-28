@@ -15,6 +15,10 @@ import {
   MARIE_CORE_CONCLUSIONS,
   deriveMarieLead,
 } from "./marieCase";
+import {
+  JORGEN_CORE_CONCLUSIONS,
+  deriveJorgenLead,
+} from "./jorgenCase";
 
 export const INVESTIGATION_STEP_IDS = [
   "observe_barbara_programming",
@@ -305,6 +309,64 @@ export function learnKnowledge(
     }
   }
 
+  if (state.selectedCaseId === "jorgen") {
+    if (
+      nextKnowledge.jorgen_prior_loop_reference_ready &&
+      nextKnowledge.jorgen_note_references_previous_loop &&
+      !nextKnowledge.jorgen_other_remembers_conclusion
+    ) {
+      nextKnowledge.jorgen_other_remembers_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.jorgen_login_used &&
+      nextKnowledge.jorgen_lookalike_seen &&
+      nextKnowledge.jorgen_player_alibi &&
+      !nextKnowledge.jorgen_identity_used_conclusion
+    ) {
+      nextKnowledge.jorgen_identity_used_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.jorgen_passage_marker_survived &&
+      nextKnowledge.jorgen_outside_control_reset &&
+      nextKnowledge.secret_passage_exists &&
+      !nextKnowledge.jorgen_passage_persistence_conclusion
+    ) {
+      nextKnowledge.jorgen_passage_persistence_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.jorgen_fragment_in_ryan_hand &&
+      nextKnowledge.jorgen_fragment_handwriting &&
+      nextKnowledge.jorgen_current_page_intact &&
+      nextKnowledge.jorgen_fragment_future_knowledge &&
+      !nextKnowledge.jorgen_fragment_from_future_conclusion
+    ) {
+      nextKnowledge.jorgen_fragment_from_future_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.jorgen_passage_persistence_conclusion &&
+      nextKnowledge.jorgen_identity_used_conclusion &&
+      nextKnowledge.jorgen_fragment_future_knowledge &&
+      nextKnowledge.jorgen_unknown_in_passage_at_reset &&
+      !nextKnowledge.jorgen_later_self_exists_conclusion
+    ) {
+      nextKnowledge.jorgen_later_self_exists_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.jorgen_fragment_from_future_conclusion &&
+      nextKnowledge.jorgen_later_self_exists_conclusion &&
+      nextKnowledge.jorgen_ryan_called_with_fragment &&
+      !nextKnowledge.jorgen_future_self_murderer_conclusion
+    ) {
+      nextKnowledge.jorgen_future_self_murderer_conclusion = true;
+      changed = true;
+    }
+  }
+
   if (!changed) return state;
 
   const caseConclusions =
@@ -314,6 +376,8 @@ export function learnKnowledge(
         ? BARBARA_CORE_CONCLUSIONS
         : state.selectedCaseId === "marie"
           ? MARIE_CORE_CONCLUSIONS
+          : state.selectedCaseId === "jorgen"
+            ? JORGEN_CORE_CONCLUSIONS
         : [];
   const newlyDerived = caseConclusions.filter(
     (id) => nextKnowledge[id] && !state.knowledge[id],
@@ -355,6 +419,14 @@ export function learnKnowledge(
               currentLead: deriveMarieLead(knowledgeState),
             },
           }
+        : state.selectedCaseId === "jorgen"
+          ? {
+              ...knowledgeState,
+              caseProgress: {
+                ...knowledgeState.caseProgress,
+                currentLead: deriveJorgenLead(knowledgeState),
+              },
+            }
       : knowledgeState;
 }
 

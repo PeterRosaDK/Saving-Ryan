@@ -16,7 +16,7 @@ ending.
 
 The stable Laura route is now available as **Original historie**. The main menu
 also offers **Director’s Cut**, which selects one curated case definition when
-a new game begins. David, Barbara, and Marie are complete alternative cases. The selected
+a new game begins. David, Barbara, Marie, and Jørgen are complete alternative cases. The selected
 murderer and case facts remain fixed when the day loops. It is not a procedural
 name swap: every later case must explicitly
 define its motive, method, access, alibi, physical evidence, required knowledge,
@@ -651,10 +651,12 @@ Only after Laura is stable as the reference implementation:
 - [x] extend the shared Director’s Cut lifecycle with the complete Barbara case;
 - [x] add Marie as a complete tragic Director’s Cut case with active two-step
   prevention;
+- [x] add Jørgen as a complete multi-loop paradox case with a special
+  revelation and reset experiment;
 - extend to further curated cases only after complete implementation and
   narrative validation.
 
-The completed foundation and the active `david`/`barbara`/`marie` pool are documented
+The completed foundation and the active `david`/`barbara`/`marie`/`jorgen` pool are documented
 in [`docs/case-model.md`](docs/case-model.md). A partial future case is never
 registered as playable.
 

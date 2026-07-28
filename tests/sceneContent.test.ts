@@ -80,7 +80,11 @@ describe("verified scene content", () => {
         ({ interactionId }) => interactionId,
       ),
     ).toContain("inspect_barbaras_computer");
-    expect(getScenePresentation("B1").interactions).toEqual([]);
+    expect(
+      getScenePresentation("B1").interactions.map(
+        ({ interactionId }) => interactionId,
+      ),
+    ).not.toContain("inspect_barbaras_computer");
   });
 
   it("places the remaining special hotspots at their Director coordinates", () => {
@@ -113,6 +117,23 @@ describe("verified scene content", () => {
         interactionId: "inspect_girlfriend_letter",
         rect: { x: 148, y: 384, width: 62, height: 24 },
       });
+    }
+  });
+
+  it("gives every manual scene interaction a presentation hotspot", () => {
+    for (const interaction of Object.values(SCENE_INTERACTIONS)) {
+      if (interaction.trigger !== "manual") {
+        continue;
+      }
+
+      for (const sceneId of interaction.scenes) {
+        expect(
+          getScenePresentation(sceneId).interactions.map(
+            ({ interactionId }) => interactionId,
+          ),
+          `${interaction.id} must be clickable in ${sceneId}`,
+        ).toContain(interaction.id);
+      }
     }
   });
 

@@ -148,7 +148,7 @@ export function reduceGameState(
           : getSceneInteraction(pending.cause.id, state).effects;
       const sourceScene = getScene(pending.from);
       const sourceEffectState = applyEffects(state, sourceEffects);
-      const effectState =
+      const murderEffectState =
         sourceScene.time.id === 2 && target.time.id === 3
           ? applyEffects(sourceEffectState, [
               {
@@ -164,6 +164,42 @@ export function reduceGameState(
               state.selectedCaseId,
             ).scene
           : null;
+      const completedLoopTransitions = seenClockEvent
+        ? [
+            ...new Set([
+              ...murderEffectState.loopState.seenTransitions,
+              seenClockEvent,
+            ]),
+          ]
+        : murderEffectState.loopState.seenTransitions;
+      const jorgenResetEffects: GameEffect[] = [];
+      if (
+        pending.beginsNewLoop &&
+        murderEffectState.selectedCaseId === "jorgen"
+      ) {
+        if (completedLoopTransitions.length > 0) {
+          jorgenResetEffects.push({
+            type: "LEARN",
+            id: "jorgen_prior_loop_reference_ready",
+          });
+        }
+        if (murderEffectState.knowledge.jorgen_passage_test_placed) {
+          jorgenResetEffects.push(
+            {
+              type: "LEARN",
+              id: "jorgen_passage_marker_survived",
+            },
+            {
+              type: "LEARN",
+              id: "jorgen_outside_control_reset",
+            },
+          );
+        }
+      }
+      const effectState = applyEffects(
+        murderEffectState,
+        jorgenResetEffects,
+      );
       const caseContent = isDirectorsCutCaseId(
         effectState.selectedCaseId,
       )
@@ -172,7 +208,7 @@ export function reduceGameState(
       const reconstructionBegins =
         pending.beginsNewLoop &&
         caseContent !== null &&
-        effectState.knowledge[caseContent.confessionKnowledgeId] &&
+        effectState.knowledge[caseContent.finaleKnowledgeId] &&
         !effectState.caseProgress.reconstructionCompleted;
       const completedState: GameState = {
         ...effectState,
@@ -184,16 +220,16 @@ export function reduceGameState(
         loopState: pending.beginsNewLoop
           ? createInitialLoopState()
           : {
-              ...effectState.loopState,
-              seenTransitions: seenClockEvent
-                ? [
-                    ...new Set([
-                      ...effectState.loopState.seenTransitions,
-                      seenClockEvent,
-                    ]),
-                  ]
-                : effectState.loopState.seenTransitions,
-            },
+            ...effectState.loopState,
+            seenTransitions: seenClockEvent
+              ? [
+                  ...new Set([
+                    ...effectState.loopState.seenTransitions,
+                    seenClockEvent,
+                  ]),
+                ]
+              : effectState.loopState.seenTransitions,
+          },
         pendingTransition: null,
         phase:
           reconstructionBegins
@@ -204,6 +240,9 @@ export function reduceGameState(
           reconstructionAvailable:
             effectState.caseProgress.reconstructionAvailable ||
             reconstructionBegins,
+          previousLoopTransitions: pending.beginsNewLoop
+            ? completedLoopTransitions
+            : effectState.caseProgress.previousLoopTransitions,
         },
       };
 

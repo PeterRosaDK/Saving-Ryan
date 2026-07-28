@@ -740,7 +740,8 @@ describe("legacy dialogue rules", () => {
             topic !== "barbara_time_with_ryan" &&
             topic !== "marie_work" &&
             topic !== "marie_threat" &&
-            topic !== "marie_location",
+            topic !== "marie_location" &&
+            topic !== "jorgen_sighting",
         ),
       ),
     );

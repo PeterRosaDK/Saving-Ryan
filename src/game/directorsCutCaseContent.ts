@@ -14,22 +14,37 @@ import {
   MARIE_OPTIONAL_EVIDENCE,
   MARIE_RECONSTRUCTION_CARDS,
 } from "./marieCase";
+import {
+  JORGEN_CORE_CONCLUSIONS,
+  JORGEN_OPTIONAL_EVIDENCE,
+  JORGEN_RECONSTRUCTION_CARDS,
+} from "./jorgenCase";
 
 export type DirectorsCutCaseId = Exclude<CaseId, "laura">;
 
 export interface DirectorsCutCaseContent {
   caseId: DirectorsCutCaseId;
+  finaleKind: "npc-confession" | "special-revelation";
   coreConclusions: readonly KnowledgeId[];
   optionalEvidence: readonly KnowledgeId[];
   reconstructionCards: readonly string[];
-  confessionKnowledgeId: KnowledgeId;
+  finaleKnowledgeId: KnowledgeId;
   reconstructionKnowledgeId: KnowledgeId;
   preventionPlanKnowledgeId: KnowledgeId;
+  hiddenKnowledge?: readonly KnowledgeId[];
   startLead: string;
   finalLead: string;
   epilogue: readonly string[];
   reconstructionAssetId: string;
   epilogueAssetId: string;
+  result?: {
+    murdererLabel?: string;
+    topRating?: string;
+    extraStatistics?: readonly {
+      label: string;
+      value: string;
+    }[];
+  };
 }
 
 export const DIRECTORS_CUT_CASE_CONTENT: Readonly<
@@ -37,10 +52,11 @@ export const DIRECTORS_CUT_CASE_CONTENT: Readonly<
 > = {
   david: {
     caseId: "david",
+    finaleKind: "npc-confession",
     coreConclusions: DAVID_CORE_CONCLUSIONS,
     optionalEvidence: DAVID_OPTIONAL_EVIDENCE,
     reconstructionCards: DAVID_RECONSTRUCTION_CARDS,
-    confessionKnowledgeId: "david_confessed",
+    finaleKnowledgeId: "david_confessed",
     reconstructionKnowledgeId: "david_reconstruction_recorded",
     preventionPlanKnowledgeId: "david_prevention_plan",
     startLead: "Find ud af, hvilke konflikter Ryan har skabt i gruppen.",
@@ -55,10 +71,11 @@ export const DIRECTORS_CUT_CASE_CONTENT: Readonly<
   },
   barbara: {
     caseId: "barbara",
+    finaleKind: "npc-confession",
     coreConclusions: BARBARA_CORE_CONCLUSIONS,
     optionalEvidence: BARBARA_OPTIONAL_EVIDENCE,
     reconstructionCards: BARBARA_RECONSTRUCTION_CARDS,
-    confessionKnowledgeId: "barbara_confessed",
+    finaleKnowledgeId: "barbara_confessed",
     reconstructionKnowledgeId: "barbara_reconstruction_recorded",
     preventionPlanKnowledgeId: "barbara_prevention_plan",
     startLead: "Undersøg Ryans konflikter med gruppen.",
@@ -74,10 +91,11 @@ export const DIRECTORS_CUT_CASE_CONTENT: Readonly<
   },
   marie: {
     caseId: "marie",
+    finaleKind: "npc-confession",
     coreConclusions: MARIE_CORE_CONCLUSIONS,
     optionalEvidence: MARIE_OPTIONAL_EVIDENCE,
     reconstructionCards: MARIE_RECONSTRUCTION_CARDS,
-    confessionKnowledgeId: "marie_confessed",
+    finaleKnowledgeId: "marie_confessed",
     reconstructionKnowledgeId: "marie_reconstruction_recorded",
     preventionPlanKnowledgeId: "marie_prevention_plan",
     startLead:
@@ -92,6 +110,37 @@ export const DIRECTORS_CUT_CASE_CONTENT: Readonly<
     ],
     reconstructionAssetId: "dc-marie-reconstruction-sequence",
     epilogueAssetId: "dc-marie-epilogue-sequence",
+  },
+  jorgen: {
+    caseId: "jorgen",
+    finaleKind: "special-revelation",
+    coreConclusions: JORGEN_CORE_CONCLUSIONS,
+    optionalEvidence: JORGEN_OPTIONAL_EVIDENCE,
+    reconstructionCards: JORGEN_RECONSTRUCTION_CARDS,
+    finaleKnowledgeId: "jorgen_revelation_completed",
+    reconstructionKnowledgeId: "jorgen_reconstruction_recorded",
+    preventionPlanKnowledgeId: "jorgen_prevention_plan",
+    hiddenKnowledge: ["jorgen_prior_loop_reference_ready"],
+    startLead:
+      "Gennemlev dagen, og læg mærke til, om nogen kan kende mine valg fra et tidligere loop.",
+    finalLead:
+      "Placér en falsk plan, og nå afsatsen ad en rute min senere udgave ikke forventer.",
+    epilogue: [
+      "Ryan overlevede. Den senere Jørgen nåede aldrig at fuldføre det skub, der skulle skabe hans egen fortid.",
+      "Siden fra fremtiden blev blank. Den ældre Jørgens stemme forsvandt midt i en sætning, og til sidst var der kun én Jørgen tilbage.",
+      "De andre huskede kun den endelige dag. Jørgen huskede mordet, efterforskningen og den person, han kunne være blevet.",
+      "Næste morgen fortsatte tiden fremad.",
+    ],
+    reconstructionAssetId: "dc-jorgen-reconstruction-sequence",
+    epilogueAssetId: "dc-jorgen-epilogue-sequence",
+    result: {
+      murdererLabel: "Jørgen (senere)",
+      topRating: "Kronologisk umulig",
+      extraStatistics: [
+        { label: "Registrerede Jørgener", value: "2" },
+        { label: "Tidsmæssige selvmodsigelser", value: "1" },
+      ],
+    },
   },
 };
 

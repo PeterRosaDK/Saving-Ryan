@@ -72,3 +72,26 @@ kontekst før/efter og case-ID for hvert behov.
 | `dc-marie-secure-work-sequence` | D1/D2-finalen | sequence | gruppen | nødvendig | ingen | placeholder |
 | `dc-marie-prevention-sequence` | C2-finalen | sequence | Jørgen/Marie/Ryan | nødvendig | ingen | placeholder |
 | `dc-marie-epilogue-sequence` | epilog | sequence | fortæller | ønskelig | ingen | placeholder |
+
+## Jørgen
+
+| Asset-ID | Scene | Type | Person | Prioritet | Genbrug | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `dc-jorgen-murder-call-sequence` | A2 | sequence | Ryan/Jørgen/ukendt | nødvendig | legacy A2 som grundlag | placeholder |
+| `dc-jorgen-previous-loop-note` | D1–D4 | still | dokument | nødvendig | ingen | placeholder |
+| `dc-jorgen-login-audit` | B1–B3 | still | computer | nødvendig | neutral legacy-computerflade | placeholder |
+| `dc-jorgen-lookalike-witness` | Marie-dialog | voice | Marie | nødvendig | ingen | placeholder |
+| `dc-jorgen-npc-alibi-dialogue` | post-murder-dialog | voice | gruppen | ønskelig | legacy-klip ikke godkendt | placeholder |
+| `dc-jorgen-wrong-accusation` | NPC-anklage | sequence | Jørgen/NPC | nødvendig | ingen | placeholder |
+| `dc-jorgen-alibi-review` | D3/D4 | sequence | Jørgen | ønskelig | ingen | placeholder |
+| `dc-jorgen-passage-test` | C1–C4 | sequence | Jørgen | nødvendig | neutral læsesalsbaggrund | placeholder |
+| `dc-jorgen-passage-persistence` | C1–C4 efter reset | still | fortæller | nødvendig | neutral læsesalsbaggrund | placeholder |
+| `dc-jorgen-future-fragment-still` | A3/A4 | still | fortæller | nødvendig | eksisterende bodystills som baggrund | placeholder |
+| `dc-jorgen-future-fragment-comparison` | D3/D4 | still | dokument | nødvendig | ingen | placeholder |
+| `dc-jorgen-reset-ambience` | passagen under reset | sfx | rumlyd | ønskelig | clock tick utilstrækkelig alene | placeholder |
+| `dc-jorgen-later-portrait` | passagen | still | Jørgen — senere | ønskelig | mørklagt Jørgen kun som placeholder | placeholder |
+| `dc-jorgen-special-revelation` | C4/reset | sequence | to Jørgener | nødvendig | ingen | placeholder |
+| `dc-jorgen-reconstruction-sequence` | sidste morgen | sequence | Jørgen | nødvendig | ingen | placeholder |
+| `dc-jorgen-decoy-plan` | D1/D2 | still | dokument | nødvendig | ingen | placeholder |
+| `dc-jorgen-paradox-prevention` | C2/afsatsen | sequence | Ryan/to Jørgener | nødvendig | ingen | placeholder |
+| `dc-jorgen-epilogue-sequence` | epilog | sequence | fortæller | ønskelig | ingen | placeholder |

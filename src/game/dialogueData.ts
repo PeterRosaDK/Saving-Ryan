@@ -84,6 +84,7 @@ const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
   marie_work: "Hvor meget af rapporten er dit arbejde?",
   marie_threat: "Hvad truede Ryan dig med?",
   marie_location: "Så du Marie vende tilbage?",
+  jorgen_sighting: "Så du nogen ved læsesalen?",
 };
 
 function choiceId(
@@ -209,6 +210,9 @@ export function isConclusiveAccusation(
   }
   if (state.selectedCaseId === "marie") {
     return person === "Marie" && hasAllMarieConclusions(state);
+  }
+  if (state.selectedCaseId === "jorgen") {
+    return false;
   }
   return (
     person === "Laura" &&
@@ -1280,6 +1284,95 @@ function getMarieSpecialChoices(
   return choices;
 }
 
+function getJorgenSpecialChoices(
+  state: GameState,
+  person: CharacterId,
+): DialogueChoice[] {
+  const choices: DialogueChoice[] = [];
+  const afterMurder = state.timeSlot >= 3;
+
+  if (afterMurder && person !== "Ryan") {
+    choices.push(
+      defineCueChoice(
+        person,
+        "alibi",
+        textCue(`Jørgen spørger ${person} om tiden omkring faldet.`),
+        textCue(
+          `${person} forklarer sin rute. Den stemmer ubehageligt præcist med de registrerede tider.`,
+          "dc-jorgen-npc-alibi-dialogue",
+        ),
+        {
+          effectsOnSkip: true,
+          skipSummary: `${person}s alibi holder bedre end forventet.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "theory",
+        textCue("Jørgen: Hvem tror du stod bag Ryan?"),
+        textCue(
+          `${person}: Jeg ved det ikke. Men nogen kendte bygningen og vores bevægelser bedre, end nogen burde.`,
+          "dc-jorgen-npc-alibi-dialogue",
+        ),
+        {
+          effectsOnSkip: true,
+          skipSummary:
+            `${person} kan ikke navngive morderen, men oplevede en usædvanligt præcis plan.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "accuse",
+        textCue(`Jørgen anklager ${person} for mordet.`),
+        textSequenceCue(
+          [
+            `${person} afviser anklagen og gentager et alibi, der kan kontrolleres.`,
+            state.knowledge.jorgen_npc_alibis_hold
+              ? "Jørgen tænker: Jeg bliver ved med at lede efter en person, der passer ind i dagen. Måske er det selve antagelsen, der er forkert."
+              : "Jørgen tænker: Et motiv er ikke nok. Jeg må kontrollere hele gruppens tider.",
+          ],
+          "dc-jorgen-wrong-accusation",
+        ),
+        {
+          effectsOnSkip: true,
+          accusationOutcome: "wrong",
+          skipSummary:
+            "Anklagen holder ikke. Personen har et kontrollerbart alibi, og efterforskningen fortsætter.",
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Marie" &&
+    state.knowledge.jorgen_login_used
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "jorgen_sighting",
+        textCue(
+          "Jørgen: Så du nogen ved læsesalen, mens mit login blev brugt?",
+          "dc-jorgen-lookalike-witness",
+        ),
+        textCue(
+          "Marie: Jeg så dig — eller en, der lignede dig — ved bogreolen. Kun ryggen og frakken. Men du kan ikke have været dér, hvis loggen har ret.",
+          "dc-jorgen-lookalike-witness",
+        ),
+        {
+          effects: [{ type: "LEARN", id: "jorgen_lookalike_seen" }],
+          effectsOnSkip: true,
+          skipSummary:
+            "Marie så en person med Jørgens ryg og frakke ved læsesalen, mens den spillede Jørgen var et andet sted.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  return choices;
+}
+
 export function getDialogueChoices(
   state: GameState,
   person: CharacterId,
@@ -1306,6 +1399,8 @@ export function getDialogueChoices(
         ? getBarbaraSpecialChoices(state, person)
         : state.selectedCaseId === "marie"
           ? getMarieSpecialChoices(state, person)
+          : state.selectedCaseId === "jorgen"
+            ? getJorgenSpecialChoices(state, person)
       : getLegacySpecialChoices(state, person)),
   ];
 }

@@ -47,13 +47,25 @@ describe("case registry and story modes", () => {
       murderer: "Marie",
       menu: CASE_DEFINITIONS.david.menu,
     });
-    expect(getMysteryCaseIds()).toEqual(["david", "barbara", "marie"]);
+    expect(CASE_DEFINITIONS.jorgen).toMatchObject({
+      mode: "directors_cut",
+      enabled: true,
+      murderer: "Jørgen",
+      menu: CASE_DEFINITIONS.david.menu,
+    });
+    expect(getMysteryCaseIds()).toEqual([
+      "david",
+      "barbara",
+      "marie",
+      "jorgen",
+    ]);
   });
 
   it("selects Director's Cut deterministically and keeps the id through loops", () => {
     expect(selectMysteryCaseId(0)).toBe("david");
-    expect(selectMysteryCaseId(0.4)).toBe("barbara");
-    expect(selectMysteryCaseId(0.999)).toBe("marie");
+    expect(selectMysteryCaseId(0.3)).toBe("barbara");
+    expect(selectMysteryCaseId(0.6)).toBe("marie");
+    expect(selectMysteryCaseId(0.999)).toBe("jorgen");
     let state = reduceGameState(createInitialGameState(), {
       type: "START_CASE",
       caseId: selectMysteryCaseId(0.2)!,
@@ -118,7 +130,7 @@ describe("case registry and story modes", () => {
     expect(
       selectDirectorsCutCase({
         requestedCaseId: "ukendt",
-        randomValue: 0.25,
+        randomValue: 0.1,
         warn: (message) => warnings.push(message),
       }),
     ).toEqual({
@@ -140,7 +152,7 @@ describe("case registry and story modes", () => {
       requestedCaseId: null,
     });
     expect(secondGame).toEqual({
-      caseId: "marie",
+      caseId: "jorgen",
       source: "random",
       requestedCaseId: null,
     });

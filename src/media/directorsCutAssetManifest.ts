@@ -11,7 +11,7 @@ export type DirectorsCutAssetType =
 
 export interface DirectorsCutAssetNeed {
   id: string;
-  caseId: "david" | "barbara" | "marie";
+  caseId: "david" | "barbara" | "marie" | "jorgen";
   scene: string;
   type: DirectorsCutAssetType;
   person: string;
@@ -50,6 +50,16 @@ function marieNeed(
   return {
     ...value,
     caseId: "marie",
+    status: "placeholder",
+  };
+}
+
+function jorgenNeed(
+  value: Omit<DirectorsCutAssetNeed, "caseId" | "status">,
+): DirectorsCutAssetNeed {
+  return {
+    ...value,
+    caseId: "jorgen",
     status: "placeholder",
   };
 }
@@ -746,6 +756,247 @@ export const DIRECTORS_CUT_ASSET_MANIFEST = [
     delivery: "Rolig forløsning uden at bagatellisere den afværgede handling.",
     before: "Mødet på afsatsen er forhindret.",
     after: "Resultatkortet vises.",
+    priority: "ønskelig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-murder-call-sequence",
+    scene: "A2, mordøjeblikket",
+    type: "sequence",
+    person: "Ryan, Jørgen og ukendt skikkelse",
+    exactContent:
+      "Ryan holder et iturevet ark, kalder specifikt på Jørgen og bliver skubbet af en skikkelse bag sig.",
+    delivery: "Chokerende og observeret fra afstand; skikkelsen må ikke kunne identificeres endnu.",
+    before: "Jørgen er i kantinen ved middag.",
+    after: "Ryan er død, og forbindelsen mellem kaldet og papiret registreres.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Legacy A2 fastslår faldet, men ikke papir eller gerningsperson.",
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-previous-loop-note",
+    scene: "D1–D4 efter mindst ét reset",
+    type: "still",
+    person: "Dokument",
+    exactContent:
+      "En anonym seddel beskriver den faktiske rækkefølge, hvori Jørgen lod tiden gå i det foregående loop.",
+    delivery: "Nøgtern og præcis; ingen antydning af dobbeltgænger.",
+    before: "Et tidligere loops transitioner er registreret.",
+    after: "Konklusionen om en anden loop-hukommelse kan udledes.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-login-audit",
+    scene: "B1–B3, computerlog",
+    type: "still",
+    person: "Computerinterface",
+    exactContent:
+      "Auditloggen viser Jørgens login ved læsesalen samtidig med tidsstemplede handlinger i computerrummet.",
+    delivery: "Teknisk læsbar og neutral; først en framing-hypotese.",
+    before: "Jørgen ved, at en anden husker loopene.",
+    after: "Misbrug af identitet og den spillede Jørgens alibi registreres.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Barbaras legacy-computerflade kan være neutral baggrund, men viser ikke den nye log.",
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-lookalike-witness",
+    scene: "Dialog med Marie",
+    type: "voice",
+    person: "Marie",
+    exactContent:
+      "Marie så ryggen og frakken på en person, der lignede Jørgen, ved bogreolen, mens den spillede Jørgen var et andet sted.",
+    delivery: "Usikker og forsigtig; hun så ikke et ansigt.",
+    before: "Det fremmede login er kendt.",
+    after: "Identitetskonklusionen kan kombineres med log og alibi.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-npc-alibi-dialogue",
+    scene: "Post-murder-dialoger",
+    type: "voice",
+    person: "Barbara, David, Laura og Marie",
+    exactContent:
+      "Hver person giver en rute, som kan kontrolleres og ikke placerer dem ved skubbet.",
+    delivery: "Presset, men konsistent og uden falske kernebeviser.",
+    before: "Jørgen spørger til alibi eller teori.",
+    after: "Normale mistanker svækkes.",
+    priority: "ønskelig",
+    reuseCandidate:
+      "Legacy alibi-klip er ikke godkendt til de nye præcise ruter.",
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-wrong-accusation",
+    scene: "Forkert NPC-anklage",
+    type: "sequence",
+    person: "Jørgen og den anklagede",
+    exactContent:
+      "Anklagen afvises med kontrollerbart alibi; Jørgen erkender gradvist, at morderen måske ikke passer ind i dagen.",
+    delivery: "Alvorlig og korrigerende, uden humor.",
+    before: "Spilleren anklager en af de fire NPC’er.",
+    after: "Statistik tælles, og efterforskningen fortsætter.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-alibi-review",
+    scene: "D3/D4, samlet tidslinje",
+    type: "sequence",
+    person: "Jørgen",
+    exactContent:
+      "Jørgen sammenholder alle fire NPC-ruter og konstaterer, at ingen normal gerningsperson passer i mordøjeblikket.",
+    delivery: "Metodisk og foruroligende.",
+    before: "Ryan er død.",
+    after: "Valgfrit støttebevis registreres.",
+    priority: "ønskelig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-passage-test",
+    scene: "C1–C4, aktivt eksperiment",
+    type: "sequence",
+    person: "Jørgen",
+    exactContent:
+      "Jørgen ridser et kryds og lægger en dateret strimmel inde i passagen samt en kontrolstrimmel udenfor.",
+    delivery: "Praktisk, reproducerbar og tydelig om kontrollen.",
+    before: "Identitetsmisbruget og passagen er kendt.",
+    after: "Spilleren må gennemføre et reset.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Læsesalsstills kan bruges som baggrund; eksperimentet er nyt.",
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-passage-persistence",
+    scene: "C1–C4, morgenen efter eksperimentet",
+    type: "still",
+    person: "Fortæller",
+    exactContent:
+      "Den daterede strimmel og ridsen inde i passagen består; kontrolmærket udenfor er nulstillet; et ældre fodspor er bevaret.",
+    delivery: "Kriminalteknisk tydelig og uden fuld identitetsafsløring.",
+    before: "Dagen er nulstillet efter det aktive eksperiment.",
+    after: "Passagens reset-blindpunkt og ophold under reset registreres.",
+    priority: "nødvendig",
+    reuseCandidate: "sektorC1/C3 som neutral baggrund.",
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-future-fragment-still",
+    scene: "A3/A4, Ryans hånd",
+    type: "still",
+    person: "Fortæller",
+    exactContent:
+      "Et iturevet notesidefragment i Ryans hånd med Jørgens håndskrift, fold og sidenummer.",
+    delivery: "Nøgtern observation; må ikke endnu kaldes et fremtidsfragment.",
+    before: "Jørgen undersøger liget.",
+    after: "Fragmentet kan senere sammenlignes med den fysiske notesbog.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "sektorA3-Ryan1 / sektorA3-Ryan2 som baggrund; papiret mangler.",
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-future-fragment-comparison",
+    scene: "D3/D4 efter passageeksperimentet",
+    type: "still",
+    person: "Dokument",
+    exactContent:
+      "Fragmentet matcher Jørgens bog, mens den tilsvarende side stadig er intakt og fragmentet omtaler senere viden.",
+    delivery: "Lagvis sammenligning med tydelig samtidighed og kronologi.",
+    before: "Identitet, passagepersistens og fragment er kendt.",
+    after: "Fremtidsfragmentet og den senere Jørgen kan udledes.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-reset-ambience",
+    scene: "Passagen under reset",
+    type: "sfx",
+    person: "Rumlyd",
+    exactContent:
+      "Lav forvrænget rumtone, hvor storm, ur og stemmer udenfor springer tilbage, mens lyden i passagen fortsætter.",
+    delivery: "Urovækkende og fysisk, men ikke høj eller melodramatisk.",
+    before: "Jørgen vælger at blive i passagen.",
+    after: "Den ukendte afsløres som en senere Jørgen.",
+    priority: "ønskelig",
+    reuseCandidate:
+      "Clock tick kan indgå, men der findes ingen semantisk dækkende resetlyd.",
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-later-portrait",
+    scene: "Passagen efter reset",
+    type: "still",
+    person: "Jørgen — senere",
+    exactContent:
+      "Et ældre, udmattet Jørgen-portræt i den mørke passage, samme identitet uden karikatur.",
+    delivery: "Skræmmende rolig, slidt og menneskelig.",
+    before: "Den ukendte står i passagen.",
+    after: "Navnet ændres til Jørgen — senere.",
+    priority: "ønskelig",
+    reuseCandidate:
+      "Et almindeligt Jørgen-billede kan kun bruges mørklagt som teknisk placeholder, hvis identiteten er tydelig i teksten.",
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-special-revelation",
+    scene: "C4 gennem reset",
+    type: "sequence",
+    person: "Jørgen og Jørgen — senere",
+    exactContent:
+      "Den senere Jørgen forklarer splittet, mordets bootstrap-årsag, sporene som instruktioner og sin tro på, at kun den huskende er virkelig.",
+    delivery: "Helt alvorlig; den senere Jørgen er rolig og udmattet, ikke teatralsk.",
+    before: "Alle fem tidskonklusioner er opnået.",
+    after: "Special revelation, rekonstruktion og paradox-prevention åbnes.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-reconstruction-sequence",
+    scene: "Sidste morgen",
+    type: "sequence",
+    person: "Jørgen",
+    exactContent:
+      "Syv private kort om den umulige gerningsperson, blindpunkt, dobbeltgænger, mordets besked, bootstrap-årsag, fælde og plan.",
+    delivery: "Koncentreret, kronologisk og uden at forklare paradokset væk.",
+    before: "Mødet med senere Jørgen er afsluttet.",
+    after: "Rekonstruktionen gemmes, og decoy-planen åbnes.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-decoy-plan",
+    scene: "D1/D2, finaleloop",
+    type: "still",
+    person: "Dokument",
+    exactContent:
+      "En fysisk falsk plan lover, at den yngre Jørgen venter i gangen og løber mod kantinen ved råbet.",
+    delivery: "Troværdig og skrevet i samme stil som de øvrige noter.",
+    before: "Rekonstruktionen er gennemført.",
+    after: "Den senere Jørgen forventes at handle på den falske rute.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-paradox-prevention",
+    scene: "C2, afsatsen",
+    type: "sequence",
+    person: "Ryan, Jørgen og Jørgen — senere",
+    exactContent:
+      "Den yngre Jørgen ankommer tidligt fra en anden retning, afbryder skubbet og får den senere Jørgen til at opløses, mens fremtidssiden bliver blank.",
+    delivery: "Intellektuel fælde og ontologisk uro; ingen filmet kamp.",
+    before: "Decoy-planen er placeret.",
+    after: "Ryan lever, og paradokset er brudt.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  jorgenNeed({
+    id: "dc-jorgen-epilogue-sequence",
+    scene: "Efter paradox-prevention",
+    type: "sequence",
+    person: "Fortæller",
+    exactContent:
+      "Ryan lever, loopet brydes, senere Jørgen er væk, de andre husker kun finaledagen, og Jørgen husker den person, han kunne være blevet.",
+    delivery: "Rolig, alvorlig og med en rest af ubehag.",
+    before: "Den senere Jørgen spørger: Så hvem bliver du nu?",
+    after: "Resultatkortet viser to registrerede Jørgener.",
     priority: "ønskelig",
     reuseCandidate: null,
   }),

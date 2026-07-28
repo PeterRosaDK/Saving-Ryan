@@ -211,6 +211,10 @@ const INTERACTIONS = {
       interactionId: "eavesdrop_barbara_and_ryan",
       rect: hotspotRect(445, 235, 146, 118),
     },
+    {
+      interactionId: "inspect_jorgen_login_audit",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
   ],
   B3: [
     {
@@ -225,12 +229,26 @@ const INTERACTIONS = {
       interactionId: "compare_barbara_timestamps",
       rect: hotspotRect(283, 244, 94, 104),
     },
+    {
+      interactionId: "inspect_jorgen_login_audit",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
   ],
+  B1: [{
+    interactionId: "inspect_jorgen_login_audit",
+    rect: hotspotRect(283, 244, 94, 104),
+  }],
   C1: [{
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
   }, {
     interactionId: "prevent_ryans_murder",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "place_jorgen_passage_test",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "inspect_jorgen_passage_test",
     rect: hotspotRect(117, 294, 14, 46),
   }],
   C2: [{
@@ -245,31 +263,144 @@ const INTERACTIONS = {
   }, {
     interactionId: "prevent_barbara_murder",
     rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "place_jorgen_passage_test",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "inspect_jorgen_passage_test",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "prevent_marie_murder",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "prevent_jorgen_murder",
+    rect: hotspotRect(117, 294, 14, 46),
   }],
   C3: [{
     interactionId: "inspect_secret_passage_book",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "inspect_marie_passage_trace",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "place_jorgen_passage_test",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "inspect_jorgen_passage_test",
     rect: hotspotRect(117, 294, 14, 46),
   }],
   C4: [{
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "inspect_marie_passage_trace",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "place_jorgen_passage_test",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "inspect_jorgen_passage_test",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "confront_later_jorgen",
+    rect: hotspotRect(117, 294, 14, 46),
   }],
-  D1: [{
-    interactionId: "inspect_girlfriend_letter",
-    rect: hotspotRect(148, 384, 62, 24),
-  }],
-  D2: [{
-    interactionId: "inspect_girlfriend_letter",
-    rect: hotspotRect(148, 384, 62, 24),
-  }],
-  D3: [{
-    interactionId: "inspect_girlfriend_letter",
-    rect: hotspotRect(148, 384, 62, 24),
-  }],
-  D4: [{
-    interactionId: "inspect_girlfriend_letter",
-    rect: hotspotRect(148, 384, 62, 24),
-  }],
+  D1: [
+    {
+      interactionId: "inspect_girlfriend_letter",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_marie_folder",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "secure_marie_work",
+      rect: hotspotRect(232, 344, 174, 64),
+    },
+    {
+      interactionId: "inspect_jorgen_anonymous_note",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "plant_jorgen_decoy",
+      rect: hotspotRect(232, 344, 174, 64),
+    },
+  ],
+  D2: [
+    {
+      interactionId: "inspect_girlfriend_letter",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_marie_folder",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "secure_marie_work",
+      rect: hotspotRect(232, 344, 174, 64),
+    },
+    {
+      interactionId: "inspect_jorgen_anonymous_note",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "plant_jorgen_decoy",
+      rect: hotspotRect(232, 344, 174, 64),
+    },
+  ],
+  D3: [
+    {
+      interactionId: "inspect_girlfriend_letter",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_marie_folder",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_marie_torn_page",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_jorgen_anonymous_note",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "review_jorgen_alibis",
+      rect: hotspotRect(232, 344, 174, 64),
+    },
+    {
+      interactionId: "compare_jorgen_notebook",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+  ],
+  D4: [
+    {
+      interactionId: "inspect_girlfriend_letter",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_marie_folder",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_marie_torn_page",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_jorgen_anonymous_note",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "review_jorgen_alibis",
+      rect: hotspotRect(232, 344, 174, 64),
+    },
+    {
+      interactionId: "compare_jorgen_notebook",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+  ],
 } as const satisfies Partial<Record<SceneId, readonly InteractionHotspot[]>>;
 
 export const DIRECTOR_STAGE = {

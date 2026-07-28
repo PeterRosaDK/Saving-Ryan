@@ -59,6 +59,7 @@ function createBaseGameState(
       },
       reconstructionAvailable: false,
       reconstructionCompleted: false,
+      previousLoopTransitions: [],
     },
   };
 }

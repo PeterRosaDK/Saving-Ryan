@@ -394,6 +394,248 @@ export const SCENE_INTERACTIONS = {
     ],
     concludesStory: true,
   },
+  inspect_jorgen_anonymous_note: {
+    id: "inspect_jorgen_anonymous_note",
+    scenes: ["D1", "D2", "D3", "D4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Læs den anonyme besked",
+    requires: ["jorgen_prior_loop_reference_ready"],
+    effects: [
+      { type: "LEARN", id: "jorgen_note_references_previous_loop" },
+      { type: "LEARN", id: "jorgen_unknown_knows_routes" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Mellem Jørgens papirer ligger en seddel, som ikke var der i går.",
+        "“Denne gang begyndte du et andet sted. Du lod tiden gå i præcis den rækkefølge, jeg forventede.”",
+        "Beskeden beskriver den rute, Jørgen faktisk valgte i det foregående loop. Ingen andre burde kunne kende den.",
+      ],
+      "dc-jorgen-previous-loop-note",
+    ),
+  },
+  inspect_jorgen_login_audit: {
+    id: "inspect_jorgen_login_audit",
+    scenes: ["B1", "B2", "B3"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Kontrollér loginloggen",
+    requires: ["jorgen_other_remembers_conclusion"],
+    effects: [
+      { type: "LEARN", id: "jorgen_login_used" },
+      { type: "LEARN", id: "jorgen_player_alibi" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Auditloggen viser et login med Jørgens oplysninger ved terminalen nær læsesalen.",
+        "Det skete, mens hans tidsstemplede udlån og Barbaras lokale log placerer den spillede Jørgen i computerrummet.",
+        "Nogen brugte hans identitet, mens han beviseligt var et andet sted.",
+      ],
+      "dc-jorgen-login-audit",
+    ),
+  },
+  review_jorgen_alibis: {
+    id: "review_jorgen_alibis",
+    scenes: ["D3", "D4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Gennemgå gruppens alibier",
+    requires: ["ryan_was_murdered"],
+    effects: [{ type: "LEARN", id: "jorgen_npc_alibis_hold" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen lægger Lauras, Davids, Barbaras og Maries forklaringer ved siden af de registrerede tider.",
+        "Der er motiver nok, men deres bevægelser overlapper ikke mordøjeblikket på den måde, de plejer.",
+        "Alle de mennesker, Jørgen kan anklage, kan ikke have stået bag Ryan.",
+      ],
+      "dc-jorgen-alibi-review",
+    ),
+  },
+  place_jorgen_passage_test: {
+    id: "place_jorgen_passage_test",
+    scenes: ["C1", "C2", "C3", "C4"],
+    kind: "special",
+    trigger: "manual",
+    label: "Placér et mærke i passagen",
+    requires: [
+      "jorgen_identity_used_conclusion",
+      "secret_passage_exists",
+    ],
+    effects: [{ type: "LEARN", id: "jorgen_passage_test_placed" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen ridser et lille kryds på indersiden af passagens mur og lægger en papirstrimmel med dagens dato under en løs sten.",
+        "Udenfor lægger han en tilsvarende strimmel under bogreolen som kontrol.",
+        "Hvis passagen følger dagen, er begge mærker væk næste morgen.",
+      ],
+      "dc-jorgen-passage-test",
+    ),
+    replaces: ["inspect_secret_passage_book"],
+  },
+  inspect_jorgen_passage_test: {
+    id: "inspect_jorgen_passage_test",
+    scenes: ["C1", "C2", "C3", "C4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Kontrollér passageeksperimentet",
+    requires: [
+      "jorgen_passage_marker_survived",
+      "jorgen_outside_control_reset",
+    ],
+    effects: [
+      {
+        type: "LEARN",
+        id: "jorgen_unknown_in_passage_at_reset",
+      },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Papirstrimlen udenfor er tilbage ved dagens begyndelse og bærer ingen dato.",
+        "Inde i passagen ligger gårsdagens daterede strimmel stadig under stenen. Ridsen er også bevaret.",
+        "Ved siden af den er støvet forstyrret af et ældre fodspor. Nogen har opholdt sig her, mens dagen blev nulstillet.",
+      ],
+      "dc-jorgen-passage-persistence",
+    ),
+    replaces: [
+      "inspect_secret_passage_book",
+      "place_jorgen_passage_test",
+    ],
+  },
+  compare_jorgen_notebook: {
+    id: "compare_jorgen_notebook",
+    scenes: ["D3", "D4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Sammenlign fragmentet med mine noter",
+    requires: [
+      "jorgen_fragment_in_ryan_hand",
+      "jorgen_fragment_handwriting",
+      "jorgen_identity_used_conclusion",
+      "jorgen_passage_persistence_conclusion",
+      "jorgen_unknown_in_passage_at_reset",
+    ],
+    effects: [
+      { type: "LEARN", id: "jorgen_current_page_intact" },
+      {
+        type: "LEARN",
+        id: "jorgen_fragment_future_knowledge",
+      },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Håndskriften, folden og sidenummeret matcher Jørgens fysiske efterforskningsbog.",
+        "Men den tilsvarende side sidder stadig hel og urørt i den nuværende bog.",
+        "Fragmentet nævner passageeksperimentets resultat med en formulering, Jørgen først skrev efter mordet.",
+        "Det kan ikke være stjålet fra hans fortid. Det kommer fra en senere udgave af hans noter.",
+      ],
+      "dc-jorgen-future-fragment-comparison",
+    ),
+  },
+  confront_later_jorgen: {
+    id: "confront_later_jorgen",
+    scenes: ["C4"],
+    kind: "special",
+    trigger: "manual",
+    label: "Bliv i passagen, mens dagen nulstilles",
+    requires: ["jorgen_future_self_murderer_conclusion"],
+    effects: [
+      { type: "LEARN", id: "jorgen_revelation_completed" },
+      { type: "LEARN", id: "jorgen_prevention_plan" },
+    ],
+    timeCost: 1,
+    timeAdvanceCue: textCue(
+      "Stemmerne udenfor begynder forfra. Inde i passagen fortsætter samtalen med den mand, dagen ikke fjernede.",
+    ),
+    cue: textSequenceCue(
+      [
+        "Stormen forsvinder. Uret springer tilbage. Men inde i passagen er der nogen, som stadig trækker vejret.",
+        "Den ukendte står i mørket med Jørgens ansigt, ældre og udmattet.",
+        "JØRGEN: Hvor mange gange har du gennemlevet dagen?",
+        "JØRGEN — SENERE: Jeg holdt op med at tælle.",
+        "JØRGEN — SENERE: Jeg stod her under reset. Verden skabte dig igen udenfor og lod mig blive. Siden har jeg kun bevæget mig, når jeg vidste, hvor du var.",
+        "Han ved præcis, hvilke spor Jørgen fandt. Han indrømmer, at han efterlod dem alle.",
+        "JØRGEN — SENERE: Du kaldte dem spor. Jeg kaldte dem instruktioner.",
+        "Han gav Ryan siden fra den senere notesbog, så Ryan ville kalde på den yngre Jørgen. Derefter skubbede han.",
+        "Mordet skabte chokket og ønsket om at få dagen tilbage. Efterforskningen skulle føre den yngre Jørgen til passagen og sikre, at han en dag skabte splittet.",
+        "JØRGEN — SENERE: De andre nulstilles. De glemmer. Kun vi er virkelige nok til at fortsætte.",
+        "JØRGEN: Mennesker bliver ikke uvirkelige, fordi du er den eneste, der husker dem.",
+        "JØRGEN — SENERE: Ryan skal dø. Ellers mister du dagen, og vi mister kontrollen.",
+        "JØRGEN — SENERE: Du leder ikke efter mig. Du er på vej til at blive mig.",
+        "Han siger, at næste morgens mord stadig vil ske, og udfordrer Jørgen til at gøre noget, han ikke allerede selv har gjort.",
+      ],
+      "dc-jorgen-special-revelation",
+    ),
+    replaces: [
+      "inspect_secret_passage_book",
+      "place_jorgen_passage_test",
+      "inspect_jorgen_passage_test",
+    ],
+  },
+  plant_jorgen_decoy: {
+    id: "plant_jorgen_decoy",
+    scenes: ["D1", "D2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Placér en falsk plan",
+    requires: [
+      "jorgen_prevention_plan",
+      "jorgen_reconstruction_recorded",
+    ],
+    effects: [{ type: "LEARN", id: "jorgen_decoy_planted" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen skriver en plan i den fysiske notesbog: Han vil vente i gangen og løbe mod kantinen, når Ryan råber.",
+        "Han lader bogen ligge på det sted i passagen, hvor hans senere udgave altid kontrollerer hans bevægelser.",
+        "Derefter går han en anden vej uden at skrive den ned.",
+      ],
+      "dc-jorgen-decoy-plan",
+    ),
+  },
+  prevent_jorgen_murder: {
+    id: "prevent_jorgen_murder",
+    scenes: ["C2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Gå gennem passagen før planen siger",
+    requires: [
+      "jorgen_prevention_plan",
+      "jorgen_reconstruction_recorded",
+      "jorgen_decoy_planted",
+    ],
+    effects: [
+      { type: "LEARN", id: "ryan_was_saved" },
+      { type: "LEARN", id: "jorgen_later_self_dissolved" },
+      { type: "LEARN", id: "jorgen_paradox_broken" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen går gennem passagen tidligere, mens den falske plan siger, at han stadig er i gangen.",
+        "På afsatsen står Ryan med fremtidssiden i hånden. Den senere Jørgen står bag ham, klar til at skubbe.",
+        "Den yngre Jørgen træder frem fra den modsatte side.",
+        "JØRGEN — SENERE: Du kan ikke overraske mig. Alt, hvad du gør, har jeg allerede gjort.",
+        "JØRGEN: Nej. Du gjorde det, jeg forventede, at du ville gøre.",
+        "Ryan vender sig. Skubbet rammer aldrig.",
+        "Siden i hans hånd bliver blank. Den senere Jørgens skikkelse begynder at miste kontur.",
+        "JØRGEN — SENERE: Så hvem bliver du nu?",
+        "Han forsvinder, før den yngre Jørgen svarer.",
+      ],
+      "dc-jorgen-paradox-prevention",
+    ),
+    replaces: [
+      "inspect_secret_passage_book",
+      "place_jorgen_passage_test",
+      "inspect_jorgen_passage_test",
+    ],
+    concludesStory: true,
+  },
 } as const satisfies Record<SceneInteractionId, SceneInteraction>;
 
 const LAURA_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
@@ -419,6 +661,18 @@ const MARIE_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
   "inspect_marie_torn_page",
   "inspect_marie_passage_trace",
   "secure_marie_work",
+]);
+
+const JORGEN_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
+  "inspect_jorgen_anonymous_note",
+  "inspect_jorgen_login_audit",
+  "review_jorgen_alibis",
+  "place_jorgen_passage_test",
+  "inspect_jorgen_passage_test",
+  "compare_jorgen_notebook",
+  "confront_later_jorgen",
+  "plant_jorgen_decoy",
+  "prevent_jorgen_murder",
 ]);
 
 const DAVID_STORY_INTERACTIONS = new Set<SceneInteractionId>([
@@ -548,6 +802,34 @@ const MARIE_INTERACTION_OVERRIDES: Partial<
   },
 };
 
+const JORGEN_INTERACTION_OVERRIDES: Partial<
+  Record<SceneInteractionId, SceneInteraction>
+> = {
+  inspect_ryans_body_and_necklace: {
+    ...SCENE_INTERACTIONS.inspect_ryans_body_and_necklace,
+    label: "Undersøg liget og papirfragmentet",
+    effects: [
+      { type: "LEARN", id: "jorgen_fragment_in_ryan_hand" },
+      { type: "LEARN", id: "jorgen_fragment_handwriting" },
+    ],
+    cue: stillsCue(
+      [
+        {
+          image: "sektorA3-Ryan1",
+          alt: "Ryan ligger livløs på kantinens gulv.",
+        },
+        {
+          image: "sektorA3-Ryan2",
+          alt: "Ryans hånd med et iturevet ark.",
+          text:
+            "Ryan holder et iturevet ark med Jørgens håndskrift. Sidenummeret og den særlige fold ligner hans fysiske efterforskningsbog.",
+        },
+      ],
+      "dc-jorgen-future-fragment-still",
+    ),
+  },
+};
+
 export function getSceneInteraction(
   id: SceneInteractionId,
   state?: Pick<GameState, "selectedCaseId">,
@@ -562,6 +844,10 @@ export function getSceneInteraction(
 
   if (state?.selectedCaseId === "marie") {
     return MARIE_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
+  }
+
+  if (state?.selectedCaseId === "jorgen") {
+    return JORGEN_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
   }
 
   return SCENE_INTERACTIONS[id];
@@ -579,22 +865,31 @@ export function getSceneInteractions(
       (state.selectedCaseId === "laura"
         ? !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
           !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
-          !MARIE_ONLY_INTERACTIONS.has(interaction.id)
+          !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
+          !JORGEN_ONLY_INTERACTIONS.has(interaction.id)
         : state.selectedCaseId === "david"
           ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
             !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
             !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
-            !MARIE_ONLY_INTERACTIONS.has(interaction.id)
+            !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
+            !JORGEN_ONLY_INTERACTIONS.has(interaction.id)
           : state.selectedCaseId === "barbara"
             ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
               !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
               !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
+              !JORGEN_ONLY_INTERACTIONS.has(interaction.id) &&
               interaction.id !== "inspect_girlfriend_letter"
-            : !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
-              !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
-              !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
-              !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
-              interaction.id !== "inspect_girlfriend_letter"),
+            : state.selectedCaseId === "marie"
+              ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
+                !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+                !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
+                !JORGEN_ONLY_INTERACTIONS.has(interaction.id) &&
+                !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
+                interaction.id !== "inspect_girlfriend_letter"
+              : !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
+                !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+                !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
+                !MARIE_ONLY_INTERACTIONS.has(interaction.id)),
   ).map((interaction) => getSceneInteraction(interaction.id, state));
 }
 
