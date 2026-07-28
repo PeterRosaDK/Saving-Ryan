@@ -295,12 +295,19 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
     (INTRO_SCORE.final.fullyVisibleAtFrame -
       INTRO_SCORE.final.startsAtFrame) *
     INTRO_SCORE.millisecondsPerFrame;
-  const finalElement = scoreElement(
-    INTRO_SCORE.final.image,
-    INTRO_SCORE.final.alt,
-    `${directorRectStyle(INTRO_SCORE.final.rect)};--intro-delay:${finalStartsAt}ms;--intro-duration:${finalFadeDuration}ms`,
-    "intro-final-element",
-  );
+  const finalElement = `
+    <div
+      class="intro-final-card"
+      style="--intro-delay:${finalStartsAt}ms;--intro-duration:${finalFadeDuration}ms"
+    >
+      ${scoreElement(
+        INTRO_SCORE.final.image,
+        INTRO_SCORE.final.alt,
+        directorRectStyle(INTRO_SCORE.final.rect),
+        "intro-final-image",
+      )}
+    </div>
+  `;
 
   root.innerHTML = `
     <main class="app-shell">
@@ -317,7 +324,7 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
           src="${getIntroAudioUrl()}"
         ></audio>
         <div class="intro-controls">
-          <p aria-live="polite" data-intro-status>Starter intro med lyd…</p>
+          <p aria-live="polite" data-intro-status hidden></p>
           <div>
             <button
               class="primary-action"
@@ -325,7 +332,7 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
               data-play-intro
               hidden
             >
-              Start intro med lyd
+              Start intro
             </button>
             <button class="secondary-action" type="button" data-skip-intro>
               Spring introen over
@@ -420,7 +427,7 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
       if (status?.isConnected) {
         status.hidden = false;
         status.textContent =
-          "Browseren kræver et klik, før introen kan afspilles med lyd.";
+          "Browseren kræver et klik, før introen kan starte.";
       }
       if (playButton?.isConnected) {
         playButton.hidden = false;

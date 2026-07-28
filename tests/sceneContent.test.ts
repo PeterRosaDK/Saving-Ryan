@@ -151,18 +151,30 @@ describe("verified scene content", () => {
     });
   });
 
-  it("uses Director's locked and unlocked computer text", () => {
+  it("presents Director's locked and unlocked computer text over the room still", () => {
     expect(getSceneInteraction("inspect_barbaras_computer").cue).toEqual({
-      kind: "text",
-      text:
-        "Du kaster et blik på Barbaras computer. Der er adgangskontrol på, så du prøver at bruge det navn, David fortalte dig. Det lykkes! Du kan se, at Barbara er inde i universitetets ellers utilgængelige filsystem over karakterer, og du kan desuden se, at hun tilsyneladende er inde under sit eget stamblad!",
+      kind: "stills",
+      frames: [
+        {
+          image: "sektorB3",
+          alt: "Barbaras computer i computerrummet.",
+          text:
+            "Du kaster et blik på Barbaras computer. Der er adgangskontrol på, så du prøver at bruge det navn, David fortalte dig. Det lykkes! Du kan se, at Barbara er inde i universitetets ellers utilgængelige filsystem over karakterer, og du kan desuden se, at hun tilsyneladende er inde under sit eget stamblad!",
+        },
+      ],
     });
     expect(
       getSceneInteraction("inspect_barbaras_computer").blockedCue,
     ).toEqual({
-      kind: "text",
-      text:
-        "Du kaster et blik på Barbaras computer. Desværre er der adgangskontrol på, og du kender ikke brugernavnet.",
+      kind: "stills",
+      frames: [
+        {
+          image: "sektorB3",
+          alt: "Barbaras computer i computerrummet.",
+          text:
+            "Du kaster et blik på Barbaras computer. Desværre er der adgangskontrol på, og du kender ikke brugernavnet.",
+        },
+      ],
     });
   });
 

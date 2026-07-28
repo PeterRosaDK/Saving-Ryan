@@ -215,7 +215,7 @@ describe("legacy dialogue rules", () => {
     expect(getDialogueSequenceCompletion("skipped")).toBe("skipped");
   });
 
-  it("uses a text question and the existing Ryan clip for the Sarah clue", () => {
+  it("uses an intentional still question and the existing Ryan clip for the Sarah clue", () => {
     const state = learnKnowledge(startedState(), [
       "ryan_has_girlfriend_sarah",
     ]);
@@ -224,8 +224,15 @@ describe("legacy dialogue rules", () => {
     );
 
     expect(choice?.questionCue).toEqual({
-      kind: "text",
-      text: "Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
+      kind: "stills",
+      frames: [
+        {
+          image: "portrait-Ryan",
+          alt: "Ryan lytter til Jørgens spørgsmål.",
+          text:
+            "Jørgen spørger: Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
+        },
+      ],
     });
     expect(videoClip(choice?.answerCue)).toBe("Ryan-omSaraOgLaura");
 

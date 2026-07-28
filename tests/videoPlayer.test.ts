@@ -3,6 +3,7 @@ import {
   VideoPlayer,
   type VideoPlaybackState,
 } from "../src/media/VideoPlayer";
+import { getVideoStatusLabel } from "../src/ui/NarrativeHost";
 
 class FakeVideoElement extends EventTarget {
   src = "";
@@ -52,6 +53,13 @@ async function flushPromises(): Promise<void> {
 }
 
 describe("VideoPlayer", () => {
+  it("keeps routine playback visually quiet while retaining useful errors", () => {
+    expect(getVideoStatusLabel("playing")).toBe("");
+    expect(getVideoStatusLabel("missing-media")).toBe(
+      "Videofilen mangler.",
+    );
+  });
+
   it("loads, plays, and resolves an ended clip", async () => {
     const { element, player, states } = createPlayer();
 

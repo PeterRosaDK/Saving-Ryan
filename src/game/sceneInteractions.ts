@@ -98,12 +98,22 @@ export const SCENE_INTERACTIONS = {
     timeAdvanceCue: textCue(
       "Det tager resten af tidsintervallet at gennemgå Barbaras filer grundigt.",
     ),
-    cue: textCue(
-      "Du kaster et blik på Barbaras computer. Der er adgangskontrol på, så du prøver at bruge det navn, David fortalte dig. Det lykkes! Du kan se, at Barbara er inde i universitetets ellers utilgængelige filsystem over karakterer, og du kan desuden se, at hun tilsyneladende er inde under sit eget stamblad!",
-    ),
-    blockedCue: textCue(
-      "Du kaster et blik på Barbaras computer. Desværre er der adgangskontrol på, og du kender ikke brugernavnet.",
-    ),
+    cue: stillsCue([
+      {
+        image: "sektorB3",
+        alt: "Barbaras computer i computerrummet.",
+        text:
+          "Du kaster et blik på Barbaras computer. Der er adgangskontrol på, så du prøver at bruge det navn, David fortalte dig. Det lykkes! Du kan se, at Barbara er inde i universitetets ellers utilgængelige filsystem over karakterer, og du kan desuden se, at hun tilsyneladende er inde under sit eget stamblad!",
+      },
+    ]),
+    blockedCue: stillsCue([
+      {
+        image: "sektorB3",
+        alt: "Barbaras computer i computerrummet.",
+        text:
+          "Du kaster et blik på Barbaras computer. Desværre er der adgangskontrol på, og du kender ikke brugernavnet.",
+      },
+    ]),
   },
   eavesdrop_barbara_and_ryan: {
     id: "eavesdrop_barbara_and_ryan",

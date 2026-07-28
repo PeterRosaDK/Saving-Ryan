@@ -64,7 +64,15 @@ describe("Director presentation parity", () => {
     expect(LOCATION_TRANSITION_EVENTS.E4.specialCue).toBeUndefined();
     expect(LOCATION_TRANSITION_EVENTS.E4.effects).toEqual([]);
     expect(LOCATION_TRANSITION_EVENTS.C2).toMatchObject({
-      specialCue: { kind: "text" },
+      specialCue: {
+        kind: "stills",
+        frames: [
+          {
+            image: "sektorC2",
+            alt: "Bogreolerne i læsesalen.",
+          },
+        ],
+      },
       effects: [
         {
           type: "LEARN",

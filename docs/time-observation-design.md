@@ -110,7 +110,7 @@ Legend:
 | Morning → midday | E corridor | David/Laura talk while Ryan bullies Marie | Text | `ryan_bullied_marie` | K ★ |
 | Midday → afternoon | A canteen | Jørgen hears Ryan and sees the fall | Text | Possible later neutral fall observation | K + U ★ |
 | Midday → afternoon | B computer room | Ryan and Barbara leave; a scream is heard | Text + `LoopB2` | None from waiting; eavesdropping is separate | K ★ |
-| Midday → afternoon | C reading room | Ryan and David enter; a scream is heard; Jørgen hears the bookcase scrape | Legacy text + phase 9 text | `heard_scraping_behind_bookcase` | K + implemented phase 9 ★ |
+| Midday → afternoon | C reading room | Ryan and David enter; a scream is heard; Jørgen hears the bookcase scrape | Legacy text + phase 9 text over `sektorC2` | `heard_scraping_behind_bookcase` | K + implemented phase 9 ★ |
 | Midday → afternoon | D group room | Marie leaves; a scream is heard | Text + `LoopD2` | None | K ★ |
 | Midday → afternoon | E corridor | David enters the reading room; Laura vanishes without using a door | Legacy text + `LoopE2` + phase 9 text | `noticed_laura_disappear_near_reading_room` | K + implemented phase 9 ★ |
 | Afternoon → evening | A canteen | Laura leaves; David sits down | Text + `LoopA3` | None; body inspection is separate | K ★ |
@@ -218,7 +218,8 @@ complete Laura path.
 ## Observation loopback slice
 
 The restored C2 and E2 transition text remains unchanged. Each transition now
-continues with one text-only phase 9 observation:
+continues with one phase 9 observation; C2 uses the recovered room still to
+make the added text visibly intentional, while E2 remains text-only:
 
 - C2 records a scraping sound behind the bookcase;
 - E2 records that Laura disappeared without using a visible hallway door.

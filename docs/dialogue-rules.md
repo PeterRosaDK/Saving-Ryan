@@ -75,8 +75,9 @@ The Director runtime and the report diverge around Sarah:
 
 The web version therefore follows the report's intended knowledge flow and uses
 the existing `Ryan-omSaraOgLaura` answer. Because no matching Jørgen question
-clip exists, his question is an explicit text cue. It can later be upgraded to
-still image plus voice-over without changing the dialogue rule.
+clip exists, his question is explicit text presented over Ryan's recovered
+portrait before the original answer clip. It can later be upgraded with
+voice-over without changing the dialogue rule.
 
 Marie's route is also kept as the report describes it: the first
 `Marie-Fortrolighed` exchange earns her confidence, and only a later repeat with

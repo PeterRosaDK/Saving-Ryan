@@ -8,6 +8,7 @@ import type {
 } from "../app/types";
 import type { VideoClipId } from "../media/videoManifest";
 import {
+  stillsCue,
   textCue,
   videoCue,
   type NarrativeCue,
@@ -349,9 +350,14 @@ function getSpecialChoices(
         defineCueChoice(
           person,
           "about_sarah",
-          textCue(
-            "Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
-          ),
+          stillsCue([
+            {
+              image: "portrait-Ryan",
+              alt: "Ryan lytter til Jørgens spørgsmål.",
+              text:
+                "Jørgen spørger: Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
+            },
+          ]),
           videoCue("Ryan-omSaraOgLaura"),
           {
             requires: ["ryan_has_girlfriend_sarah"],

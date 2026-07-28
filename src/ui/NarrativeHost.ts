@@ -22,12 +22,18 @@ const VIDEO_STATUS_LABELS: Readonly<
   Partial<Record<VideoPlaybackState["status"], string>>
 > = {
   loading: "Indlæser sekvens…",
-  playing: "Afspiller sekvens…",
+  playing: "",
   "autoplay-blocked": "Browseren blokerede afspilningen.",
   "missing-media": "Videofilen mangler.",
   "network-error": "Videofilen kunne ikke indlæses.",
   "decode-error": "Videofilen kunne ikke afkodes.",
 };
+
+export function getVideoStatusLabel(
+  status: VideoPlaybackState["status"],
+): string {
+  return VIDEO_STATUS_LABELS[status] ?? "";
+}
 
 export class NarrativeHost {
   private readonly video: HTMLVideoElement;
@@ -93,7 +99,7 @@ export class NarrativeHost {
     this.status = this.requireElement<HTMLElement>("[data-media-status]");
     this.videoPlayer = new VideoPlayer(this.video);
     this.unsubscribeVideo = this.videoPlayer.subscribe((state) => {
-      this.status.textContent = VIDEO_STATUS_LABELS[state.status] ?? "";
+      this.status.textContent = getVideoStatusLabel(state.status);
     });
 
     this.continueButton.addEventListener("click", () => {
@@ -206,7 +212,7 @@ export class NarrativeHost {
       this.stillImage.removeAttribute("src");
       this.stillImage.alt = "";
       this.textCopy.textContent = active.cue.text;
-      this.status.textContent = "Tekstsekvens";
+      this.status.textContent = "";
       this.continueButton.textContent = "Fortsæt";
       return;
     }
@@ -221,7 +227,9 @@ export class NarrativeHost {
     this.textCopy.textContent = frame.text ?? "";
     this.textCopy.hidden = frame.text === undefined;
     this.status.textContent =
-      `Billedsekvens ${active.frameIndex + 1} af ${active.cue.frames.length}`;
+      active.cue.frames.length > 1
+        ? `Billede ${active.frameIndex + 1} af ${active.cue.frames.length}`
+        : "";
     this.continueButton.textContent =
       active.frameIndex < active.cue.frames.length - 1
         ? "Næste"

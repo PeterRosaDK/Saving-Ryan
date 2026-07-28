@@ -59,8 +59,9 @@ NPC disposition or loop-memory system.
 
 ### Report-backed reconstruction
 
-- The Sarah question is text because the Director runtime has no reachable
-  matching Jørgen question, while the report explicitly requires this route.
+- The Sarah question is text presented over Ryan's recovered portrait because
+  the Director runtime has no reachable matching Jørgen question, while the
+  report explicitly requires this route.
 - The third Laura accusation requires both motive and necklace evidence.
 - Laura's response is a text cue because no confession response video exists.
   It states the report's explanation: she used the hidden door behind the

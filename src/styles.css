@@ -83,16 +83,20 @@ button {
   animation-name: intro-final-credit-score;
 }
 
-.intro-final-element {
+.intro-final-card {
+  position: absolute;
   z-index: 1;
+  inset: 0;
+  overflow: hidden;
   opacity: 0;
+  background: #000;
   animation: intro-group-fade var(--intro-duration) linear
     var(--intro-delay) both paused;
 }
 
 .intro-stage.is-playing .intro-title-element,
 .intro-stage.is-playing .intro-credit-card,
-.intro-stage.is-playing .intro-final-element {
+.intro-stage.is-playing .intro-final-card {
   animation-play-state: running;
 }
 

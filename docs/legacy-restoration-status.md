@@ -54,7 +54,7 @@ ported presentation improvements are documented in
 | --- | --- | --- |
 | Inspect Ryan / necklace | A3, A4 | `sektorA3-Ryan1` → `sektorA3-Ryan2`; necklace evidence |
 | Inspect trash / letter | D1–D4 | `sektorD4-Brev1` → `sektorD4-Brev2`; Sarah fact |
-| Barbara's computer | B2, B3 | original locked text before `Intruder`, original success text afterward |
+| Barbara's computer | B2, B3 | original locked text before `Intruder`, original success text afterward, presented over the recovered empty computer-room still |
 | Listen under table | B2 | recovered Director text; Barbara/Ryan conflict |
 | Pull the book | C1–C4 | recovered Director text; secret passage |
 | Wait in B4 | B4 | `LauraSuspekt` video before loop completion |
@@ -89,9 +89,9 @@ These are useful but are not byte-for-byte Director behavior:
   `Peter-omRyanOgMarie`.
 - Ryan's self-topic actually invokes playback, correcting the missing Director
   `Dialog()` call.
-- The report-backed Sarah route uses a text question plus the existing
-  `Ryan-omSaraOgLaura` answer because the Director runtime never exposes a
-  matching Sarah question.
+- The report-backed Sarah route presents a text question over Ryan's portrait,
+  then uses the existing `Ryan-omSaraOgLaura` answer because the Director
+  runtime never exposes a matching Sarah question.
 - Marie's second confidence clip and the evidence-sensitive Laura accusation
   provide a partial report-backed bridge toward the intended solution.
 

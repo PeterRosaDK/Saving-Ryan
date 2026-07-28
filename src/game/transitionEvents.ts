@@ -4,6 +4,7 @@ import type {
   TransitionEventId,
 } from "../app/types";
 import {
+  stillsCue,
   textCue,
   videoCue,
   type NarrativeCue,
@@ -93,9 +94,14 @@ export const LOCATION_TRANSITION_EVENTS = {
     "C2",
     "Du går ud i gangen og holder en pause. På vejen derud møder du Ryan, der går ind i læsesalen. Lidt efter går også David derind. Pludselig høres et skrig fra kantinen!",
     {
-      specialCue: textCue(
-        "Lige før skriget hører du en tung, skrabende lyd fra området bag bogreolen. Du kan ikke se, hvad der bevæger sig.",
-      ),
+      specialCue: stillsCue([
+        {
+          image: "sektorC2",
+          alt: "Bogreolerne i læsesalen.",
+          text:
+            "Lige før skriget hører du en tung, skrabende lyd fra området bag bogreolen. Du kan ikke se, hvad der bevæger sig.",
+        },
+      ]),
       effects: [
         {
           type: "LEARN",
