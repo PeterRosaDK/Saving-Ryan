@@ -706,7 +706,10 @@ describe("legacy dialogue rules", () => {
         DIALOGUE_TOPIC_IDS.filter(
           (topic) =>
             topic !== "david_breakup" &&
-            topic !== "david_saw_ryan",
+            topic !== "david_saw_ryan" &&
+            topic !== "laura_necklace_bag" &&
+            topic !== "laura_bag_access" &&
+            topic !== "barbara_time_with_ryan",
         ),
       ),
     );

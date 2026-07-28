@@ -6,6 +6,10 @@ import {
   type LoopState,
 } from "./types";
 import { DEFAULT_CASE_ID } from "../game/caseDefinitions";
+import {
+  getDirectorsCutCaseContent,
+  isDirectorsCutCaseId,
+} from "../game/directorsCutCaseContent";
 
 function createInitialKnowledge(): Record<KnowledgeId, boolean> {
   return Object.fromEntries(
@@ -43,8 +47,8 @@ function createBaseGameState(
     pendingTransition: null,
     caseProgress: {
       currentLead:
-        selectedCaseId === "david"
-          ? "Find ud af, hvilke konflikter Ryan har skabt i gruppen."
+        isDirectorsCutCaseId(selectedCaseId)
+          ? getDirectorsCutCaseContent(selectedCaseId).startLead
           : "",
       pendingInsights: [],
       statistics: {

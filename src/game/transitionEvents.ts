@@ -222,11 +222,66 @@ const DAVID_TRANSITION_OVERRIDES: Partial<
   ),
 };
 
+const BARBARA_TRANSITION_OVERRIDES: Partial<
+  Record<SceneId, LocationTransitionEvent>
+> = {
+  A1: defineTransitionEvent(
+    "A1",
+    "Morgenmødet bryder op, og Laura går ud for at se, hvad der sker med Marie.",
+    {
+      specialCue: textSequenceCue(
+        [
+          "Under morgenmødet fumler Laura med låsen på sin isbjørnehalskæde.",
+          "“Den går op hele tiden,” mumler hun, tager kæden af og lægger den i den yderste lomme på sin taske.",
+          "Da mødet bryder op, går Laura ud for at se, hvad der sker med Marie. Tasken bliver stående et øjeblik.",
+          "Barbara er den sidste, der forlader rummet.",
+        ],
+        "dc-barbara-morning-necklace-sequence",
+      ),
+      effects: [
+        { type: "LEARN", id: "laura_put_necklace_in_bag" },
+        { type: "LEARN", id: "barbara_had_access_to_laura_bag" },
+      ],
+    },
+  ),
+  B2: defineTransitionEvent(
+    "B2",
+    "Ryan og Barbara går ud. Et par minutter senere høres et skrig fra kantinen.",
+    {
+      effects: [{ type: "LEARN", id: "barbara_left_with_ryan" }],
+    },
+  ),
+  B4: defineTransitionEvent(
+    "B4",
+    "Marie forlader lokalet. Du venter lidt og ser Laura lukke et vindue på computeren, da du nærmer dig.",
+    {
+      specialCue: textCue(
+        "Laura skjuler tydeligvis noget på computeren. Det er værd at undersøge, men hendes privatliv er ikke i sig selv et bevis på mord.",
+      ),
+      effects: [{ type: "LEARN", id: "laura_hid_computer_activity" }],
+    },
+  ),
+  C2: defineTransitionEvent(
+    "C2",
+    "Du holder øje med området ved bogreolen. Kort efter høres et skrig fra kantinen.",
+  ),
+  E2: defineTransitionEvent(
+    "E2",
+    "David og Laura holder op med at tale. David går ind i læsesalen.",
+  ),
+};
+
 export function getLocationTransitionEvent(
   id: TransitionEventId,
   caseId: CaseId = "laura",
 ): LocationTransitionEvent {
-  return caseId === "david"
-    ? DAVID_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id]
-    : LOCATION_TRANSITION_EVENTS[id];
+  if (caseId === "david") {
+    return DAVID_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id];
+  }
+
+  if (caseId === "barbara") {
+    return BARBARA_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id];
+  }
+
+  return LOCATION_TRANSITION_EVENTS[id];
 }

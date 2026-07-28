@@ -26,13 +26,13 @@ import {
   DEFAULT_CASE_ID,
   getDirectorsCutCaseOverride,
   getCaseDefinition,
+  getMysteryCaseIds,
   selectDirectorsCutCase,
 } from "../game/caseDefinitions";
 import {
-  DAVID_CORE_CONCLUSIONS,
-  DAVID_OPTIONAL_EVIDENCE,
-  DAVID_RECONSTRUCTION_CARDS,
-} from "../game/davidCase";
+  getDirectorsCutCaseContent,
+  isDirectorsCutCaseId,
+} from "../game/directorsCutCaseContent";
 import { textCue } from "../media/narrativeCue";
 import {
   DIRECTOR_STAGE,
@@ -116,6 +116,49 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
     "Jørgens private rekonstruktion er gemt",
   david_prevention_plan:
     "Plan: Stands David ved bogreolen i læsesalen ved middag",
+  barbara_blackmailed_by_ryan:
+    "Ryan afpressede Barbara med de ændrede karakterer",
+  laura_put_necklace_in_bag:
+    "Laura lagde den løse halskæde i yderlommen på sin taske",
+  necklace_missing_from_laura_bag:
+    "Halskæden forsvandt fra Lauras taske før mordet",
+  barbara_had_access_to_laura_bag:
+    "Barbara var den sidste ved Lauras efterladte taske",
+  barbara_opened_plans_before_murder:
+    "Barbara åbnede bygningstegningerne før mordet",
+  building_plans_show_passage:
+    "Tegningerne viser passagen fra læsesalen til afsatsen",
+  barbara_saved_necklace_image_before_murder:
+    "Barbara gemte billedet af Lauras halskæde før mordet",
+  barbara_left_with_ryan:
+    "Barbara og Ryan forlod computerrummet sammen",
+  barbara_alibi_gap:
+    "Barbaras forklaring efterlader et hul før mordet",
+  barbara_presented_image_as_new:
+    "Barbara præsenterede halskædebilledet som et nyt fund",
+  barbara_timestamps_compared:
+    "Tidsstemplerne viser, at Barbaras fund var forberedt",
+  laura_private_history_not_evidence:
+    "Lauras private sygehistorie er ikke et bevis på mord",
+  barbara_motive_conclusion:
+    "Ryan afpressede Barbara med karaktersvindlen og gav hende et motiv",
+  barbara_opportunity_conclusion:
+    "Barbara fulgtes med Ryan og har et uforklaret tidsrum før mordet",
+  barbara_passage_conclusion:
+    "Barbara kendte den skjulte rute til afsatsen før mordet",
+  barbara_staging_conclusion:
+    "Barbara stjal halskæden og forberedte Laura som syndebuk",
+  marie_saw_barbara_by_bag:
+    "Marie så Barbara alene ved Lauras taske",
+  david_saw_barbara_lead_ryan:
+    "David så Barbara føre Ryan mod læsesalen",
+  barbara_confessed: "Barbara har tilstået",
+  barbara_murder_method_known:
+    "Barbara førte Ryan gennem passagen, gav ham halskæden og skubbede ham",
+  barbara_reconstruction_recorded:
+    "Jørgens private Barbara-rekonstruktion er gemt",
+  barbara_prevention_plan:
+    "Plan: Vent ved bogreolen i læsesalen ved middag",
 };
 
 function button(
@@ -269,7 +312,10 @@ function connectHotspotLabel(
 
 function renderMainMenu(root: HTMLElement, store: GameStore): void {
   const defaultCase = getCaseDefinition(DEFAULT_CASE_ID);
-  const directorsCut = getCaseDefinition("david");
+  const firstDirectorsCutCase = getMysteryCaseIds()[0];
+  const directorsCut = getCaseDefinition(
+    firstDirectorsCutCase ?? DEFAULT_CASE_ID,
+  );
 
   root.innerHTML = `
     <main class="app-shell menu-shell">
@@ -585,7 +631,7 @@ function renderKnowledge(state: GameState): string {
     return "<p class=\"empty-state\">Du har endnu ikke samlet nogen spor.</p>";
   }
 
-  if (state.selectedCaseId !== "david") {
+  if (!isDirectorsCutCaseId(state.selectedCaseId)) {
     return `
     <ul class="clue-list">
       ${discoveries
@@ -598,10 +644,11 @@ function renderKnowledge(state: GameState): string {
   `;
   }
 
-  const conclusions = new Set<KnowledgeId>(DAVID_CORE_CONCLUSIONS);
+  const caseContent = getDirectorsCutCaseContent(state.selectedCaseId);
+  const conclusions = new Set<KnowledgeId>(caseContent.coreConclusions);
   const hiddenSystemKnowledge = new Set<KnowledgeId>([
-    "david_reconstruction_recorded",
-    "david_prevention_plan",
+    caseContent.reconstructionKnowledgeId,
+    caseContent.preventionPlanKnowledgeId,
   ]);
   const facts = discoveries.filter(
     (id) => !conclusions.has(id) && !hiddenSystemKnowledge.has(id),
@@ -633,7 +680,7 @@ function renderKnowledge(state: GameState): string {
       state.caseProgress.reconstructionAvailable
         ? `<details class="reconstruction-notes">
             <summary>Læs den private rekonstruktion igen</summary>
-            <ol>${DAVID_RECONSTRUCTION_CARDS.map(
+            <ol>${caseContent.reconstructionCards.map(
               (card) => `<li>${card}</li>`,
             ).join("")}</ol>
           </details>`
@@ -849,9 +896,13 @@ function renderEnding(
   state: GameState,
   store: GameStore,
 ): void {
-  if (state.selectedCaseId === "david") {
+  if (isDirectorsCutCaseId(state.selectedCaseId)) {
+    const definition = getCaseDefinition(state.selectedCaseId);
+    const caseContent = getDirectorsCutCaseContent(
+      state.selectedCaseId,
+    );
     const statistics = state.caseProgress.statistics;
-    const optionalFound = DAVID_OPTIONAL_EVIDENCE.filter(
+    const optionalFound = caseContent.optionalEvidence.filter(
       (id) => state.knowledge[id],
     ).length;
     const score = calculateCaseScore(state);
@@ -883,25 +934,25 @@ function renderEnding(
     };
     root.innerHTML = `
       <main class="app-shell ending-shell">
-        <section class="ending-card ending-card--results" aria-labelledby="ending-title" data-placeholder-asset-id="dc-david-epilogue-sequence">
+        <section class="ending-card ending-card--results" aria-labelledby="ending-title" data-placeholder-asset-id="${caseContent.epilogueAssetId}">
           <div class="ending-copy">
             <p class="eyebrow">Director’s Cut · Epilog</p>
             <h1 id="ending-title">Sagen er opklaret</h1>
-            <p>Ryan overlevede. Gruppen tilkaldte hjælp, og David blev fjernet fra situationen, før nogen kom til skade.</p>
-            <p>Stormen lagde sig i løbet af aftenen.</p>
-            <p>Næste morgen vågnede Jørgen til en ny dag. For første gang gentog gårsdagen sig ikke.</p>
+            ${caseContent.epilogue
+              .map((paragraph) => `<p>${paragraph}</p>`)
+              .join("")}
             <dl class="result-grid">
-              <div><dt>Morder</dt><dd>David</dd></div>
+              <div><dt>Morder</dt><dd>${definition.murderer}</dd></div>
               <div><dt>Dage brugt</dt><dd>${state.loop}</dd></div>
               <div><dt>Konfrontationer</dt><dd>${statistics.confrontations}</dd></div>
               <div><dt>Forkerte anklager</dt><dd>${statistics.wrongAccusations}</dd></div>
               <div><dt>For tidlige anklager</dt><dd>${statistics.prematureAccusations}</dd></div>
-              <div><dt>Afgørende konklusioner</dt><dd>3/3</dd></div>
-              <div><dt>Ekstra spor</dt><dd>${optionalFound}/${DAVID_OPTIONAL_EVIDENCE.length}</dd></div>
+              <div><dt>Afgørende konklusioner</dt><dd>${caseContent.coreConclusions.length}/${caseContent.coreConclusions.length}</dd></div>
+              <div><dt>Ekstra spor</dt><dd>${optionalFound}/${caseContent.optionalEvidence.length}</dd></div>
               <div><dt>Score</dt><dd>${score} · ${title}</dd></div>
             </dl>
             <p class="score-explanation">
-              Par: ${getCaseDefinition("david").score.parDays} dage.
+              Par: ${definition.score.parDays} dage.
               Scoren justeres kun for ekstra dage, anklager og ekstra spor.
             </p>
             <div class="ending-actions">
@@ -961,19 +1012,24 @@ function renderEnding(
 
 function renderReconstruction(
   root: HTMLElement,
+  state: GameState,
   store: GameStore,
 ): void {
+  if (!isDirectorsCutCaseId(state.selectedCaseId)) {
+    return;
+  }
+  const caseContent = getDirectorsCutCaseContent(state.selectedCaseId);
   root.innerHTML = `
     <main class="app-shell reconstruction-shell">
       <section
         class="reconstruction-card"
         aria-labelledby="reconstruction-title"
-        data-placeholder-asset-id="dc-david-reconstruction-sequence"
+        data-placeholder-asset-id="${caseContent.reconstructionAssetId}"
       >
         <p class="eyebrow">Jørgens private rekonstruktion</p>
         <h1 id="reconstruction-title">Sådan hænger sagen sammen</h1>
         <ol>
-          ${DAVID_RECONSTRUCTION_CARDS.map(
+          ${caseContent.reconstructionCards.map(
             (card) => `<li>${card}</li>`,
           ).join("")}
         </ol>
@@ -1437,7 +1493,7 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
     }
 
     if (state.phase === "reconstruction") {
-      renderReconstruction(appView, store);
+      renderReconstruction(appView, state, store);
       return;
     }
 

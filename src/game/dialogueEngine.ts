@@ -13,6 +13,7 @@ import {
   applyKnowledgeEffects,
   hasKnowledge,
 } from "./knowledgeGraph";
+import { isDirectorsCutCaseId } from "./directorsCutCaseContent";
 
 export type DialogueCompletion = "ended" | "skipped";
 
@@ -48,7 +49,9 @@ function advanceBarbaraHelp(
 
   const current = state.loopState.dialogue.barbaraHelp;
   const next =
-    current === "ready"
+    state.selectedCaseId === "barbara"
+      ? "completed"
+      : current === "ready"
       ? "completed"
       : state.knowledge.barbara_forged_grades
         ? "ready"
@@ -73,7 +76,7 @@ function recordInconclusiveAccusation(
   choice: DialogueChoice,
 ): GameState {
   if (
-    state.selectedCaseId === "david" ||
+    isDirectorsCutCaseId(state.selectedCaseId) ||
     choice.topic !== "accuse" ||
     isConclusiveAccusation(state, choice.person) ||
     state.loopState.dialogue.refusesFurtherDialogue.includes(

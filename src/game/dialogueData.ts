@@ -18,6 +18,10 @@ import {
   getMissingDavidConclusionLabels,
   hasAllDavidConclusions,
 } from "./davidCase";
+import {
+  getMissingBarbaraConclusionLabels,
+  hasAllBarbaraConclusions,
+} from "./barbaraCase";
 
 export const CHARACTERS = [
   "Barbara",
@@ -69,6 +73,9 @@ const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
   about_sarah: "Hvad skete der mellem Sarah, Laura og dig?",
   david_breakup: "Hvordan tog David bruddet med Sarah?",
   david_saw_ryan: "Så du Ryan gå ind foran dig?",
+  laura_necklace_bag: "Hvor er din isbjørnehalskæde?",
+  laura_bag_access: "Hvem kunne komme til tasken?",
+  barbara_time_with_ryan: "Hvor længe var du sammen med Ryan?",
 };
 
 function choiceId(
@@ -185,6 +192,9 @@ export function isConclusiveAccusation(
 ): boolean {
   if (state.selectedCaseId === "david") {
     return person === "David" && hasAllDavidConclusions(state);
+  }
+  if (state.selectedCaseId === "barbara") {
+    return person === "Barbara" && hasAllBarbaraConclusions(state);
   }
   return (
     person === "Laura" &&
@@ -668,6 +678,350 @@ function getDavidSpecialChoices(
   return choices;
 }
 
+function getBarbaraAccusationAnswer(
+  state: GameState,
+  person: Exclude<CharacterId, "Ryan">,
+): NarrativeCue {
+  if (person !== "Barbara") {
+    return textCue(
+      `${person} afviser anklagen. Jørgen har ikke beviser, der forbinder ${person} med mordet.`,
+    );
+  }
+
+  if (!hasAllBarbaraConclusions(state)) {
+    return textCue(
+      `Barbara afviser anklagen. Jørgen mangler stadig at dokumentere ${getMissingBarbaraConclusionLabels(
+        state,
+      ).join(" og ")}.`,
+      "dc-barbara-accusation-sequence",
+    );
+  }
+
+  return textSequenceCue(
+    [
+      "Jørgen: Ryan afpressede dig med de ændrede karakterer. Du kendte passagen, før han døde, og du forlod computerrummet sammen med ham.",
+      "Barbara: Det beviser ikke, at jeg skubbede ham.",
+      "Jørgen: Nej. Men billedet gør din forklaring umulig. Du viste mig Lauras halskæde, som om du netop havde fundet siden. Filen lå på din computer før mordet.",
+      "Laura havde allerede lagt halskæden i sin taske, og den forsvandt, mens du havde adgang til hendes ting. Senere lå den i Ryans hånd.",
+      "Barbara: Du kan ikke bevise, hvordan den kom der.",
+      "Jørgen: Du gav den til ham. Du ville have, at alle skulle se Laura, når de så halskæden.",
+      "Barbara: Ryan ville aldrig stoppe. Han havde kopier af mine karakterer. Han kunne ødelægge alt.",
+      "Jeg fandt de gamle tegninger i systemet. Passagen gik fra læsesalen til afsatsen.",
+      "Laura havde efterladt tasken. Jeg tog halskæden og gemte billedet af hende, så der ville være en forklaring, når den blev fundet.",
+      "Jeg sagde til Ryan, at jeg havde fundet noget ved bogreolen. Ude på afsatsen gav jeg ham kæden. Han råbte ned til dig.",
+      "Da han vendte ryggen til, skubbede jeg ham.",
+      "Bagefter lod jeg, som om jeg hjalp dig. Jeg viste dig præcis det spor, jeg selv havde valgt.",
+    ],
+    "dc-barbara-confession-voice",
+  );
+}
+
+function getBarbaraSpecialChoices(
+  state: GameState,
+  person: CharacterId,
+): DialogueChoice[] {
+  const choices: DialogueChoice[] = [];
+  const afterMurder = state.timeSlot >= 3;
+
+  if (afterMurder && person !== "Ryan") {
+    const outcome =
+      person !== "Barbara"
+        ? "wrong"
+        : hasAllBarbaraConclusions(state)
+          ? "conclusive"
+          : "premature";
+    choices.push(
+      defineCueChoice(
+        person,
+        "alibi",
+        textCue(
+          person === "Barbara"
+            ? "Jørgen: Hvor var du, da Ryan faldt?"
+            : `Jørgen spørger ${person} om et alibi.`,
+          person === "Barbara" ? "dc-barbara-alibi-dialogue" : undefined,
+        ),
+        textCue(
+          person === "Barbara"
+            ? "Barbara: Jeg gik ud fra computerrummet, men Ryan fortsatte alene. Jeg vendte om. Da jeg hørte skriget, var jeg på vej tilbage."
+            : `${person} forklarer sin færden uden at blive forbundet med afsatsen.`,
+          person === "Barbara" ? "dc-barbara-alibi-dialogue" : undefined,
+        ),
+        {
+          effects:
+            person === "Barbara"
+              ? [{ type: "LEARN", id: "barbara_alibi_gap" }]
+              : [],
+          effectsOnSkip: true,
+          skipSummary:
+            person === "Barbara"
+              ? "Barbara indrømmer, at hun forlod rummet med Ryan, men forklaringen efterlader et hul før mordet."
+              : `${person}s alibi gav ikke et nyt kernespor.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "theory",
+        textCue(
+          "Jørgen: Hvem tror du myrdede Ryan?",
+          "dc-barbara-suspicions-dialogue",
+        ),
+        textCue(
+          `${person}: Jeg ved det ikke. Jeg så ikke selve faldet.`,
+          "dc-barbara-suspicions-dialogue",
+        ),
+        {
+          effectsOnSkip: true,
+          skipSummary: `${person} har ingen sikker mistanke om morderen.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "accuse",
+        textCue(
+          person === "Barbara"
+            ? "Jørgen konfronterer Barbara med sagen."
+            : `Jørgen anklager ${person} for mordet.`,
+          person === "Barbara"
+            ? "dc-barbara-accusation-sequence"
+            : undefined,
+        ),
+        getBarbaraAccusationAnswer(
+          state,
+          person as Exclude<CharacterId, "Ryan">,
+        ),
+        {
+          effects:
+            outcome === "conclusive"
+              ? [
+                  { type: "LEARN", id: "barbara_confessed" },
+                  { type: "LEARN", id: "secret_passage_exists" },
+                  {
+                    type: "LEARN",
+                    id: "barbara_murder_method_known",
+                  },
+                  { type: "LEARN", id: "barbara_prevention_plan" },
+                ]
+              : [],
+          effectsOnSkip: true,
+          accusationOutcome: outcome,
+          skipSummary:
+            outcome === "conclusive"
+              ? "Barbara tilstår mordet og den falske efterforskning. Mordet skal stadig forhindres."
+              : "Anklagen blev afvist; efterforskningen kan fortsætte.",
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "David" &&
+    state.knowledge.barbara_is_computer_expert
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "barbara_and_computers",
+        textCue(
+          "Jørgen: Hvad ved du om Barbaras computerfærdigheder?",
+          "dc-barbara-intruder-dialogue",
+        ),
+        textCue(
+          "David: Hun kalder sig Intruder. Det er både hendes hackernavn og, så vidt jeg ved, den kode hun bruger, når hun vil være smart.",
+          "dc-barbara-intruder-dialogue",
+        ),
+        {
+          effects: [
+            { type: "LEARN", id: "barbara_hacker_alias_intruder" },
+          ],
+          effectsOnSkip: true,
+          skipSummary:
+            "David fortæller, at Barbaras hackernavn og smarte adgangskode er Intruder.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Laura" &&
+    state.knowledge.laura_put_necklace_in_bag
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "laura_necklace_bag",
+        textCue(
+          "Jørgen: Hvor er din isbjørnehalskæde?",
+          "dc-barbara-laura-missing-necklace",
+        ),
+        textCue(
+          "Laura: Jeg tog den af i morges, fordi låsen var løs. Jeg lagde den i tasken. Den er væk nu.",
+          "dc-barbara-laura-missing-necklace",
+        ),
+        {
+          effects: [
+            { type: "LEARN", id: "laura_owns_polar_bear_necklace" },
+            { type: "LEARN", id: "necklace_missing_from_laura_bag" },
+          ],
+          effectsOnSkip: true,
+          skipSummary:
+            "Laura lagde halskæden i tasken om morgenen; nu er den væk.",
+          isNewTopic: true,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "laura_bag_access",
+        textCue(
+          "Jørgen: Hvem kunne komme til tasken?",
+          "dc-barbara-laura-missing-necklace",
+        ),
+        textCue(
+          "Laura: Den stod alene et øjeblik efter mødet. Barbara var vist den sidste derinde, men det betyder jo ikke, at hun tog den.",
+          "dc-barbara-laura-missing-necklace",
+        ),
+        {
+          requires: ["necklace_missing_from_laura_bag"],
+          effects: [
+            { type: "LEARN", id: "barbara_had_access_to_laura_bag" },
+          ],
+          effectsOnSkip: true,
+          skipSummary:
+            "Barbara var den sidste ved den efterladte taske, men Laura så ikke noget tyveri.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Marie" &&
+    state.knowledge.barbara_had_access_to_laura_bag
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "laura_bag_access",
+        textCue(
+          "Jørgen: Så du nogen blive tilbage ved Lauras taske?",
+          "dc-barbara-marie-bag-dialogue",
+        ),
+        textCue(
+          "Marie: Barbara var den sidste derinde. Jeg så hende stå alene ved tasken, men ikke hvad hun gjorde.",
+          "dc-barbara-marie-bag-dialogue",
+        ),
+        {
+          effects: [{ type: "LEARN", id: "marie_saw_barbara_by_bag" }],
+          effectsOnSkip: true,
+          skipSummary:
+            "Marie så Barbara alene ved Lauras taske, men så ikke et tyveri.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (person === "David" && state.knowledge.barbara_left_with_ryan) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "barbara_time_with_ryan",
+        textCue(
+          "Jørgen: Så du, hvor Barbara og Ryan gik hen?",
+          "dc-barbara-david-movement-dialogue",
+        ),
+        textCue(
+          "David: Barbara førte Ryan fra computerrummet i retning af læsesalen.",
+          "dc-barbara-david-movement-dialogue",
+        ),
+        {
+          effects: [
+            { type: "LEARN", id: "david_saw_barbara_lead_ryan" },
+          ],
+          effectsOnSkip: true,
+          skipSummary:
+            "David så Barbara føre Ryan mod læsesalen.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Barbara" &&
+    afterMurder &&
+    state.knowledge.barbara_left_with_ryan
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "barbara_time_with_ryan",
+        textCue(
+          "Jørgen: Hvor længe var du sammen med Ryan?",
+          "dc-barbara-alibi-dialogue",
+        ),
+        textCue(
+          "Barbara: Ikke længe. Vi skiltes i gangen.",
+          "dc-barbara-alibi-dialogue",
+        ),
+        {
+          effects: [{ type: "LEARN", id: "barbara_alibi_gap" }],
+          effectsOnSkip: true,
+          skipSummary:
+            "Barbara siger, at de skiltes i gangen; tidsrummet før mordet er stadig uforklaret.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Barbara" &&
+    state.knowledge.laura_hid_computer_activity &&
+    state.knowledge.barbara_hacker_alias_intruder &&
+    state.knowledge.barbara_forged_grades &&
+    !state.knowledge.barbara_presented_image_as_new
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "ask_barbara_for_help",
+        textCue(
+          "Jørgen: Vil du hjælpe mig med at undersøge Laura?",
+          "dc-barbara-helper-sequence",
+        ),
+        textSequenceCue(
+          [
+            "Barbara: Fint. Jeg undersøger, hvor Laura har været. Men så holder du mund om mine karakterer.",
+            "Barbara arbejder hurtigt. Efter få øjeblikke åbner hun en side med et gammelt billede af Laura.",
+            "Barbara: Se. Hun har været indlagt. Og dér har hun halskæden på.",
+            "Jørgen tænker: Barbara præsenterer billedet, som om hun netop har fundet det.",
+            "Lauras private sygehistorie er ikke et bevis på mord.",
+          ],
+          "dc-barbara-helper-sequence",
+        ),
+        {
+          effects: [
+            { type: "LEARN", id: "barbara_presented_image_as_new" },
+            {
+              type: "LEARN",
+              id: "laura_private_history_not_evidence",
+            },
+            { type: "LEARN", id: "laura_was_in_institution" },
+            { type: "LEARN", id: "laura_owns_polar_bear_necklace" },
+          ],
+          effectsOnSkip: true,
+          skipSummary:
+            "Barbara præsenterer Lauras private historik og halskædebilledet som nye fund; privathistorikken er ikke et skyldbevis.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  return choices;
+}
+
 export function getDialogueChoices(
   state: GameState,
   person: CharacterId,
@@ -690,6 +1044,8 @@ export function getDialogueChoices(
     ...subjectChoices,
     ...(state.selectedCaseId === "david"
       ? getDavidSpecialChoices(state, person)
+      : state.selectedCaseId === "barbara"
+        ? getBarbaraSpecialChoices(state, person)
       : getLegacySpecialChoices(state, person)),
   ];
 }

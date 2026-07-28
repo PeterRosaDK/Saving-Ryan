@@ -6,7 +6,7 @@ export type AppPhase =
   | "reconstruction"
   | "ending";
 
-export const CASE_IDS = ["laura", "david"] as const;
+export const CASE_IDS = ["laura", "david", "barbara"] as const;
 
 export type CaseId = (typeof CASE_IDS)[number];
 
@@ -55,6 +55,28 @@ export const KNOWLEDGE_IDS = [
   "david_murder_method_known",
   "david_reconstruction_recorded",
   "david_prevention_plan",
+  "barbara_blackmailed_by_ryan",
+  "laura_put_necklace_in_bag",
+  "necklace_missing_from_laura_bag",
+  "barbara_had_access_to_laura_bag",
+  "barbara_opened_plans_before_murder",
+  "building_plans_show_passage",
+  "barbara_saved_necklace_image_before_murder",
+  "barbara_left_with_ryan",
+  "barbara_alibi_gap",
+  "barbara_presented_image_as_new",
+  "barbara_timestamps_compared",
+  "laura_private_history_not_evidence",
+  "barbara_motive_conclusion",
+  "barbara_opportunity_conclusion",
+  "barbara_passage_conclusion",
+  "barbara_staging_conclusion",
+  "marie_saw_barbara_by_bag",
+  "david_saw_barbara_lead_ryan",
+  "barbara_confessed",
+  "barbara_murder_method_known",
+  "barbara_reconstruction_recorded",
+  "barbara_prevention_plan",
 ] as const;
 
 export type KnowledgeId = (typeof KNOWLEDGE_IDS)[number];
@@ -79,6 +101,9 @@ export const DIALOGUE_TOPIC_IDS = [
   "about_sarah",
   "david_breakup",
   "david_saw_ryan",
+  "laura_necklace_bag",
+  "laura_bag_access",
+  "barbara_time_with_ryan",
 ] as const;
 
 export type DialogueTopicId = (typeof DIALOGUE_TOPIC_IDS)[number];
@@ -110,7 +135,10 @@ export type SceneInteractionId =
   | "watch_secret_passage"
   | "prevent_ryans_murder"
   | "prevent_david_murder"
-  | "inspect_barbaras_computer";
+  | "prevent_barbara_murder"
+  | "inspect_barbaras_computer"
+  | "inspect_barbara_building_plans"
+  | "compare_barbara_timestamps";
 
 export type SceneInteractionTrigger = "enter" | "manual";
 

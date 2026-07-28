@@ -16,7 +16,7 @@ ending.
 
 The stable Laura route is now available as **Original historie**. The main menu
 also offers **Director’s Cut**, which selects one curated case definition when
-a new game begins. David is the first complete alternative case. The selected
+a new game begins. David and Barbara are the first complete alternative cases. The selected
 murderer and case facts remain fixed when the day loops. It is not a procedural
 name swap: every later case must explicitly
 define its motive, method, access, alibi, physical evidence, required knowledge,
@@ -28,9 +28,10 @@ changing dialogue or knowledge rules. New live-action recording is not a
 dependency, and cloned voices must never be assumed without the necessary rights
 and consent.
 
-The next authored murderer can extend the Director’s Cut registry only after its
+Another authored murderer can extend the Director’s Cut registry only after its
 full clue, confrontation, prevention, result, test, and asset-manifest route is
-implemented. Barbara remains deliberately unimplemented.
+implemented. Barbara now demonstrates that a second case can reuse the lifecycle
+without weakening the isolation of Laura or David.
 
 ## What the legacy project actually contains
 
@@ -646,13 +647,14 @@ Only after Laura is stable as the reference implementation:
 
 - [x] add a minimal `CaseDefinition` boundary and persistent selected case;
 - [x] keep Laura as the default and add **Mystisk case** separately;
-- introduce one hand-authored alternative murderer as a proof of concept;
-- extend to further curated cases only after narrative validation.
+- [x] introduce David as the first hand-authored alternative murderer;
+- [x] extend the shared Director’s Cut lifecycle with the complete Barbara case;
+- extend to further curated cases only after Barbara playtest and narrative
+  validation.
 
-The completed foundation is documented in
-[`docs/case-model.md`](docs/case-model.md). **Mystisk case** remains visibly
-disabled until the first complete alternative is authored; a partial case is
-never registered as playable.
+The completed foundation and the active `david`/`barbara` pool are documented
+in [`docs/case-model.md`](docs/case-model.md). A partial future case is never
+registered as playable.
 
 ### Later production improvements
 

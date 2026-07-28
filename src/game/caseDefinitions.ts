@@ -2,6 +2,10 @@ import type {
   CaseId,
   CharacterId,
 } from "../app/types";
+import {
+  getDirectorsCutCaseContent,
+  isDirectorsCutCaseId,
+} from "./directorsCutCaseContent";
 
 export interface CaseDefinition {
   id: CaseId;
@@ -58,6 +62,25 @@ export const CASE_DEFINITIONS: Readonly<
     },
     score: {
       parDays: 2,
+      base: 1000,
+      extraDayPenalty: 100,
+      wrongAccusationPenalty: 100,
+      prematureAccusationPenalty: 50,
+      optionalEvidenceBonus: 25,
+    },
+  },
+  barbara: {
+    id: "barbara",
+    mode: "directors_cut",
+    enabled: true,
+    murderer: "Barbara",
+    menu: {
+      title: "Director’s Cut",
+      description:
+        "Spil en alternativ version, hvor morderen vælges tilfældigt blandt de tilgængelige Director’s Cut-sager.",
+    },
+    score: {
+      parDays: 3,
       base: 1000,
       extraDayPenalty: 100,
       wrongAccusationPenalty: 100,
@@ -155,10 +178,13 @@ export function calculateCaseScore(state: {
   knowledge: Record<string, boolean>;
 }): number {
   const score = getCaseDefinition(state.selectedCaseId).score;
-  const optionalEvidence = [
-    "marie_says_david_was_hurt",
-    "david_lied_about_ryan",
-  ].filter((id) => state.knowledge[id]).length;
+  const optionalEvidence = isDirectorsCutCaseId(
+    state.selectedCaseId,
+  )
+    ? getDirectorsCutCaseContent(
+        state.selectedCaseId,
+      ).optionalEvidence.filter((id) => state.knowledge[id]).length
+    : 0;
   return Math.max(
     0,
     score.base -

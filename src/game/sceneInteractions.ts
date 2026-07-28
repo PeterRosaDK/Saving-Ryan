@@ -205,14 +205,105 @@ export const SCENE_INTERACTIONS = {
     replaces: ["inspect_secret_passage_book"],
     concludesStory: true,
   },
+  prevent_barbara_murder: {
+    id: "prevent_barbara_murder",
+    scenes: ["C2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Vent ved bogreolen",
+    requires: [
+      "barbara_prevention_plan",
+      "barbara_reconstruction_recorded",
+    ],
+    effects: [{ type: "LEARN", id: "ryan_was_saved" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen stiller sig bag bogreolen og venter.",
+        "Barbara kommer ind sammen med Ryan. Hun trykker på den skjulte mekanisme, og den smalle dør åbner sig.",
+        "Barbara: Jeg fandt noget derinde. Du bør se det.",
+        "Hun tager Lauras isbjørnehalskæde frem og rækker den til Ryan.",
+        "Ryan går ud på afsatsen og råber ned mod kantinen.",
+        "Ryan: Jørgen! Kom lige og se, hvad jeg har fundet!",
+        "Barbara træder hen bag ham og løfter hænderne.",
+        "Jørgen springer frem og griber hendes håndled, før hun rammer Ryan.",
+        "Jørgen: Ikke denne gang.",
+        "Barbara: Hvad laver du?",
+        "Jørgen: Jeg ved, hvor du fandt tegningen. Jeg ved, hvornår du gemte billedet. Og jeg ved, hvorfor Laura mangler sin halskæde.",
+        "Ryan vender sig. Halskæden ligger stadig i hans hånd.",
+        "Barbara kan ikke længere forklare, hvorfor hun har ført ham gennem en hemmelig passage med en stjålet genstand.",
+        "Hun bryder sammen, før nogen bliver skubbet.",
+      ],
+      "dc-barbara-prevention-sequence",
+    ),
+    replaces: ["inspect_secret_passage_book"],
+    concludesStory: true,
+  },
+  inspect_barbara_building_plans: {
+    id: "inspect_barbara_building_plans",
+    scenes: ["B2", "B3"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Åbn bygningstegningen",
+    requires: ["barbara_opened_plans_before_murder"],
+    effects: [
+      { type: "LEARN", id: "building_plans_show_passage" },
+      { type: "LEARN", id: "secret_passage_exists" },
+    ],
+    timeCost: 0,
+    cue: textCue(
+      "Tegningen viser en smal servicegang bag bogreolen i læsesalen. Den fører direkte til afsatsen over kantinen.",
+      "dc-barbara-building-plan-screen",
+    ),
+    replaces: ["inspect_barbaras_computer"],
+  },
+  compare_barbara_timestamps: {
+    id: "compare_barbara_timestamps",
+    scenes: ["B2", "B3"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Sammenlign tidsstempler",
+    requires: [
+      "barbara_presented_image_as_new",
+      "barbara_saved_necklace_image_before_murder",
+      "barbara_opened_plans_before_murder",
+    ],
+    effects: [{ type: "LEARN", id: "barbara_timestamps_compared" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Siden, Barbara netop “fandt”, ligger allerede i computerens cache. Den blev åbnet og billedet gemt før mordet.",
+        "Bygningstegningen blev åbnet i samme tidsrum.",
+        "Jørgen tænker: Barbara fandt ikke sporet under efterforskningen. Hun kendte det på forhånd og førte mig med vilje hen til det.",
+      ],
+      "dc-barbara-timestamp-comparison",
+    ),
+    replaces: [
+      "inspect_barbaras_computer",
+      "inspect_barbara_building_plans",
+    ],
+  },
 } as const satisfies Record<SceneInteractionId, SceneInteraction>;
 
-const ORIGINAL_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
+const LAURA_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
+  "watch_secret_passage",
+  "prevent_ryans_murder",
+]);
+
+const LEGACY_BARBARA_INTERACTIONS = new Set<SceneInteractionId>([
   "notice_barbara_computer_expertise",
   "inspect_barbaras_computer",
   "eavesdrop_barbara_and_ryan",
-  "watch_secret_passage",
-  "prevent_ryans_murder",
+]);
+
+const BARBARA_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
+  "prevent_barbara_murder",
+  "inspect_barbara_building_plans",
+  "compare_barbara_timestamps",
+]);
+
+const DAVID_STORY_INTERACTIONS = new Set<SceneInteractionId>([
+  "prevent_david_murder",
 ]);
 
 const DAVID_INTERACTION_OVERRIDES: Partial<
@@ -251,13 +342,78 @@ const DAVID_INTERACTION_OVERRIDES: Partial<
   },
 };
 
+const BARBARA_INTERACTION_OVERRIDES: Partial<
+  Record<SceneInteractionId, SceneInteraction>
+> = {
+  inspect_ryans_body_and_necklace: {
+    ...SCENE_INTERACTIONS.inspect_ryans_body_and_necklace,
+    effects: [{ type: "LEARN", id: "necklace_found_in_ryans_hand" }],
+    cue: stillsCue(
+      [
+        {
+          image: "sektorA3-Ryan1",
+          alt: "Ryan ligger livløs på kantinens gulv.",
+        },
+        {
+          image: "sektorA3-Ryan2",
+          alt: "Ryans hånd med den lille isbjørnehalskæde.",
+          text:
+            "Ryans hånd er knyttet om Lauras isbjørnehalskæde. Det beviser kun, hvem der ejede halskæden. Ikke hvem der gav den til Ryan.",
+        },
+      ],
+      "dc-barbara-body-necklace-still",
+    ),
+  },
+  inspect_barbaras_computer: {
+    ...SCENE_INTERACTIONS.inspect_barbaras_computer,
+    effects: [
+      { type: "LEARN", id: "barbara_forged_grades" },
+      { type: "LEARN", id: "barbara_opened_plans_before_murder" },
+      {
+        type: "LEARN",
+        id: "barbara_saved_necklace_image_before_murder",
+      },
+    ],
+    cue: textSequenceCue(
+      [
+        "Barbaras computer — vælg undersøgelse: Se eksamens-/karakterfiler eller se nyligt åbnede filer.",
+        "Karakterfiler: Flere karakterer er ændret manuelt. Originalværdierne og de nye værdier ligger side om side i en skjult fil.",
+        "Nyligt åbnede filer: En arkiveret bygningstegning er åbnet tidligere på dagen.",
+        "En billedfil med navnet “laura_isbjoern” er gemt samme formiddag — før mordet.",
+      ],
+      "dc-barbara-computer-recent-files",
+    ),
+  },
+  eavesdrop_barbara_and_ryan: {
+    ...SCENE_INTERACTIONS.eavesdrop_barbara_and_ryan,
+    effects: [
+      { type: "LEARN", id: "barbara_and_ryan_argued" },
+      { type: "LEARN", id: "barbara_blackmailed_by_ryan" },
+    ],
+    cue: textSequenceCue(
+      [
+        "Ryan: Du ved godt, hvad der sker, hvis nogen ser de rigtige karakterudskrifter.",
+        "Barbara: Du har fået, hvad du ville have.",
+        "Ryan: Indtil videre. Du gør, som jeg siger, ellers sender jeg det hele videre.",
+      ],
+      "dc-barbara-blackmail-sequence",
+    ),
+  },
+};
+
 export function getSceneInteraction(
   id: SceneInteractionId,
   state?: Pick<GameState, "selectedCaseId">,
 ): SceneInteraction {
-  return state?.selectedCaseId === "david"
-    ? DAVID_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id]
-    : SCENE_INTERACTIONS[id];
+  if (state?.selectedCaseId === "david") {
+    return DAVID_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
+  }
+
+  if (state?.selectedCaseId === "barbara") {
+    return BARBARA_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
+  }
+
+  return SCENE_INTERACTIONS[id];
 }
 
 export function getSceneInteractions(
@@ -269,9 +425,16 @@ export function getSceneInteractions(
     (interaction) =>
       (interaction.scenes as readonly SceneId[]).includes(scene) &&
       interaction.trigger === trigger &&
-      (state.selectedCaseId === "david"
-        ? !ORIGINAL_ONLY_INTERACTIONS.has(interaction.id)
-        : interaction.id !== "prevent_david_murder"),
+      (state.selectedCaseId === "laura"
+        ? !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+          !BARBARA_ONLY_INTERACTIONS.has(interaction.id)
+        : state.selectedCaseId === "david"
+          ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
+            !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
+            !BARBARA_ONLY_INTERACTIONS.has(interaction.id)
+          : !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
+            !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+            interaction.id !== "inspect_girlfriend_letter"),
   ).map((interaction) => getSceneInteraction(interaction.id, state));
 }
 

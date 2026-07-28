@@ -7,6 +7,10 @@ import {
   DAVID_CORE_CONCLUSIONS,
   deriveDavidLead,
 } from "./davidCase";
+import {
+  BARBARA_CORE_CONCLUSIONS,
+  deriveBarbaraLead,
+} from "./barbaraCase";
 
 export const INVESTIGATION_STEP_IDS = [
   "observe_barbara_programming",
@@ -220,14 +224,57 @@ export function learnKnowledge(
     }
   }
 
+  if (state.selectedCaseId === "barbara") {
+    if (
+      nextKnowledge.barbara_forged_grades &&
+      nextKnowledge.barbara_blackmailed_by_ryan &&
+      !nextKnowledge.barbara_motive_conclusion
+    ) {
+      nextKnowledge.barbara_motive_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.barbara_left_with_ryan &&
+      nextKnowledge.barbara_alibi_gap &&
+      !nextKnowledge.barbara_opportunity_conclusion
+    ) {
+      nextKnowledge.barbara_opportunity_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.barbara_opened_plans_before_murder &&
+      nextKnowledge.building_plans_show_passage &&
+      !nextKnowledge.barbara_passage_conclusion
+    ) {
+      nextKnowledge.barbara_passage_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.laura_put_necklace_in_bag &&
+      nextKnowledge.necklace_missing_from_laura_bag &&
+      nextKnowledge.barbara_had_access_to_laura_bag &&
+      nextKnowledge.barbara_saved_necklace_image_before_murder &&
+      nextKnowledge.necklace_found_in_ryans_hand &&
+      nextKnowledge.barbara_presented_image_as_new &&
+      nextKnowledge.barbara_timestamps_compared &&
+      !nextKnowledge.barbara_staging_conclusion
+    ) {
+      nextKnowledge.barbara_staging_conclusion = true;
+      changed = true;
+    }
+  }
+
   if (!changed) return state;
 
-  const newlyDerived =
+  const caseConclusions =
     state.selectedCaseId === "david"
-      ? DAVID_CORE_CONCLUSIONS.filter(
-          (id) => nextKnowledge[id] && !state.knowledge[id],
-        )
-      : [];
+      ? DAVID_CORE_CONCLUSIONS
+      : state.selectedCaseId === "barbara"
+        ? BARBARA_CORE_CONCLUSIONS
+        : [];
+  const newlyDerived = caseConclusions.filter(
+    (id) => nextKnowledge[id] && !state.knowledge[id],
+  );
   const knowledgeState: GameState = {
     ...state,
     knowledge: nextKnowledge,
@@ -249,7 +296,15 @@ export function learnKnowledge(
           currentLead: deriveDavidLead(knowledgeState),
         },
       }
-    : knowledgeState;
+    : state.selectedCaseId === "barbara"
+      ? {
+          ...knowledgeState,
+          caseProgress: {
+            ...knowledgeState.caseProgress,
+            currentLead: deriveBarbaraLead(knowledgeState),
+          },
+        }
+      : knowledgeState;
 }
 
 export function executeInvestigationStep(

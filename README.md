@@ -7,8 +7,8 @@ interactive mystery.
 
 The tagged Director restoration is preserved as `legacy-restoration-v1`, the
 canonical Laura story is playable from intro to epilogue, phase 9's expanded
-time-loop mechanics are complete, and Director’s Cut now contains the complete
-David case:
+time-loop mechanics are complete, and Director’s Cut now contains complete
+David and Barbara cases:
 
 - legacy Director files and the original report are preserved in `Legacy/`;
 - converted MP4 files are served from `public/Video/`;
@@ -19,12 +19,16 @@ David case:
 - the A1–E4 location/time model is implemented as a typed state machine;
 - a main menu offers isolated **Original historie** and **Director’s Cut**
   modes from the first launch;
-- Director’s Cut selects from an enabled case registry, currently David;
+- Director’s Cut selects uniformly from the enabled `david` and `barbara`
+  registry entries; `?dcCase=<id>` provides deterministic QA;
 - the selected case is stored at the top level of version 3 game state and
   survives every daily loop unchanged;
 - David’s motive, necklace possession, and movement are order-independent
   conclusions; a documented confrontation leads to a private reconstruction
   and an active C2 prevention rather than immediate victory;
+- Barbara’s grade fraud/blackmail motive, movement with Ryan, prior passage
+  knowledge, and staged Laura evidence form four order-independent conclusions;
+  Laura’s private health history is explicitly neutral and never a guilt rule;
 - Director’s Cut tracks accusations, days, core conclusions, optional evidence,
   and a centrally configured deterministic score;
 - waiting is a two-step transition, so narration and special sequences complete
@@ -111,6 +115,8 @@ Missing Director’s Cut production assets are listed in
 [docs/directors-cut-asset-manifest.md](docs/directors-cut-asset-manifest.md).
 Den målrettede David-playtest, herunder `?dcCase=david`, er beskrevet i
 [docs/david-playtest.md](docs/david-playtest.md).
+Barbara-ruten og dens målrettede `?dcCase=barbara`-QA er beskrevet i
+[docs/barbara-playtest.md](docs/barbara-playtest.md).
 
 ## Commands
 

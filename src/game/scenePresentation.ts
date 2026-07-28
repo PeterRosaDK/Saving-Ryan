@@ -200,14 +200,32 @@ const INTERACTIONS = {
       rect: hotspotRect(283, 244, 94, 104),
     },
     {
+      interactionId: "inspect_barbara_building_plans",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+    {
+      interactionId: "compare_barbara_timestamps",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+    {
       interactionId: "eavesdrop_barbara_and_ryan",
       rect: hotspotRect(445, 235, 146, 118),
     },
   ],
-  B3: [{
-    interactionId: "inspect_barbaras_computer",
-    rect: hotspotRect(283, 244, 94, 104),
-  }],
+  B3: [
+    {
+      interactionId: "inspect_barbaras_computer",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+    {
+      interactionId: "inspect_barbara_building_plans",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+    {
+      interactionId: "compare_barbara_timestamps",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+  ],
   C1: [{
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
@@ -223,6 +241,9 @@ const INTERACTIONS = {
     rect: hotspotRect(117, 294, 14, 46),
   }, {
     interactionId: "prevent_david_murder",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "prevent_barbara_murder",
     rect: hotspotRect(117, 294, 14, 46),
   }],
   C3: [{

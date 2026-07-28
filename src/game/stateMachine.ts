@@ -24,6 +24,10 @@ import { applyKnowledgeEffects } from "./knowledgeGraph";
 import { executeDialogueChoice } from "./dialogueEngine";
 import { isCharacterInScene } from "./sceneOccupants";
 import { getLocationTransitionEvent } from "./transitionEvents";
+import {
+  getDirectorsCutCaseContent,
+  isDirectorsCutCaseId,
+} from "./directorsCutCaseContent";
 
 function applyEffects(
   state: GameState,
@@ -160,6 +164,16 @@ export function reduceGameState(
               state.selectedCaseId,
             ).scene
           : null;
+      const caseContent = isDirectorsCutCaseId(
+        effectState.selectedCaseId,
+      )
+        ? getDirectorsCutCaseContent(effectState.selectedCaseId)
+        : null;
+      const reconstructionBegins =
+        pending.beginsNewLoop &&
+        caseContent !== null &&
+        effectState.knowledge[caseContent.confessionKnowledgeId] &&
+        !effectState.caseProgress.reconstructionCompleted;
       const completedState: GameState = {
         ...effectState,
         location: target.location.id,
@@ -182,19 +196,14 @@ export function reduceGameState(
             },
         pendingTransition: null,
         phase:
-          pending.beginsNewLoop &&
-          effectState.selectedCaseId === "david" &&
-          effectState.knowledge.david_confessed &&
-          !effectState.caseProgress.reconstructionCompleted
+          reconstructionBegins
             ? "reconstruction"
             : effectState.phase,
         caseProgress: {
           ...effectState.caseProgress,
           reconstructionAvailable:
             effectState.caseProgress.reconstructionAvailable ||
-            (pending.beginsNewLoop &&
-              effectState.selectedCaseId === "david" &&
-              effectState.knowledge.david_confessed),
+            reconstructionBegins,
         },
       };
 
@@ -210,7 +219,13 @@ export function reduceGameState(
 
       const interaction = getSceneInteraction(action.id, state);
       const sceneId = toSceneId(state.location, state.timeSlot);
+      const isVisibleInCase = getSceneInteractions(
+        state,
+        sceneId,
+        "manual",
+      ).some(({ id }) => id === action.id);
       if (
+        !isVisibleInCase ||
         interaction.trigger !== "manual" ||
         !(interaction.scenes as readonly typeof sceneId[]).includes(sceneId) ||
         !canPerformSceneInteraction(state, interaction)
@@ -308,12 +323,18 @@ export function reduceGameState(
     case "COMPLETE_RECONSTRUCTION": {
       if (
         state.phase !== "reconstruction" ||
-        state.selectedCaseId !== "david"
+        !isDirectorsCutCaseId(state.selectedCaseId)
       ) {
         return state;
       }
+      const caseContent = getDirectorsCutCaseContent(
+        state.selectedCaseId,
+      );
       const recorded = applyEffects(state, [
-        { type: "LEARN", id: "david_reconstruction_recorded" },
+        {
+          type: "LEARN",
+          id: caseContent.reconstructionKnowledgeId,
+        },
       ]);
       return {
         ...recorded,
@@ -322,8 +343,7 @@ export function reduceGameState(
           ...recorded.caseProgress,
           reconstructionAvailable: true,
           reconstructionCompleted: true,
-          currentLead:
-            "Vær i læsesalen ved middag og stop David.",
+          currentLead: caseContent.finalLead,
         },
       };
     }

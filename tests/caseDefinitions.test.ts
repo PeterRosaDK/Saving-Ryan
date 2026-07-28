@@ -34,12 +34,18 @@ describe("case registry and story modes", () => {
           "Spil en alternativ version, hvor morderen vælges tilfældigt blandt de tilgængelige Director’s Cut-sager.",
       },
     });
-    expect(getMysteryCaseIds()).toEqual(["david"]);
+    expect(CASE_DEFINITIONS.barbara).toMatchObject({
+      mode: "directors_cut",
+      enabled: true,
+      murderer: "Barbara",
+      menu: CASE_DEFINITIONS.david.menu,
+    });
+    expect(getMysteryCaseIds()).toEqual(["david", "barbara"]);
   });
 
   it("selects Director's Cut deterministically and keeps the id through loops", () => {
     expect(selectMysteryCaseId(0)).toBe("david");
-    expect(selectMysteryCaseId(0.999)).toBe("david");
+    expect(selectMysteryCaseId(0.999)).toBe("barbara");
     let state = reduceGameState(createInitialGameState(), {
       type: "START_CASE",
       caseId: selectMysteryCaseId(0.42)!,
@@ -55,7 +61,7 @@ describe("case registry and story modes", () => {
     });
   });
 
-  it("parses and applies ?dcCase=david through the active registry", () => {
+  it("parses and applies a generic ?dcCase selector through the active registry", () => {
     expect(getDirectorsCutCaseOverride("?dcCase=david")).toBe("david");
     expect(
       selectDirectorsCutCase({
@@ -75,20 +81,32 @@ describe("case registry and story modes", () => {
         return definition.mode === "directors_cut" && definition.enabled;
       }),
     ).toBe(true);
+    expect(
+      selectDirectorsCutCase({
+        requestedCaseId: getDirectorsCutCaseOverride(
+          "?dcCase=barbara",
+        ),
+        randomValue: 0,
+      }),
+    ).toEqual({
+      caseId: "barbara",
+      source: "qa",
+      requestedCaseId: "barbara",
+    });
   });
 
   it("falls back to normal registry selection for an unknown override", () => {
     const warnings: string[] = [];
     expect(
       selectDirectorsCutCase({
-        requestedCaseId: "barbara",
+        requestedCaseId: "ukendt",
         randomValue: 0.25,
         warn: (message) => warnings.push(message),
       }),
     ).toEqual({
       caseId: "david",
       source: "random",
-      requestedCaseId: "barbara",
+      requestedCaseId: "ukendt",
     });
     expect(warnings).toEqual([
       expect.stringContaining("Ukendt eller inaktiv"),
@@ -104,7 +122,7 @@ describe("case registry and story modes", () => {
       requestedCaseId: null,
     });
     expect(secondGame).toEqual({
-      caseId: "david",
+      caseId: "barbara",
       source: "random",
       requestedCaseId: null,
     });

@@ -28,10 +28,10 @@ the compiled module, CSS, images, video, and audio. Cloudflare Access is the
 only production authentication boundary.
 
 The phase 10 case boundary lives in `src/game/caseDefinitions.ts`.
-`selectedCaseId` is top-level version 2 game state: the main menu selects it
+`selectedCaseId` is top-level version 3 game state: the main menu selects it
 once for a new game, and ordinary day-loop resets leave it unchanged.
-Unfinished cases are not registered, so the visible **Mystisk case** menu
-option remains disabled until at least one complete curated definition exists.
+The enabled Director’s Cut pool contains David and Barbara. Unfinished future
+cases are not registered, so selection can never enter a partial story.
 
 Arbitrary paths must return the committed `404.html`; the application does not
 use client-side routing. Static JSON liveness and readiness responses are valid

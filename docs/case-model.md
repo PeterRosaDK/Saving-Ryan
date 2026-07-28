@@ -1,7 +1,7 @@
 # Director’s Cut case model
 
-Status: David-sagen er implementeret og spilbar; Laura er fortsat det isolerede
-originalforløb.
+Status: David- og Barbara-sagerne er implementeret og spilbare; Laura er
+fortsat det isolerede originalforløb.
 
 ## Modes og valg
 
@@ -13,14 +13,15 @@ Titlen tilbyder uden progression-gate:
 `selectedCaseId` ligger i version 3 af `GameState` og ændres aldrig af et
 dagsloop. `RESET_GAME` nulstiller viden, statistik og case-lokal state. Et nyt
 Director’s Cut-spil foretager derefter et nyt registry-valg. Poolen indeholder
-aktuelt kun `david`, men den registry-baserede selector er deterministisk
-testbar og klar til flere aktiverede cases.
+aktuelt `david` og `barbara`; normal selection er uniform, mens injicerede
+random-værdier gør begge udfald deterministisk testbare.
 
 Til målrettet QA læses `?dcCase=<case-id>`. Et gyldigt, aktiveret
 Director’s Cut-ID vælges deterministisk og logges i konsollen; et ukendt eller
 inaktivt ID giver en advarsel og falder tilbage til normal registry-udvælgelse.
 Parameteren bruges kun, når spilleren vælger Director’s Cut, og kan derfor ikke
-ændre Original historie. Se `docs/david-playtest.md`.
+ændre Original historie. Se `docs/david-playtest.md` og
+`docs/barbara-playtest.md`.
 
 ## Registry
 
@@ -58,6 +59,36 @@ Laura-regel, der kombinerer `killer_dropped_necklace` med Lauras ejerskab, køre
 kun for `laura`. Lauras ejerskab kan derfor aldrig alene gøre hende skyldig i
 Director’s Cut.
 
+## Barbara knowledge graph
+
+Barbara-casen afleder fire kernekonklusioner fra neutrale fakta:
+
+1. **Motiv:** de forfalskede karakterer + Ryans afpresning.
+2. **Mulighed:** Barbara og Ryan forlader B2 sammen + hullet i hendes alibi.
+3. **Forhåndskendskab til passagen:** den præmordligt åbnede tegning +
+   tegningens servicegang fra læsesalen til afsatsen.
+4. **Iscenesættelse:** Laura lægger halskæden i tasken, den forsvinder mens
+   Barbara har adgang, Barbara gemmer billedet før mordet, halskæden findes i
+   Ryans hånd, billedet præsenteres som nyt, og tidsstemplerne sammenholdes.
+
+Fakta kan findes på tværs af loops og i forskellig rækkefølge. Konklusionerne
+afledes centralt i `knowledgeGraph.ts`; scene- og dialoglaget uddeler kun
+fakta. Først alle fire konklusioner gør Barbara-anklagen afgørende.
+
+`laura_was_in_institution` og
+`laura_private_history_not_evidence` er bevidst ikke forudsætninger for nogen
+skyldregel. Lauras private helbredsoplysninger forklarer Barbaras
+manipulationsforsøg, ikke Lauras skyld. På samme måde er halskædens ejerskab og
+fundet i Ryans hånd neutrale, indtil den aktuelle cases øvrige fakta giver dem
+betydning.
+
+Den samme legacy-geografi kan derfor have forskellig semantik: E1 indeholder
+Davids pickup i David-sagen, B2 registrerer Barbara og Ryan sammen i
+Barbara-sagen, mens Laura-sagen beholder den restaurerede Director-betydning.
+Casefiltreringen gælder også interaktioner, dialog, tilståelse, rekonstruktion
+og prevention, så en action fra en anden case afvises selv ved direkte
+state-machine-dispatch.
+
 ## Kildegrænse
 
 Director-dumpet er autoritativt for geografi, tider og eksisterende
@@ -75,15 +106,17 @@ grund af filnavnet.
 
 ## Loop, rekonstruktion og prevention
 
-Efter tilståelsen starter næste morgen i fasen `reconstruction`. De fem private
-kort gemmes i notesbogen, også hvis spilleren springer visningen over. Derefter
-er `Vent ved bogreolen` tilgængelig kun i C2 og kun i David-sagen. Hvis vinduet
-misses, fortsætter mordet og loopet normalt, mens planen består.
+Efter tilståelsen starter næste morgen i fasen `reconstruction`. De fem
+David-kort eller seks Barbara-kort gemmes i notesbogen, også hvis spilleren
+springer visningen over. Derefter er `Vent ved bogreolen` tilgængelig kun i C2
+og kun med den aktuelle cases rekonstruktion og prevention-plan. Hvis vinduet
+misses, fortsætter mordet og loopet normalt, mens planen består. Barbara-finalen
+viser eksplicit, at Jørgen griber hendes håndled før skubbet.
 
 ## Statistik og score
 
-Case-state tæller konfrontationer, forkerte anklager og for tidlige David-
-anklager. Antallet af dage er `loop`; kernespor og valgfri støttebeviser
+Case-state tæller konfrontationer, forkerte anklager og for tidlige
+morderanklager. Antallet af dage er `loop`; kernespor og valgfri støttebeviser
 beregnes fra knowledge. David-casens verificerede `parDays` er 2:
 
 - dag 1: gangen E1; derefter brev og Ryan-dialog i middagsslot,
@@ -91,7 +124,16 @@ beregnes fra knowledge. David-casens verificerede `parDays` er 2:
 - dag 2: rekonstruktion og prevention i C2.
 
 Scoren straffer kun ekstra dage og anklager og belønner de to valgfrie
-støttebeviser. Parametrene står på case-definitionen.
+støttebeviser. Barbara-casens verificerede `parDays` er 3:
+
+- dag 1: morgenmødet, halskædetasken, afpresningen, B2-bevægelsen, ligfund,
+  alibi og Lauras skjulte computeraktivitet;
+- dag 2: `Intruder`, computerens karakter-/metadatafund, tegningen,
+  Barbaras falske hjælp, tidsstempelsammenligning og tilståelse;
+- dag 3: privat rekonstruktion og prevention i C2.
+
+Barbara har to valgfrie støttebeviser: Maries observation ved tasken og Davids
+observation af ruten mod læsesalen. Parametrene står på case-definitionen.
 
 ## Text-first assets
 
@@ -100,3 +142,6 @@ registreret maskinlæsbart i
 `src/media/directorsCutAssetManifest.ts` og læsevenligt i
 `docs/directors-cut-asset-manifest.md`. Hver runtime-placeholder bærer et stabilt
 manifest-ID. Senere medier må ændre præsentationen, men ikke knowledge-effects.
+Barbara bruger samme centrale manifest; der findes ikke et parallelt
+case-manifest. Tekstfallback og skip-resumé er den autoritative semantik, så
+manglende produktion ikke blokerer progression.
