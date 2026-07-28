@@ -28,7 +28,7 @@ describe("legacy game state", () => {
   it("starts at the case menu without revealing any knowledge", () => {
     const state = createInitialGameState();
 
-    expect(state.version).toBe(2);
+    expect(state.version).toBe(3);
     expect(state.selectedCaseId).toBe("laura");
     expect(state.phase).toBe("menu");
     expect(toSceneId(state.location, state.timeSlot)).toBe("A1");

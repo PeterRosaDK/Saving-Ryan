@@ -3,6 +3,10 @@ import type {
   GameState,
   KnowledgeId,
 } from "../app/types";
+import {
+  DAVID_CORE_CONCLUSIONS,
+  deriveDavidLead,
+} from "./davidCase";
 
 export const INVESTIGATION_STEP_IDS = [
   "observe_barbara_programming",
@@ -182,6 +186,7 @@ export function learnKnowledge(
   }
 
   if (
+    state.selectedCaseId === "laura" &&
     nextKnowledge.killer_dropped_necklace &&
     nextKnowledge.laura_owns_polar_bear_necklace &&
     !nextKnowledge.necklace_connects_laura_to_scene
@@ -190,12 +195,61 @@ export function learnKnowledge(
     changed = true;
   }
 
-  return changed
+  if (state.selectedCaseId === "david") {
+    if (
+      nextKnowledge.sarah_left_david_for_ryan &&
+      !nextKnowledge.david_motive_conclusion
+    ) {
+      nextKnowledge.david_motive_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.david_picked_up_necklace &&
+      nextKnowledge.necklace_found_in_ryans_hand &&
+      !nextKnowledge.david_necklace_possession_conclusion
+    ) {
+      nextKnowledge.david_necklace_possession_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.david_followed_ryan &&
+      !nextKnowledge.david_opportunity_conclusion
+    ) {
+      nextKnowledge.david_opportunity_conclusion = true;
+      changed = true;
+    }
+  }
+
+  if (!changed) return state;
+
+  const newlyDerived =
+    state.selectedCaseId === "david"
+      ? DAVID_CORE_CONCLUSIONS.filter(
+          (id) => nextKnowledge[id] && !state.knowledge[id],
+        )
+      : [];
+  const knowledgeState: GameState = {
+    ...state,
+    knowledge: nextKnowledge,
+    caseProgress: {
+      ...state.caseProgress,
+      pendingInsights: [
+        ...new Set([
+          ...state.caseProgress.pendingInsights,
+          ...newlyDerived,
+        ]),
+      ],
+    },
+  };
+  return state.selectedCaseId === "david"
     ? {
-        ...state,
-        knowledge: nextKnowledge,
+        ...knowledgeState,
+        caseProgress: {
+          ...knowledgeState.caseProgress,
+          currentLead: deriveDavidLead(knowledgeState),
+        },
       }
-    : state;
+    : knowledgeState;
 }
 
 export function executeInvestigationStep(

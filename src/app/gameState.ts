@@ -29,7 +29,7 @@ function createBaseGameState(
   phase: GameState["phase"],
 ): GameState {
   return {
-    version: 2,
+    version: 3,
     selectedCaseId,
     phase,
     location: "A",
@@ -41,6 +41,20 @@ function createBaseGameState(
     },
     loopState: createInitialLoopState(),
     pendingTransition: null,
+    caseProgress: {
+      currentLead:
+        selectedCaseId === "david"
+          ? "Find ud af, hvilke konflikter Ryan har skabt i gruppen."
+          : "",
+      pendingInsights: [],
+      statistics: {
+        confrontations: 0,
+        wrongAccusations: 0,
+        prematureAccusations: 0,
+      },
+      reconstructionAvailable: false,
+      reconstructionCompleted: false,
+    },
   };
 }
 

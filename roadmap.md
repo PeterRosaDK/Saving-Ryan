@@ -14,10 +14,11 @@ the Director project. A normal new game must enter that case directly; it remain
 the reference implementation for story progression, dialogue, knowledge, and the
 ending.
 
-Only after that route is complete and stable should the main menu add a
-**Mystisk case** option. That option will select one curated case definition when
-a new game begins. The selected murderer and case facts must remain fixed when the
-day loops. It is not a procedural name swap: every later case must explicitly
+The stable Laura route is now available as **Original historie**. The main menu
+also offers **Director’s Cut**, which selects one curated case definition when
+a new game begins. David is the first complete alternative case. The selected
+murderer and case facts remain fixed when the day loops. It is not a procedural
+name swap: every later case must explicitly
 define its motive, method, access, alibi, physical evidence, required knowledge,
 red herrings, confession conditions, and prevention/ending sequence.
 
@@ -27,8 +28,9 @@ changing dialogue or knowledge rules. New live-action recording is not a
 dependency, and cloned voices must never be assumed without the necessary rights
 and consent.
 
-Do not introduce case selection, randomized state, or save migration while the
-canonical dialogue IDs and Laura route are still changing.
+The next authored murderer can extend the Director’s Cut registry only after its
+full clue, confrontation, prevention, result, test, and asset-manifest route is
+implemented. Barbara remains deliberately unimplemented.
 
 ## What the legacy project actually contains
 

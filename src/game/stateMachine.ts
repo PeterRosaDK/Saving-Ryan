@@ -37,7 +37,7 @@ function applyTriggeredSceneEffects(
   sceneId: ReturnType<typeof toSceneId>,
   trigger: "enter",
 ): GameState {
-  return getSceneInteractions(sceneId, trigger).reduce(
+  return getSceneInteractions(state, sceneId, trigger).reduce(
     (nextState, interaction) =>
       applyEffects(nextState, interaction.effects),
     state,
@@ -114,7 +114,10 @@ export function reduceGameState(
       }
 
       const sceneId = toSceneId(state.location, state.timeSlot);
-      const event = getLocationTransitionEvent(sceneId);
+      const event = getLocationTransitionEvent(
+        sceneId,
+        state.selectedCaseId,
+      );
 
       return beginTimeAdvance(state, {
         kind: "clock",
@@ -134,8 +137,11 @@ export function reduceGameState(
       const target = getScene(pending.to);
       const sourceEffects =
         pending.cause.kind === "clock"
-          ? getLocationTransitionEvent(pending.cause.eventId).effects
-          : getSceneInteraction(pending.cause.id).effects;
+          ? getLocationTransitionEvent(
+              pending.cause.eventId,
+              state.selectedCaseId,
+            ).effects
+          : getSceneInteraction(pending.cause.id, state).effects;
       const sourceScene = getScene(pending.from);
       const sourceEffectState = applyEffects(state, sourceEffects);
       const effectState =
@@ -149,7 +155,10 @@ export function reduceGameState(
           : sourceEffectState;
       const seenClockEvent =
         pending.cause.kind === "clock"
-          ? getLocationTransitionEvent(pending.cause.eventId).scene
+          ? getLocationTransitionEvent(
+              pending.cause.eventId,
+              state.selectedCaseId,
+            ).scene
           : null;
       const completedState: GameState = {
         ...effectState,
@@ -172,13 +181,26 @@ export function reduceGameState(
                 : effectState.loopState.seenTransitions,
             },
         pendingTransition: null,
+        phase:
+          pending.beginsNewLoop &&
+          effectState.selectedCaseId === "david" &&
+          effectState.knowledge.david_confessed &&
+          !effectState.caseProgress.reconstructionCompleted
+            ? "reconstruction"
+            : effectState.phase,
+        caseProgress: {
+          ...effectState.caseProgress,
+          reconstructionAvailable:
+            effectState.caseProgress.reconstructionAvailable ||
+            (pending.beginsNewLoop &&
+              effectState.selectedCaseId === "david" &&
+              effectState.knowledge.david_confessed),
+        },
       };
 
-      return applyTriggeredSceneEffects(
-        completedState,
-        pending.to,
-        "enter",
-      );
+      return completedState.phase === "exploration"
+        ? applyTriggeredSceneEffects(completedState, pending.to, "enter")
+        : completedState;
     }
 
     case "PERFORM_INTERACTION": {
@@ -186,7 +208,7 @@ export function reduceGameState(
         return state;
       }
 
-      const interaction = getSceneInteraction(action.id);
+      const interaction = getSceneInteraction(action.id, state);
       const sceneId = toSceneId(state.location, state.timeSlot);
       if (
         interaction.trigger !== "manual" ||
@@ -270,6 +292,40 @@ export function reduceGameState(
         action.topic,
         action.completion,
       ).state;
+    }
+
+    case "DISMISS_INSIGHTS":
+      return state.caseProgress.pendingInsights.length === 0
+        ? state
+        : {
+            ...state,
+            caseProgress: {
+              ...state.caseProgress,
+              pendingInsights: [],
+            },
+          };
+
+    case "COMPLETE_RECONSTRUCTION": {
+      if (
+        state.phase !== "reconstruction" ||
+        state.selectedCaseId !== "david"
+      ) {
+        return state;
+      }
+      const recorded = applyEffects(state, [
+        { type: "LEARN", id: "david_reconstruction_recorded" },
+      ]);
+      return {
+        ...recorded,
+        phase: "exploration",
+        caseProgress: {
+          ...recorded.caseProgress,
+          reconstructionAvailable: true,
+          reconstructionCompleted: true,
+          currentLead:
+            "Vær i læsesalen ved middag og stop David.",
+        },
+      };
     }
 
     case "RESET_GAME":

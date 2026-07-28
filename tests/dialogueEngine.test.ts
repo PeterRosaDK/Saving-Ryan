@@ -701,6 +701,14 @@ describe("legacy dialogue rules", () => {
       }
     }
 
-    expect(recoveredTopics).toEqual(new Set(DIALOGUE_TOPIC_IDS));
+    expect(recoveredTopics).toEqual(
+      new Set(
+        DIALOGUE_TOPIC_IDS.filter(
+          (topic) =>
+            topic !== "david_breakup" &&
+            topic !== "david_saw_ryan",
+        ),
+      ),
+    );
   });
 });

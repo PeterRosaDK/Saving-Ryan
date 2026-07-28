@@ -7,8 +7,8 @@ interactive mystery.
 
 The tagged Director restoration is preserved as `legacy-restoration-v1`, the
 canonical Laura story is playable from intro to epilogue, phase 9's expanded
-time-loop mechanics are complete, and the phase 10 case boundary is ready for
-the first authored alternative:
+time-loop mechanics are complete, and Director’s Cut now contains the complete
+David case:
 
 - legacy Director files and the original report are preserved in `Legacy/`;
 - converted MP4 files are served from `public/Video/`;
@@ -17,10 +17,16 @@ the first authored alternative:
 - eight recovered location-music masters and the original clock sound are served
   from `public/assets/audio/`;
 - the A1–E4 location/time model is implemented as a typed state machine;
-- a main menu starts the canonical Laura case by default and exposes
-  **Mystisk case** separately without enabling unfinished content;
-- the selected case is stored at the top level of version 2 game state and
+- a main menu offers isolated **Original historie** and **Director’s Cut**
+  modes from the first launch;
+- Director’s Cut selects from an enabled case registry, currently David;
+- the selected case is stored at the top level of version 3 game state and
   survives every daily loop unchanged;
+- David’s motive, necklace possession, and movement are order-independent
+  conclusions; a documented confrontation leads to a private reconstruction
+  and an active C2 prevention rather than immediate victory;
+- Director’s Cut tracks accusations, days, core conclusions, optional evidence,
+  and a centrally configured deterministic score;
 - waiting is a two-step transition, so narration and special sequences complete
   before the time slot changes;
 - knowledge persists when evening wraps into another morning;
@@ -99,8 +105,12 @@ The completed phase 9 event matrix, time-action rules, loop-local memory, and
 validation boundary are in
 [docs/time-observation-design.md](docs/time-observation-design.md).
 The phase 10 case registry, selection lifecycle, and alternative-case
-readiness boundary are in
+implementation are in
 [docs/case-model.md](docs/case-model.md).
+Missing Director’s Cut production assets are listed in
+[docs/directors-cut-asset-manifest.md](docs/directors-cut-asset-manifest.md).
+Den målrettede David-playtest, herunder `?dcCase=david`, er beskrevet i
+[docs/david-playtest.md](docs/david-playtest.md).
 
 ## Commands
 

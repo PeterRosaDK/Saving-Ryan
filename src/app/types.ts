@@ -3,9 +3,10 @@ export type AppPhase =
   | "intro"
   | "exploration"
   | "dialogue"
+  | "reconstruction"
   | "ending";
 
-export const CASE_IDS = ["laura"] as const;
+export const CASE_IDS = ["laura", "david"] as const;
 
 export type CaseId = (typeof CASE_IDS)[number];
 
@@ -40,6 +41,20 @@ export const KNOWLEDGE_IDS = [
   "laura_confessed",
   "ryan_dismissed_warning",
   "ryan_was_saved",
+  "sarah_left_david_for_ryan",
+  "laura_dropped_necklace",
+  "david_picked_up_necklace",
+  "necklace_found_in_ryans_hand",
+  "david_followed_ryan",
+  "david_motive_conclusion",
+  "david_necklace_possession_conclusion",
+  "david_opportunity_conclusion",
+  "marie_says_david_was_hurt",
+  "david_lied_about_ryan",
+  "david_confessed",
+  "david_murder_method_known",
+  "david_reconstruction_recorded",
+  "david_prevention_plan",
 ] as const;
 
 export type KnowledgeId = (typeof KNOWLEDGE_IDS)[number];
@@ -62,6 +77,8 @@ export const DIALOGUE_TOPIC_IDS = [
   "ask_barbara_for_help",
   "warn_ryan",
   "about_sarah",
+  "david_breakup",
+  "david_saw_ryan",
 ] as const;
 
 export type DialogueTopicId = (typeof DIALOGUE_TOPIC_IDS)[number];
@@ -92,6 +109,7 @@ export type SceneInteractionId =
   | "inspect_secret_passage_book"
   | "watch_secret_passage"
   | "prevent_ryans_murder"
+  | "prevent_david_murder"
   | "inspect_barbaras_computer";
 
 export type SceneInteractionTrigger = "enter" | "manual";
@@ -120,8 +138,22 @@ export interface PendingTransition {
   beginsNewLoop: boolean;
 }
 
+export interface CaseStatistics {
+  confrontations: number;
+  wrongAccusations: number;
+  prematureAccusations: number;
+}
+
+export interface CaseProgress {
+  currentLead: string;
+  pendingInsights: KnowledgeId[];
+  statistics: CaseStatistics;
+  reconstructionAvailable: boolean;
+  reconstructionCompleted: boolean;
+}
+
 export interface GameState {
-  version: 2;
+  version: 3;
   selectedCaseId: CaseId;
   phase: AppPhase;
   location: LocationId;
@@ -131,6 +163,7 @@ export interface GameState {
   dialogue: DialogueProgress;
   loopState: LoopState;
   pendingTransition: PendingTransition | null;
+  caseProgress: CaseProgress;
 }
 
 export type GameAction =
@@ -149,4 +182,6 @@ export type GameAction =
       topic: DialogueTopicId;
       completion: "ended" | "skipped";
     }
+  | { type: "DISMISS_INSIGHTS" }
+  | { type: "COMPLETE_RECONSTRUCTION" }
   | { type: "RESET_GAME" };

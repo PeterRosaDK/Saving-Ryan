@@ -73,6 +73,7 @@ function recordInconclusiveAccusation(
   choice: DialogueChoice,
 ): GameState {
   if (
+    state.selectedCaseId === "david" ||
     choice.topic !== "accuse" ||
     isConclusiveAccusation(state, choice.person) ||
     state.loopState.dialogue.refusesFurtherDialogue.includes(
@@ -92,6 +93,29 @@ function recordInconclusiveAccusation(
           ...state.loopState.dialogue.refusesFurtherDialogue,
           choice.person,
         ],
+      },
+    },
+  };
+}
+
+function recordAccusationStatistics(
+  state: GameState,
+  choice: DialogueChoice,
+): GameState {
+  if (!choice.accusationOutcome) return state;
+  const current = state.caseProgress.statistics;
+  return {
+    ...state,
+    caseProgress: {
+      ...state.caseProgress,
+      statistics: {
+        confrontations: current.confrontations + 1,
+        wrongAccusations:
+          current.wrongAccusations +
+          (choice.accusationOutcome === "wrong" ? 1 : 0),
+        prematureAccusations:
+          current.prematureAccusations +
+          (choice.accusationOutcome === "premature" ? 1 : 0),
       },
     },
   };
@@ -143,6 +167,7 @@ export function executeDialogueChoice(
     nextState = applyKnowledgeEffects(nextState, choice.effects);
     nextState = advanceBarbaraHelp(nextState, choice);
   }
+  nextState = recordAccusationStatistics(nextState, choice);
   nextState = recordInconclusiveAccusation(nextState, choice);
 
   return {

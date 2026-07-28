@@ -22,11 +22,18 @@ import {
   START_PROLOGUE_PARAGRAPHS,
 } from "../game/introPresentation";
 import {
+  calculateCaseScore,
   DEFAULT_CASE_ID,
+  getDirectorsCutCaseOverride,
   getCaseDefinition,
-  getMysteryCaseIds,
-  selectMysteryCaseId,
+  selectDirectorsCutCase,
 } from "../game/caseDefinitions";
+import {
+  DAVID_CORE_CONCLUSIONS,
+  DAVID_OPTIONAL_EVIDENCE,
+  DAVID_RECONSTRUCTION_CARDS,
+} from "../game/davidCase";
+import { textCue } from "../media/narrativeCue";
 import {
   DIRECTOR_STAGE,
   DIRECTOR_TOOL_RECTS,
@@ -85,6 +92,30 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
   laura_confessed: "Laura har tilstået",
   ryan_dismissed_warning: "Ryan afviser advarslen",
   ryan_was_saved: "Mordet på Ryan er forhindret",
+  sarah_left_david_for_ryan: "Sarah forlod David for Ryan",
+  laura_dropped_necklace: "Laura tabte halskæden i gangen",
+  david_picked_up_necklace: "David samlede halskæden op",
+  necklace_found_in_ryans_hand:
+    "Halskæden blev fundet i Ryans hånd efter faldet",
+  david_followed_ryan:
+    "David fulgte Ryan ind i læsesalen kort før mordet",
+  david_motive_conclusion:
+    "Ryan tog Sarah fra David. David havde et stærkt personligt motiv til at konfrontere ham.",
+  david_necklace_possession_conclusion:
+    "Halskæden peger ikke automatisk på Laura. David samlede den op og var den sidste kendte person, der havde den før mordet.",
+  david_opportunity_conclusion:
+    "David fulgte Ryan ind i læsesalen få minutter før faldet. Han var den sidste kendte person, der gik efter Ryan.",
+  marie_says_david_was_hurt:
+    "Marie så, at David var knust efter bruddet",
+  david_lied_about_ryan:
+    "David nedtoner, at han fulgte lige efter Ryan",
+  david_confessed: "David har tilstået",
+  david_murder_method_known:
+    "David fulgte Ryan gennem den skjulte passage og skubbede ham impulsivt",
+  david_reconstruction_recorded:
+    "Jørgens private rekonstruktion er gemt",
+  david_prevention_plan:
+    "Plan: Stands David ved bogreolen i læsesalen ved middag",
 };
 
 function button(
@@ -238,7 +269,7 @@ function connectHotspotLabel(
 
 function renderMainMenu(root: HTMLElement, store: GameStore): void {
   const defaultCase = getCaseDefinition(DEFAULT_CASE_ID);
-  const mysteryAvailable = getMysteryCaseIds().length > 0;
+  const directorsCut = getCaseDefinition("david");
 
   root.innerHTML = `
     <main class="app-shell menu-shell">
@@ -258,7 +289,7 @@ function renderMainMenu(root: HTMLElement, store: GameStore): void {
           </p>
           <div class="case-options">
             <article class="case-option">
-              <p class="eyebrow">Standard</p>
+              <p class="eyebrow">Kanonisk forløb</p>
               <h2>${defaultCase.menu.title}</h2>
               <p>${defaultCase.menu.description}</p>
               <button
@@ -266,27 +297,22 @@ function renderMainMenu(root: HTMLElement, store: GameStore): void {
                 type="button"
                 data-start-default-case
               >
-                Start spil
+                Original historie
               </button>
             </article>
             <article class="case-option case-option--mystery">
-              <p class="eyebrow">Kuraterede variationer</p>
-              <h2>Mystisk case</h2>
+              <p class="eyebrow">Alternative sager</p>
+              <h2>${directorsCut.menu.title}</h2>
               <p id="mystery-case-description">
-                ${
-                  mysteryAvailable
-                    ? "Vælg en håndskrevet alternativ sag uden at kende gerningspersonen på forhånd."
-                    : "Den første alternative sag tilføjes som næste fortælletrin."
-                }
+                ${directorsCut.menu.description}
               </p>
               <button
                 class="secondary-action"
                 type="button"
                 data-start-mystery-case
                 aria-describedby="mystery-case-description"
-                ${mysteryAvailable ? "" : "disabled"}
               >
-                Mystisk case
+                Director’s Cut
               </button>
             </article>
           </div>
@@ -307,9 +333,19 @@ function renderMainMenu(root: HTMLElement, store: GameStore): void {
   root
     .querySelector("[data-start-mystery-case]")
     ?.addEventListener("click", () => {
-      const caseId = selectMysteryCaseId();
-      if (caseId) {
-        store.dispatch({ type: "START_CASE", caseId });
+      const selection = selectDirectorsCutCase({
+        requestedCaseId: getDirectorsCutCaseOverride(
+          window.location.search,
+        ),
+      });
+      if (selection.caseId) {
+        if (selection.source === "qa") {
+          const selectedCase = getCaseDefinition(selection.caseId);
+          console.info(
+            `[Saving Ryan QA] Tvunget Director’s Cut-case: ${selectedCase.id} (${selectedCase.menu.title}).`,
+          );
+        }
+        store.dispatch({ type: "START_CASE", caseId: selection.caseId });
       }
     });
 }
@@ -549,7 +585,8 @@ function renderKnowledge(state: GameState): string {
     return "<p class=\"empty-state\">Du har endnu ikke samlet nogen spor.</p>";
   }
 
-  return `
+  if (state.selectedCaseId !== "david") {
+    return `
     <ul class="clue-list">
       ${discoveries
         .map(
@@ -558,6 +595,50 @@ function renderKnowledge(state: GameState): string {
         )
         .join("")}
     </ul>
+  `;
+  }
+
+  const conclusions = new Set<KnowledgeId>(DAVID_CORE_CONCLUSIONS);
+  const hiddenSystemKnowledge = new Set<KnowledgeId>([
+    "david_reconstruction_recorded",
+    "david_prevention_plan",
+  ]);
+  const facts = discoveries.filter(
+    (id) => !conclusions.has(id) && !hiddenSystemKnowledge.has(id),
+  );
+  const foundConclusions = discoveries.filter((id) =>
+    conclusions.has(id),
+  );
+  const list = (ids: readonly KnowledgeId[]): string =>
+    ids.length
+      ? `<ul class="clue-list">${ids
+          .map((id) => `<li><span>${CLUE_LABELS[id]}</span></li>`)
+          .join("")}</ul>`
+      : "<p class=\"empty-state\">Ingen endnu.</p>";
+
+  return `
+    <section class="notebook-section">
+      <h3>Spor og fakta</h3>
+      ${list(facts)}
+    </section>
+    <section class="notebook-section">
+      <h3>Jørgens konklusioner</h3>
+      ${list(foundConclusions)}
+    </section>
+    <section class="notebook-section notebook-lead">
+      <h3>Aktuelt lead</h3>
+      <p>${state.caseProgress.currentLead}</p>
+    </section>
+    ${
+      state.caseProgress.reconstructionAvailable
+        ? `<details class="reconstruction-notes">
+            <summary>Læs den private rekonstruktion igen</summary>
+            <ol>${DAVID_RECONSTRUCTION_CARDS.map(
+              (card) => `<li>${card}</li>`,
+            ).join("")}</ol>
+          </details>`
+        : ""
+    }
   `;
 }
 
@@ -597,6 +678,19 @@ async function playDialogueChoice(
 
   const questionResult = await narrativeHost.play(choice.questionCue);
   if (!isCompletedPlayback(questionResult.status)) {
+    if (
+      questionResult.status !== "aborted" &&
+      choice.skipSummary
+    ) {
+      await narrativeHost.play(textCue(choice.skipSummary));
+      store.dispatch({
+        type: "COMPLETE_DIALOGUE_CHOICE",
+        person,
+        topic: choice.topic,
+        completion: "skipped",
+      });
+      return;
+    }
     if (questionResult.status !== "aborted" && status?.isConnected) {
       status.textContent =
         PLAYBACK_ERROR_LABELS[questionResult.status] ??
@@ -615,6 +709,19 @@ async function playDialogueChoice(
     }
     const answerResult = await narrativeHost.play(choice.answerCue);
     if (!isCompletedPlayback(answerResult.status)) {
+      if (
+        answerResult.status !== "aborted" &&
+        choice.skipSummary
+      ) {
+        await narrativeHost.play(textCue(choice.skipSummary));
+        store.dispatch({
+          type: "COMPLETE_DIALOGUE_CHOICE",
+          person,
+          topic: choice.topic,
+          completion: "skipped",
+        });
+        return;
+      }
       if (answerResult.status !== "aborted" && status?.isConnected) {
         status.textContent =
           PLAYBACK_ERROR_LABELS[answerResult.status] ??
@@ -630,6 +737,10 @@ async function playDialogueChoice(
       questionResult.status,
       answerResult.status,
     );
+  }
+
+  if (completion === "skipped" && choice.skipSummary) {
+    await narrativeHost.play(textCue(choice.skipSummary));
   }
 
   const current = store.getState();
@@ -710,7 +821,7 @@ function renderDialogue(
     );
     options?.append(
       button(
-        choice.label,
+        `${choice.isNewTopic && !asked ? "Nyt emne · " : ""}${choice.label}`,
         `dialogue-choice${asked ? " is-asked" : ""}`,
         () => {
           void playDialogueChoice(
@@ -738,6 +849,78 @@ function renderEnding(
   state: GameState,
   store: GameStore,
 ): void {
+  if (state.selectedCaseId === "david") {
+    const statistics = state.caseProgress.statistics;
+    const optionalFound = DAVID_OPTIONAL_EVIDENCE.filter(
+      (id) => state.knowledge[id],
+    ).length;
+    const score = calculateCaseScore(state);
+    const title =
+      score >= 1000
+        ? "Skarp efterforsker"
+        : score >= 750
+          ? "Sagen løst"
+          : "Vedholdende detektiv";
+    const playAgain = (): void => {
+      store.dispatch({ type: "RESET_GAME" });
+      const selection = selectDirectorsCutCase({
+        requestedCaseId: getDirectorsCutCaseOverride(
+          window.location.search,
+        ),
+      });
+      if (selection.caseId) {
+        if (selection.source === "qa") {
+          const selectedCase = getCaseDefinition(selection.caseId);
+          console.info(
+            `[Saving Ryan QA] Nyt spil bruger tvunget case: ${selectedCase.id} (${selectedCase.menu.title}).`,
+          );
+        }
+        store.dispatch({
+          type: "START_CASE",
+          caseId: selection.caseId,
+        });
+      }
+    };
+    root.innerHTML = `
+      <main class="app-shell ending-shell">
+        <section class="ending-card ending-card--results" aria-labelledby="ending-title" data-placeholder-asset-id="dc-david-epilogue-sequence">
+          <div class="ending-copy">
+            <p class="eyebrow">Director’s Cut · Epilog</p>
+            <h1 id="ending-title">Sagen er opklaret</h1>
+            <p>Ryan overlevede. Gruppen tilkaldte hjælp, og David blev fjernet fra situationen, før nogen kom til skade.</p>
+            <p>Stormen lagde sig i løbet af aftenen.</p>
+            <p>Næste morgen vågnede Jørgen til en ny dag. For første gang gentog gårsdagen sig ikke.</p>
+            <dl class="result-grid">
+              <div><dt>Morder</dt><dd>David</dd></div>
+              <div><dt>Dage brugt</dt><dd>${state.loop}</dd></div>
+              <div><dt>Konfrontationer</dt><dd>${statistics.confrontations}</dd></div>
+              <div><dt>Forkerte anklager</dt><dd>${statistics.wrongAccusations}</dd></div>
+              <div><dt>For tidlige anklager</dt><dd>${statistics.prematureAccusations}</dd></div>
+              <div><dt>Afgørende konklusioner</dt><dd>3/3</dd></div>
+              <div><dt>Ekstra spor</dt><dd>${optionalFound}/${DAVID_OPTIONAL_EVIDENCE.length}</dd></div>
+              <div><dt>Score</dt><dd>${score} · ${title}</dd></div>
+            </dl>
+            <p class="score-explanation">
+              Par: ${getCaseDefinition("david").score.parDays} dage.
+              Scoren justeres kun for ekstra dage, anklager og ekstra spor.
+            </p>
+            <div class="ending-actions">
+              <button class="primary-action" type="button" data-play-again>Spil igen</button>
+              <button class="secondary-action" type="button" data-restart>Tilbage til titel</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    `;
+    root
+      .querySelector("[data-play-again]")
+      ?.addEventListener("click", playAgain);
+    root.querySelector("[data-restart]")?.addEventListener("click", () => {
+      store.dispatch({ type: "RESET_GAME" });
+    });
+    return;
+  }
+
   root.innerHTML = `
     <main class="app-shell ending-shell">
       <section class="ending-card" aria-labelledby="ending-title">
@@ -774,6 +957,45 @@ function renderEnding(
   root.querySelector("[data-restart]")?.addEventListener("click", () => {
     store.dispatch({ type: "RESET_GAME" });
   });
+}
+
+function renderReconstruction(
+  root: HTMLElement,
+  store: GameStore,
+): void {
+  root.innerHTML = `
+    <main class="app-shell reconstruction-shell">
+      <section
+        class="reconstruction-card"
+        aria-labelledby="reconstruction-title"
+        data-placeholder-asset-id="dc-david-reconstruction-sequence"
+      >
+        <p class="eyebrow">Jørgens private rekonstruktion</p>
+        <h1 id="reconstruction-title">Sådan hænger sagen sammen</h1>
+        <ol>
+          ${DAVID_RECONSTRUCTION_CARDS.map(
+            (card) => `<li>${card}</li>`,
+          ).join("")}
+        </ol>
+        <p>Opsummeringen er gemt permanent i notesbogen.</p>
+        <div class="ending-actions">
+          <button class="primary-action" type="button" data-complete-reconstruction>
+            Gå ind i det sidste loop
+          </button>
+          <button class="secondary-action" type="button" data-complete-reconstruction>
+            Spring rekonstruktionen over
+          </button>
+        </div>
+      </section>
+    </main>
+  `;
+  root
+    .querySelectorAll("[data-complete-reconstruction]")
+    .forEach((element) => {
+      element.addEventListener("click", () => {
+        store.dispatch({ type: "COMPLETE_RECONSTRUCTION" });
+      });
+    });
 }
 
 async function playSceneInteraction(
@@ -813,7 +1035,10 @@ async function completePendingTransition(
 
   const specialCue =
     pending.cause.kind === "clock"
-      ? getLocationTransitionEvent(pending.cause.eventId).specialCue
+      ? getLocationTransitionEvent(
+          pending.cause.eventId,
+          store.getState().selectedCaseId,
+        ).specialCue
       : undefined;
   if (!specialCue) {
     store.dispatch({ type: "COMPLETE_TRANSITION" });
@@ -862,7 +1087,11 @@ function renderExploration(
   const sceneId = toSceneId(state.location, state.timeSlot);
   const scene = getScene(sceneId);
   const presentation = getScenePresentation(sceneId);
-  const manualInteractions = getSceneInteractions(sceneId, "manual").filter(
+  const manualInteractions = getSceneInteractions(
+    state,
+    sceneId,
+    "manual",
+  ).filter(
     (interaction) =>
       canPerformSceneInteraction(state, interaction) ||
       interaction.blockedCue !== undefined,
@@ -878,8 +1107,11 @@ function renderExploration(
   const pending = state.pendingTransition;
   const transitionCue = pending
     ? pending.cause.kind === "clock"
-      ? getLocationTransitionEvent(pending.cause.eventId).cue
-      : getSceneInteraction(pending.cause.id).timeAdvanceCue
+      ? getLocationTransitionEvent(
+          pending.cause.eventId,
+          state.selectedCaseId,
+        ).cue
+      : getSceneInteraction(pending.cause.id, state).timeAdvanceCue
     : undefined;
   const transitionText = transitionCue?.text ?? null;
   const transitionTarget = pending ? getScene(pending.to) : null;
@@ -940,6 +1172,20 @@ function renderExploration(
         </aside>
       </section>
 
+      ${
+        state.caseProgress.pendingInsights.length > 0
+          ? `<div class="insight-dialog" role="dialog" aria-modal="true" aria-labelledby="insight-title">
+              <div>
+                <p class="eyebrow">Jørgen tænker</p>
+                <h2 id="insight-title">Ny konklusion</h2>
+                ${state.caseProgress.pendingInsights
+                  .map((id) => `<p>${CLUE_LABELS[id]}</p>`)
+                  .join("")}
+                <button class="primary-action" type="button" data-dismiss-insights>Notér</button>
+              </div>
+            </div>`
+          : ""
+      }
       ${
         transitionText
           ? `<div class="transition-dialog" role="dialog" aria-modal="true" aria-labelledby="transition-title">
@@ -1135,6 +1381,11 @@ function renderExploration(
     clockAudio.currentTime = 0;
     void completePendingTransition(root, store, narrativeHost);
   });
+  root
+    .querySelector("[data-dismiss-insights]")
+    ?.addEventListener("click", () => {
+      store.dispatch({ type: "DISMISS_INSIGHTS" });
+    });
 }
 
 export function mountApp(root: HTMLElement, store: GameStore): () => void {
@@ -1182,6 +1433,11 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
 
     if (state.phase === "dialogue") {
       renderDialogue(appView, state, store, narrativeHost);
+      return;
+    }
+
+    if (state.phase === "reconstruction") {
+      renderReconstruction(appView, store);
       return;
     }
 

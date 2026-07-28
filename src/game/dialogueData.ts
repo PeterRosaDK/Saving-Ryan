@@ -10,9 +10,14 @@ import type { VideoClipId } from "../media/videoManifest";
 import {
   stillsCue,
   textCue,
+  textSequenceCue,
   videoCue,
   type NarrativeCue,
 } from "../media/narrativeCue";
+import {
+  getMissingDavidConclusionLabels,
+  hasAllDavidConclusions,
+} from "./davidCase";
 
 export const CHARACTERS = [
   "Barbara",
@@ -41,6 +46,9 @@ export interface DialogueChoice {
   effects: readonly GameEffect[];
   repeatable: boolean;
   effectsOnSkip: boolean;
+  skipSummary?: string;
+  accusationOutcome?: "wrong" | "premature" | "conclusive";
+  isNewTopic?: boolean;
 }
 
 const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
@@ -59,6 +67,8 @@ const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
   ask_barbara_for_help: "Vil du hjælpe mig med Lauras computer?",
   warn_ryan: "Ryan, du er i fare.",
   about_sarah: "Hvad skete der mellem Sarah, Laura og dig?",
+  david_breakup: "Hvordan tog David bruddet med Sarah?",
+  david_saw_ryan: "Så du Ryan gå ind foran dig?",
 };
 
 function choiceId(
@@ -77,6 +87,10 @@ function defineChoice(
     requires?: readonly KnowledgeId[];
     effects?: readonly GameEffect[];
     effectsOnSkip?: boolean;
+    label?: string;
+    skipSummary?: string;
+    accusationOutcome?: DialogueChoice["accusationOutcome"];
+    isNewTopic?: boolean;
   } = {},
 ): DialogueChoice {
   return defineCueChoice(
@@ -97,19 +111,26 @@ function defineCueChoice(
     requires?: readonly KnowledgeId[];
     effects?: readonly GameEffect[];
     effectsOnSkip?: boolean;
+    label?: string;
+    skipSummary?: string;
+    accusationOutcome?: DialogueChoice["accusationOutcome"];
+    isNewTopic?: boolean;
   } = {},
 ): DialogueChoice {
   return {
     id: choiceId(person, topic),
     person,
     topic,
-    label: TOPIC_LABELS[topic],
+    label: options.label ?? TOPIC_LABELS[topic],
     requires: options.requires ?? [],
     questionCue,
     answerCue,
     effects: options.effects ?? [],
     repeatable: true,
     effectsOnSkip: options.effectsOnSkip ?? false,
+    skipSummary: options.skipSummary,
+    accusationOutcome: options.accusationOutcome,
+    isNewTopic: options.isNewTopic,
   };
 }
 
@@ -162,6 +183,9 @@ export function isConclusiveAccusation(
   state: GameState,
   person: CharacterId,
 ): boolean {
+  if (state.selectedCaseId === "david") {
+    return person === "David" && hasAllDavidConclusions(state);
+  }
   return (
     person === "Laura" &&
     state.knowledge.ryan_left_laura &&
@@ -169,7 +193,7 @@ export function isConclusiveAccusation(
   );
 }
 
-function getSpecialChoices(
+function getLegacySpecialChoices(
   state: GameState,
   person: CharacterId,
 ): DialogueChoice[] {
@@ -400,6 +424,250 @@ function getSpecialChoices(
   return choices;
 }
 
+function getDavidAccusationAnswer(
+  state: GameState,
+  person: Exclude<CharacterId, "Ryan">,
+): NarrativeCue {
+  if (person === "Laura") {
+    return textSequenceCue(
+      [
+        "Jørgen: Halskæden er din, og Ryan havde den i hånden. Det gør dig mistænkelig.",
+        "Laura: Den er min, ja, men jeg havde den ikke, da Ryan faldt. Låsen var løs, og jeg må have tabt den i gangen.",
+        "Jørgen tænker: Mistanken var forståelig, men ejerskab er ikke det samme som besiddelse på mordtidspunktet. Jeg må fastslå, hvem der havde halskæden umiddelbart før mordet.",
+      ],
+      "dc-david-laura-wrong-accusation",
+    );
+  }
+  if (person !== "David") {
+    return textCue(
+      `${person} afviser anklagen. Jørgen har ikke beviser, der forbinder ${person} med mordet.`,
+    );
+  }
+  if (!hasAllDavidConclusions(state)) {
+    return textCue(
+      `David afviser anklagen. Jørgen mangler stadig at dokumentere ${getMissingDavidConclusionLabels(
+        state,
+      ).join(" og ")}.`,
+      "dc-david-accusation-sequence",
+    );
+  }
+  return textSequenceCue(
+    [
+      "Jørgen: Sarah forlod dig for Ryan. Du samlede Lauras halskæde op, og kort før mordet fulgte du Ryan ind i læsesalen. Halskæden lå i hans hånd, da han døde.",
+      "David: Det beviser ikke, at jeg slog ham ihjel.",
+      "Jørgen: Det beviser, at du var tæt nok på ham til, at han kunne rive kæden fra dig. Hvordan kom du op på afsatsen?",
+      "David: Ryan fandt en skjult dør bag bogreolen. Jeg så ham gå ind og fulgte efter.",
+      "David: Jeg ville tale med ham om Sarah. Han grinede bare. Han sagde, at hun endelig havde valgt rigtigt.",
+      "David: Jeg skubbede ham. Jeg havde ikke planlagt det. Da han faldt, greb han fat i kæden i min lomme.",
+      "David: Jeg gik tilbage gennem passagen og lod, som om jeg kun havde hørt skriget.",
+    ],
+    "dc-david-accusation-sequence",
+  );
+}
+
+function getDavidSpecialChoices(
+  state: GameState,
+  person: CharacterId,
+): DialogueChoice[] {
+  const choices: DialogueChoice[] = [];
+  const afterMurder = state.timeSlot >= 3;
+
+  if (afterMurder && person !== "Ryan") {
+    const outcome =
+      person !== "David"
+        ? "wrong"
+        : hasAllDavidConclusions(state)
+          ? "conclusive"
+          : "premature";
+    choices.push(
+      defineCueChoice(
+        person,
+        "alibi",
+        textCue(
+          person === "David"
+            ? "Jørgen: Hvor var du, da Ryan faldt?"
+            : `Jørgen spørger ${person} om et alibi.`,
+          person === "David" ? "dc-david-alibi-voice" : undefined,
+        ),
+        textCue(
+          person === "David"
+            ? "David: I læsesalen. Jeg gik derind for at være alene. Jeg hørte skriget ligesom alle andre."
+            : `${person} forklarer sin færden uden at blive forbundet med afsatsen.`,
+          person === "David" ? "dc-david-alibi-voice" : undefined,
+        ),
+        {
+          effectsOnSkip: true,
+          skipSummary:
+            person === "David"
+              ? "David siger, at han var alene i læsesalen og kun hørte skriget."
+              : `${person}s alibi gav ikke et nyt kernespor.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "theory",
+        textCue(
+          "Jørgen: Hvem tror du myrdede Ryan?",
+          "dc-david-suspicions-dialogue",
+        ),
+        textCue(
+          `${person}: Jeg ved det ikke. Alle virker påvirkede, men jeg så ikke selve faldet.`,
+          "dc-david-suspicions-dialogue",
+        ),
+        {
+          effectsOnSkip: true,
+          skipSummary: `${person} har ingen sikker mistanke om morderen.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "accuse",
+        textCue(
+          person === "David"
+            ? "Jørgen konfronterer David med sagen."
+            : `Jørgen anklager ${person} for mordet.`,
+          person === "David"
+            ? "dc-david-accusation-sequence"
+            : undefined,
+        ),
+        getDavidAccusationAnswer(
+          state,
+          person as Exclude<CharacterId, "Ryan">,
+        ),
+        {
+          effects:
+            outcome === "conclusive"
+              ? [
+                  { type: "LEARN", id: "david_confessed" },
+                  { type: "LEARN", id: "secret_passage_exists" },
+                  { type: "LEARN", id: "david_murder_method_known" },
+                  { type: "LEARN", id: "david_prevention_plan" },
+                ]
+              : [],
+          effectsOnSkip: true,
+          accusationOutcome: outcome,
+          skipSummary:
+            outcome === "conclusive"
+              ? "David tilstår og afslører passagen. Mordet skal stadig forhindres."
+              : "Anklagen blev afvist; efterforskningen kan fortsætte.",
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Ryan" &&
+    state.timeSlot <= 2 &&
+    state.knowledge.ryan_has_girlfriend_sarah
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "about_sarah",
+        textCue("Jørgen: Hvem er Sarah?", "dc-david-ryan-sarah-voice"),
+        textCue(
+          "Ryan: Min kæreste. Hun var sammen med David før, men det var vist ikke særlig spændende. Hun valgte heldigvis rigtigt til sidst.",
+          "dc-david-ryan-sarah-voice",
+        ),
+        {
+          label: "Hvem er Sarah?",
+          effects: [
+            { type: "LEARN", id: "sarah_left_david_for_ryan" },
+          ],
+          effectsOnSkip: true,
+          skipSummary:
+            "Sarah forlod David for Ryan; Ryan omtaler bruddet hånligt.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (person === "Marie" && state.knowledge.ryan_has_girlfriend_sarah) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "david_breakup",
+        textCue(
+          "Jørgen: Hvordan tog David bruddet med Sarah?",
+          "dc-david-marie-breakup-voice",
+        ),
+        textCue(
+          "Marie: Dårligt. Jeg fandt ham helt knust. Han prøver at lade, som om det er ligegyldigt, men Ryan gør det bestemt ikke lettere.",
+          "dc-david-marie-breakup-voice",
+        ),
+        {
+          effects: [
+            { type: "LEARN", id: "marie_says_david_was_hurt" },
+          ],
+          effectsOnSkip: true,
+          skipSummary: "Marie bekræfter, at David var knust efter bruddet.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Laura" &&
+    state.knowledge.necklace_found_in_ryans_hand
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "necklace",
+        textCue(
+          "Jørgen: Er isbjørnehalskæden din?",
+          "dc-david-laura-necklace-voice",
+        ),
+        textCue(
+          "Laura: Ja. Låsen har været løs hele dagen. Jeg må have tabt den i gangen, mens jeg talte med David.",
+          "dc-david-laura-necklace-voice",
+        ),
+        {
+          effects: [
+            { type: "LEARN", id: "laura_owns_polar_bear_necklace" },
+          ],
+          effectsOnSkip: true,
+          skipSummary:
+            "Laura ejer halskæden, men den løse lås må være sprunget op i gangen.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "David" &&
+    afterMurder &&
+    state.knowledge.david_followed_ryan
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "david_saw_ryan",
+        textCue(
+          "Jørgen: Så du Ryan gå ind foran dig?",
+          "dc-david-followup-lie-voice",
+        ),
+        textCue(
+          "David: Nej. Jeg lagde ikke mærke til ham.",
+          "dc-david-followup-lie-voice",
+        ),
+        {
+          effects: [{ type: "LEARN", id: "david_lied_about_ryan" }],
+          effectsOnSkip: true,
+          skipSummary:
+            "David benægter at have set Ryan, selv om Jørgen så ham følge efter.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  return choices;
+}
+
 export function getDialogueChoices(
   state: GameState,
   person: CharacterId,
@@ -418,5 +686,10 @@ export function getDialogueChoices(
     Object.keys(SUBJECT_TOPICS) as (keyof typeof SUBJECT_TOPICS)[]
   ).map((topic) => getSubjectChoice(state, person, topic));
 
-  return [...subjectChoices, ...getSpecialChoices(state, person)];
+  return [
+    ...subjectChoices,
+    ...(state.selectedCaseId === "david"
+      ? getDavidSpecialChoices(state, person)
+      : getLegacySpecialChoices(state, person)),
+  ];
 }

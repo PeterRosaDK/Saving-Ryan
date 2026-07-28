@@ -12,6 +12,7 @@ import {
 import {
   stillsCue,
   textCue,
+  textSequenceCue,
   type NarrativeCue,
 } from "../media/narrativeCue";
 
@@ -180,23 +181,98 @@ export const SCENE_INTERACTIONS = {
     replaces: ["inspect_secret_passage_book"],
     concludesStory: true,
   },
+  prevent_david_murder: {
+    id: "prevent_david_murder",
+    scenes: ["C2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Vent ved bogreolen",
+    requires: ["david_prevention_plan", "david_reconstruction_recorded"],
+    effects: [{ type: "LEARN", id: "ryan_was_saved" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Ryan går hen til bogreolen og trykker på en skjult mekanisme. En smal dør åbner sig.",
+        "David kommer ind og går direkte efter ham. Jørgen træder ind mellem dem.",
+        "Jørgen: Du kommer ikke med ham.",
+        "David: Flyt dig.",
+        "Jørgen: Lauras halskæde ligger i din lomme. Sarah forlod dig for Ryan. Og hvis du følger ham gennem den dør, kommer du til at slå ham ihjel.",
+        "David stivner. Da han tager hånden op af lommen, ligger den lille isbjørn i hans hånd.",
+        "Ryan når aldrig ud på afsatsen. David bryder sammen og indrømmer, hvad han havde tænkt sig at gøre.",
+      ],
+      "dc-david-prevention-sequence",
+    ),
+    replaces: ["inspect_secret_passage_book"],
+    concludesStory: true,
+  },
 } as const satisfies Record<SceneInteractionId, SceneInteraction>;
+
+const ORIGINAL_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
+  "notice_barbara_computer_expertise",
+  "inspect_barbaras_computer",
+  "eavesdrop_barbara_and_ryan",
+  "watch_secret_passage",
+  "prevent_ryans_murder",
+]);
+
+const DAVID_INTERACTION_OVERRIDES: Partial<
+  Record<SceneInteractionId, SceneInteraction>
+> = {
+  inspect_ryans_body_and_necklace: {
+    ...SCENE_INTERACTIONS.inspect_ryans_body_and_necklace,
+    effects: [{ type: "LEARN", id: "necklace_found_in_ryans_hand" }],
+    cue: stillsCue([
+      {
+        image: "sektorA3-Ryan1",
+        alt: "Ryan ligger livløs på kantinens gulv.",
+      },
+      {
+        image: "sektorA3-Ryan2",
+        alt: "Ryans knyttede hånd med den knækkede halskæde.",
+        text:
+          "Ryans højre hånd er knyttet. Mellem fingrene sidder en lille isbjørn i en knækket halskæde.",
+      },
+    ], "dc-david-body-necklace-still"),
+  },
+  inspect_girlfriend_letter: {
+    ...SCENE_INTERACTIONS.inspect_girlfriend_letter,
+    cue: stillsCue([
+      {
+        image: "sektorD4-Brev1",
+        alt: "Et sammenkrøllet brev i papirkurven.",
+      },
+      {
+        image: "sektorD4-Brev2",
+        alt: "Det romantiske brev til Ryan er foldet ud.",
+        text:
+          "I papirkurven ligger et sammenkrøllet brev til Ryan. Det er underskrevet Sarah, og tonen er tydeligt romantisk.",
+      },
+    ], "dc-david-letter-still"),
+  },
+};
 
 export function getSceneInteraction(
   id: SceneInteractionId,
+  state?: Pick<GameState, "selectedCaseId">,
 ): SceneInteraction {
-  return SCENE_INTERACTIONS[id];
+  return state?.selectedCaseId === "david"
+    ? DAVID_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id]
+    : SCENE_INTERACTIONS[id];
 }
 
 export function getSceneInteractions(
+  state: Pick<GameState, "selectedCaseId">,
   scene: SceneId,
   trigger: SceneInteractionTrigger,
 ): readonly SceneInteraction[] {
   return Object.values(SCENE_INTERACTIONS).filter(
     (interaction) =>
       (interaction.scenes as readonly SceneId[]).includes(scene) &&
-      interaction.trigger === trigger,
-  );
+      interaction.trigger === trigger &&
+      (state.selectedCaseId === "david"
+        ? !ORIGINAL_ONLY_INTERACTIONS.has(interaction.id)
+        : interaction.id !== "prevent_david_murder"),
+  ).map((interaction) => getSceneInteraction(interaction.id, state));
 }
 
 export function canPerformSceneInteraction(

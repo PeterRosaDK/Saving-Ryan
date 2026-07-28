@@ -13,7 +13,10 @@ export interface NarrativeCueResult {
 
 interface ActivePanelCue {
   token: symbol;
-  cue: Extract<NarrativeCue, { kind: "text" | "stills" }>;
+  cue: Extract<
+    NarrativeCue,
+    { kind: "text" | "stills" | "text-sequence" }
+  >;
   frameIndex: number;
   resolve: (result: NarrativeCueResult) => void;
 }
@@ -117,7 +120,11 @@ export class NarrativeHost {
     this.root.hidden = false;
     this.setActive(true);
 
-    if (cue.kind === "text" || cue.kind === "stills") {
+    if (
+      cue.kind === "text" ||
+      cue.kind === "stills" ||
+      cue.kind === "text-sequence"
+    ) {
       this.video.hidden = true;
       this.textPanel.hidden = false;
 
@@ -190,8 +197,12 @@ export class NarrativeHost {
     }
 
     if (
-      active.cue.kind === "stills" &&
-      active.frameIndex < active.cue.frames.length - 1
+      active.cue.kind !== "text" &&
+      active.frameIndex <
+        (active.cue.kind === "stills"
+          ? active.cue.frames.length
+          : active.cue.cards.length) -
+          1
     ) {
       active.frameIndex += 1;
       this.renderPanelCue();
@@ -214,6 +225,25 @@ export class NarrativeHost {
       this.textCopy.textContent = active.cue.text;
       this.status.textContent = "";
       this.continueButton.textContent = "Fortsæt";
+      return;
+    }
+
+    if (active.cue.kind === "text-sequence") {
+      const card = active.cue.cards[active.frameIndex];
+      if (!card) {
+        throw new Error("Text sequence has no card to present.");
+      }
+      this.stillImage.hidden = true;
+      this.stillImage.removeAttribute("src");
+      this.stillImage.alt = "";
+      this.textCopy.hidden = false;
+      this.textCopy.textContent = card;
+      this.status.textContent =
+        `Kort ${active.frameIndex + 1} af ${active.cue.cards.length}`;
+      this.continueButton.textContent =
+        active.frameIndex < active.cue.cards.length - 1
+          ? "Næste"
+          : "Fortsæt";
       return;
     }
 

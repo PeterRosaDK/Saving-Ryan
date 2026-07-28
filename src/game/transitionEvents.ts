@@ -1,4 +1,5 @@
 import type {
+  CaseId,
   GameEffect,
   SceneId,
   TransitionEventId,
@@ -6,6 +7,7 @@ import type {
 import {
   stillsCue,
   textCue,
+  textSequenceCue,
   videoCue,
   type NarrativeCue,
 } from "../media/narrativeCue";
@@ -178,8 +180,53 @@ export const TRANSITION_TEXT = Object.fromEntries(
   ]),
 ) as Readonly<Record<SceneId, string>>;
 
+const DAVID_TRANSITION_OVERRIDES: Partial<
+  Record<SceneId, LocationTransitionEvent>
+> = {
+  B4: defineTransitionEvent(
+    "B4",
+    "Marie forlader lokalet. Du venter lidt, før den nye morgen begynder.",
+  ),
+  C2: defineTransitionEvent(
+    "C2",
+    "Ryan går ind i læsesalen. David ser ham og følger efter. Kort efter høres et skrig fra kantinen.",
+    {
+      specialCue: textCue(
+        "David fulgte Ryan ind i læsesalen få minutter før faldet. Han var den sidste kendte person, der gik efter Ryan.",
+        "dc-david-reading-room-follow-sequence",
+      ),
+      effects: [{ type: "LEARN", id: "david_followed_ryan" }],
+    },
+  ),
+  E1: defineTransitionEvent(
+    "E1",
+    "David og Laura taler sammen i gangen, mens Ryan begynder at genere Marie.",
+    {
+      specialCue: textSequenceCue(
+        [
+          "David og Laura taler sammen i gangen, mens Ryan begynder at genere Marie.",
+          "Da Laura vender sig, hænger hendes halskæde fast. Låsen springer op, og den lille isbjørn falder på gulvet uden at hun opdager det.",
+          "David ser sig omkring, samler halskæden op og lægger den i lommen.",
+        ],
+        "dc-david-hall-necklace-sequence",
+      ),
+      effects: [
+        { type: "LEARN", id: "laura_dropped_necklace" },
+        { type: "LEARN", id: "david_picked_up_necklace" },
+      ],
+    },
+  ),
+  E2: defineTransitionEvent(
+    "E2",
+    "David og Laura holder op med at tale. David går ind i læsesalen.",
+  ),
+};
+
 export function getLocationTransitionEvent(
   id: TransitionEventId,
+  caseId: CaseId = "laura",
 ): LocationTransitionEvent {
-  return LOCATION_TRANSITION_EVENTS[id];
+  return caseId === "david"
+    ? DAVID_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id]
+    : LOCATION_TRANSITION_EVENTS[id];
 }

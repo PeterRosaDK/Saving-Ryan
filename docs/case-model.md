@@ -1,70 +1,102 @@
-# Phase 10 case model
+# Director’s Cut case model
 
-Status: foundation complete; first alternative narrative not yet authored.
+Status: David-sagen er implementeret og spilbar; Laura er fortsat det isolerede
+originalforløb.
 
-## Boundary
+## Modes og valg
 
-`CaseDefinition` is the smallest current boundary between the stable Laura game
-and future curated alternatives. A registered case declares:
+Titlen tilbyder uden progression-gate:
 
-- a stable `CaseId`;
-- whether it is the default or belongs to the mystery pool;
-- the murderer;
-- spoiler-free menu copy.
+- **Original historie**, der vælger `laura`;
+- **Director’s Cut**, der vælger én aktiveret case fra registryet.
 
-The registry currently contains only `laura`. Existing Laura dialogue,
-knowledge, transitions, interactions, confession, prevention, and ending remain
-the reference implementation and are unchanged.
+`selectedCaseId` ligger i version 3 af `GameState` og ændres aldrig af et
+dagsloop. `RESET_GAME` nulstiller viden, statistik og case-lokal state. Et nyt
+Director’s Cut-spil foretager derefter et nyt registry-valg. Poolen indeholder
+aktuelt kun `david`, men den registry-baserede selector er deterministisk
+testbar og klar til flere aktiverede cases.
 
-The first alternative must extend its definition with the concrete narrative
-data it actually needs. It must explicitly define motive, method, access,
-alibi, evidence, required knowledge, red herrings, confession, prevention, and
-ending before it is added to the playable mystery pool. The boundary should
-grow from that authored content rather than from speculative generic fields.
+Til målrettet QA læses `?dcCase=<case-id>`. Et gyldigt, aktiveret
+Director’s Cut-ID vælges deterministisk og logges i konsollen; et ukendt eller
+inaktivt ID giver en advarsel og falder tilbage til normal registry-udvælgelse.
+Parameteren bruges kun, når spilleren vælger Director’s Cut, og kan derfor ikke
+ændre Original historie. Se `docs/david-playtest.md`.
 
-## Selection lifecycle
+## Registry
 
-```text
-main menu
-  ├─ Start spil ─────> select Laura ─> intro ─> daily loops ─> ending
-  └─ Mystisk case ───> select one registered curated case once
-                                      │
-                                      └─ same case through every day reset
-```
+`src/game/caseDefinitions.ts` er den centrale liste. En case angiver stabilt ID,
+mode, enabled-flag, morder, spoilerfri menutekst og scoreparametre. Nye sager
+registreres som disabled, indtil deres egen knowledge graph, dialog, overgange,
+anklage, prevention og ending er komplette.
 
-`selectedCaseId` lives at the top level of version 2 `GameState`.
-`createInitialLoopState()` cannot change it. The evening-to-morning transition
-resets only loop-local observations and dialogue memory, while permanent
-knowledge and the selected case survive.
+Case-specifikt indhold vælges ved grænserne for:
 
-`RESET_GAME` returns to the main menu and the default Laura selection. Starting
-a case replaces the menu state with a clean intro state for that exact case.
+- transition events;
+- scene interactions;
+- dialogue choices;
+- knowledge derivation;
+- ending og score.
 
-## Mystery-case guard
+Dermed kan den delte A1–E4-geografi og state machine genbruges uden at gøre
+Laura-regler universelle.
 
-The main menu exposes **Mystisk case** separately, as required by the product
-direction. It is disabled while the mystery registry is empty. Once a complete
-curated case is registered, the selector chooses from that pool when the player
-starts a new mystery game. The chosen ID is stored immediately; randomness is
-never repeated during a daily loop.
+## David knowledge graph
 
-This prevents three failure modes:
+Kernefakta er Sarah/David-bruddet, Davids pickup af halskæden, halskæden i Ryans
+hånd og Davids bevægelse efter Ryan. De afleder tre konklusioner:
 
-- silently treating Laura as a “random” mystery case;
-- starting unfinished alternative content;
-- changing murderer or case facts when the day resets.
+1. motiv;
+2. besiddelse af halskæden umiddelbart før mordet;
+3. mulighed og bevægelse efter Ryan.
 
-## Verification
+Pickup og fund kan læres i begge rækkefølger og på forskellige dage. Først når
+alle tre konklusioner er kendt, giver en anklage mod David en tilståelse.
+Tilståelsen afslører passagen og mordmetoden, men er ikke sejr.
 
-The regression suite covers:
+I David-sagen er `necklace_found_in_ryans_hand` et neutralt faktum. Den gamle
+Laura-regel, der kombinerer `killer_dropped_necklace` med Lauras ejerskab, kører
+kun for `laura`. Lauras ejerskab kan derfor aldrig alene gøre hende skyldig i
+Director’s Cut.
 
-- Laura as the only registered default case;
-- an empty mystery pool returning no selection;
-- case start being accepted only from the menu;
-- version 2 state carrying `selectedCaseId`;
-- selected-case persistence across a new-day transition;
-- full reset returning to the menu;
-- the complete Laura golden path after menu selection.
+## Kildegrænse
 
-Save persistence and migration remain out of scope because the application
-still stores no state outside the current browser session.
+Director-dumpet er autoritativt for geografi, tider og eksisterende
+sceneplaceringer. Det bekræfter især C2-rækkefølgen: Ryan går ind i læsesalen,
+og David følger efter før skriget. Projektrapporten og den restaurerede kode
+beskriver derimod Laura som originalens tiltænkte morder og indeholder ikke den
+færdige David-forklaring. David som morder, Sarah-motivet, pickup-scenen,
+tilståelsen og preventionen kommer derfor fra den godkendte Director’s
+Cut-kanon, mens de ligger oven på den verificerede legacy-geografi.
+
+Castet indeholder `Ryan-omSaraOgDavid`, men der er ingen dokumenteret,
+semantisk sikker runtime-vej eller transskription, som beviser, at klippet siger
+den nye kanoniske replik. Det er derfor bevaret urørt og ikke genbrugt alene på
+grund af filnavnet.
+
+## Loop, rekonstruktion og prevention
+
+Efter tilståelsen starter næste morgen i fasen `reconstruction`. De fem private
+kort gemmes i notesbogen, også hvis spilleren springer visningen over. Derefter
+er `Vent ved bogreolen` tilgængelig kun i C2 og kun i David-sagen. Hvis vinduet
+misses, fortsætter mordet og loopet normalt, mens planen består.
+
+## Statistik og score
+
+Case-state tæller konfrontationer, forkerte anklager og for tidlige David-
+anklager. Antallet af dage er `loop`; kernespor og valgfri støttebeviser
+beregnes fra knowledge. David-casens verificerede `parDays` er 2:
+
+- dag 1: gangen E1; derefter brev og Ryan-dialog i middagsslot,
+  C2-bevægelsen, ligfund og tilståelse;
+- dag 2: rekonstruktion og prevention i C2.
+
+Scoren straffer kun ekstra dage og anklager og belønner de to valgfrie
+støttebeviser. Parametrene står på case-definitionen.
+
+## Text-first assets
+
+Nye scener og replikker er autoritative tekstforløb. Manglende produktion er
+registreret maskinlæsbart i
+`src/media/directorsCutAssetManifest.ts` og læsevenligt i
+`docs/directors-cut-asset-manifest.md`. Hver runtime-placeholder bærer et stabilt
+manifest-ID. Senere medier må ændre præsentationen, men ikke knowledge-effects.
