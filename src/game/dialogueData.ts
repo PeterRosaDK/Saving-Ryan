@@ -22,6 +22,10 @@ import {
   getMissingBarbaraConclusionLabels,
   hasAllBarbaraConclusions,
 } from "./barbaraCase";
+import {
+  getMissingMarieConclusionLabels,
+  hasAllMarieConclusions,
+} from "./marieCase";
 
 export const CHARACTERS = [
   "Barbara",
@@ -77,6 +81,9 @@ const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
   laura_necklace_bag: "Hvor er din isbjørnehalskæde?",
   laura_bag_access: "Hvem kunne komme til tasken?",
   barbara_time_with_ryan: "Hvor længe var du sammen med Ryan?",
+  marie_work: "Hvor meget af rapporten er dit arbejde?",
+  marie_threat: "Hvad truede Ryan dig med?",
+  marie_location: "Så du Marie vende tilbage?",
 };
 
 function choiceId(
@@ -199,6 +206,9 @@ export function isConclusiveAccusation(
   }
   if (state.selectedCaseId === "barbara") {
     return person === "Barbara" && hasAllBarbaraConclusions(state);
+  }
+  if (state.selectedCaseId === "marie") {
+    return person === "Marie" && hasAllMarieConclusions(state);
   }
   return (
     person === "Laura" &&
@@ -1035,6 +1045,241 @@ function getBarbaraSpecialChoices(
   return choices;
 }
 
+function getMarieAccusationAnswer(
+  state: GameState,
+  person: Exclude<CharacterId, "Ryan">,
+): NarrativeCue {
+  if (person !== "Marie") {
+    return textCue(
+      `${person} afviser anklagen. Flere i gruppen havde grunde til at hade Ryan, men et motiv er ikke et bevis.`,
+    );
+  }
+
+  if (!hasAllMarieConclusions(state)) {
+    const missing = getMissingMarieConclusionLabels(state);
+    if (!state.knowledge.marie_motive_conclusion) {
+      return textCue(
+        "Marie: Du har set Ryan være modbydelig. Det gør mig ikke til morder.",
+        "dc-marie-accusation-sequence",
+      );
+    }
+    if (!state.knowledge.marie_alibi_conclusion) {
+      return textCue(
+        "Marie: Du ved ikke engang, hvor jeg var.",
+        "dc-marie-accusation-sequence",
+      );
+    }
+    if (!state.knowledge.marie_physical_conclusion) {
+      return textCue(
+        "Marie: Du har intet, der placerer mig sammen med ham.",
+        "dc-marie-accusation-sequence",
+      );
+    }
+    if (!state.knowledge.marie_passage_conclusion) {
+      return textCue(
+        "Marie: Hvordan skulle jeg være kommet derop uden at nogen så mig?",
+        "dc-marie-accusation-sequence",
+      );
+    }
+    return textCue(
+      `Marie afviser anklagen. Jørgen mangler stadig ${missing.join(" og ")}.`,
+      "dc-marie-accusation-sequence",
+    );
+  }
+
+  return textSequenceCue(
+    [
+      "Jørgen: Ryan truede med at tage dit arbejde og skade Laura. Du forlod grupperummet, du kendte passagen, og papiret i hans hånd blev revet fra den side, du stadig havde resten af.",
+      "Marie: Han tog fragmentet i morges. Det beviser ikke, at jeg var på afsatsen.",
+      "Jørgen: Siden blev skrevet og rettet efter morgenens konfrontation. Rivningen er frisk, og din mappe indeholder resten.",
+      "Marie: Ryan havde taget æren for mit arbejde længe. Hver gang jeg protesterede, fik han mig til at tro, at ingen ville vælge min forklaring frem for hans.",
+      "Denne morgen sagde han, at mit navn skulle helt væk. Og at han ville fortælle alle om Laura, hvis jeg gjorde modstand.",
+      "Efter mødet gik jeg ind i læsesalen. Jeg skubbede til reolen og opdagede døren ved et tilfælde.",
+      "Senere skrev jeg siden færdig. Jeg fulgte Ryan gennem passagen for at få ham til at anerkende, at arbejdet var mit.",
+      "Han lo. Han rev i siden og sagde, at ingen ville tro mig. Så gentog han truslen mod Laura.",
+      "Marie: Jeg gik derop for at få mit arbejde tilbage. Jeg ville have ham til at sige, at det var mit. Han lo bare. Da han sagde, at han også ville bruge Laura imod mig, skubbede jeg. Jeg nåede at se, at han stadig havde papiret i hånden.",
+      "Jeg havde ikke planlagt at slå ham ihjel. Jeg tog resten af siden, gik tilbage gennem passagen og løj om, hvor længe jeg havde været væk.",
+    ],
+    "dc-marie-confession-voice",
+  );
+}
+
+function getMarieSpecialChoices(
+  state: GameState,
+  person: CharacterId,
+): DialogueChoice[] {
+  const choices: DialogueChoice[] = [];
+  const afterMurder = state.timeSlot >= 3;
+
+  if (afterMurder && person !== "Ryan") {
+    const outcome =
+      person !== "Marie"
+        ? "wrong"
+        : hasAllMarieConclusions(state)
+          ? "conclusive"
+          : "premature";
+    choices.push(
+      defineCueChoice(
+        person,
+        "alibi",
+        textCue(
+          person === "Marie"
+            ? "Jørgen: Hvor var du, da Ryan faldt?"
+            : `Jørgen spørger ${person} om et alibi.`,
+          person === "Marie" ? "dc-marie-alibi-dialogue" : undefined,
+        ),
+        textCue(
+          person === "Marie"
+            ? "Marie: I grupperummet. Jeg gik kun ud et øjeblik for at få luft og var tilbage, før jeg hørte skriget."
+            : `${person} forklarer sin færden uden at blive forbundet med papiret eller passagen.`,
+          person === "Marie" ? "dc-marie-alibi-dialogue" : undefined,
+        ),
+        {
+          effects:
+            person === "Marie"
+              ? [{ type: "LEARN", id: "marie_claimed_no_absence" }]
+              : [],
+          effectsOnSkip: true,
+          skipSummary:
+            person === "Marie"
+              ? "Marie påstår, at hun kun var væk et øjeblik, selv om hun forlod grupperummet i det afgørende tidsrum."
+              : `${person}s alibi gav ikke et nyt kernespor.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "theory",
+        textCue("Jørgen: Hvem tror du myrdede Ryan?"),
+        textCue(
+          `${person}: Jeg ved det ikke. Ryan havde gjort sig uvenner med næsten alle.`,
+        ),
+        {
+          effectsOnSkip: true,
+          skipSummary: `${person} har ingen sikker mistanke om morderen.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "accuse",
+        textCue(
+          person === "Marie"
+            ? "Jørgen konfronterer Marie med sagen."
+            : `Jørgen anklager ${person} for mordet.`,
+          person === "Marie"
+            ? "dc-marie-accusation-sequence"
+            : undefined,
+        ),
+        getMarieAccusationAnswer(
+          state,
+          person as Exclude<CharacterId, "Ryan">,
+        ),
+        {
+          effects:
+            outcome === "conclusive"
+              ? [
+                  { type: "LEARN", id: "marie_confessed" },
+                  { type: "LEARN", id: "secret_passage_exists" },
+                  { type: "LEARN", id: "marie_murder_method_known" },
+                  { type: "LEARN", id: "marie_prevention_plan" },
+                ]
+              : [],
+          effectsOnSkip: true,
+          accusationOutcome: outcome,
+          responseKey: `Marie:accuse:${person}:${outcome}`,
+          skipSummary:
+            outcome === "conclusive"
+              ? "Marie tilstår det impulsive skub og flugten gennem passagen. Hendes arbejde skal sikres, og mødet skal forhindres."
+              : "Anklagen blev afvist; efterforskningen kan fortsætte.",
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Marie" &&
+    state.knowledge.ryan_claimed_marie_work
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "marie_work",
+        textCue(
+          "Jørgen: Hvor meget af rapporten er egentlig dit arbejde?",
+          "dc-marie-work-dialogue",
+        ),
+        textCue(
+          "Marie: Analysen er min. Jeg har også gennemrettet de centrale afsnit, men Ryan afleverer siderne, som om de er hans.",
+          "dc-marie-work-dialogue",
+        ),
+        {
+          effects: [{ type: "LEARN", id: "marie_wrote_report" }],
+          effectsOnSkip: true,
+          skipSummary:
+            "Marie har skrevet analysen og gennemrettet rapportens centrale sider.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Marie" &&
+    state.knowledge.ryan_threatened_remove_marie_credit
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "marie_threat",
+        textCue(
+          "Jørgen: Hvad truede Ryan dig med?",
+          "dc-marie-threat-dialogue",
+        ),
+        textCue(
+          "Marie: Han vil fjerne mit navn. Og hvis jeg siger imod, fortæller han gruppen om Lauras fortid og får det til at lyde, som om hun er problemet.",
+          "dc-marie-threat-dialogue",
+        ),
+        {
+          effects: [{ type: "LEARN", id: "ryan_threatened_laura" }],
+          effectsOnSkip: true,
+          skipSummary:
+            "Ryan vil både fjerne Maries navn og bruge Lauras private fortid som våben.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Laura" &&
+    afterMurder &&
+    state.knowledge.marie_left_group_before_scream
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "marie_location",
+        textCue(
+          "Jørgen: Så du Marie vende tilbage?",
+          "dc-marie-dust-witness-dialogue",
+        ),
+        textCue(
+          "Laura: Ja. Hun kom fra læsesalens retning lige efter skriget. Hun rystede, og der var lyst murstøv på hendes ærme.",
+          "dc-marie-dust-witness-dialogue",
+        ),
+        {
+          effects: [{ type: "LEARN", id: "marie_returned_dusty" }],
+          effectsOnSkip: true,
+          skipSummary:
+            "Laura så Marie komme fra læsesalen, rystet og med lyst støv på ærmet.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  return choices;
+}
+
 export function getDialogueChoices(
   state: GameState,
   person: CharacterId,
@@ -1059,6 +1304,8 @@ export function getDialogueChoices(
       ? getDavidSpecialChoices(state, person)
       : state.selectedCaseId === "barbara"
         ? getBarbaraSpecialChoices(state, person)
+        : state.selectedCaseId === "marie"
+          ? getMarieSpecialChoices(state, person)
       : getLegacySpecialChoices(state, person)),
   ];
 }

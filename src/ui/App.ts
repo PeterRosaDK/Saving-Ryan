@@ -161,6 +161,45 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
     "Jørgens private Barbara-rekonstruktion er gemt",
   barbara_prevention_plan:
     "Plan: Vent ved bogreolen i læsesalen ved middag",
+  marie_wrote_report:
+    "Marie har skrevet analysen og gennemrettet centrale dele af rapporten",
+  ryan_claimed_marie_work:
+    "Ryan tager æren for Maries arbejde",
+  ryan_threatened_remove_marie_credit:
+    "Ryan vil fjerne Maries navn fra hendes eget arbejde",
+  ryan_threatened_laura:
+    "Ryan truer med at bruge Lauras private fortid mod Marie og Laura",
+  marie_discovered_passage:
+    "Marie kendte den skjulte passage før mordet",
+  marie_left_group_before_scream:
+    "Marie forlod grupperummet kort før skriget",
+  marie_claimed_no_absence:
+    "Marie påstår, at hun kun var væk et øjeblik",
+  marie_fragment_in_ryan_hand:
+    "Ryan døde med et friskrevet papirfragment i hånden",
+  marie_fragment_has_edits:
+    "Fragmentet bærer Maries karakteristiske rettelser og initialer",
+  marie_torn_page_in_folder:
+    "Maries mappe indeholder resten af den friskrevne side",
+  marie_returned_dusty:
+    "Marie vendte rystet tilbage med støv fra læsesalen på tøjet",
+  marie_motive_conclusion:
+    "Ryan var ved at udslette Maries arbejde og bruge Lauras private fortid som våben. Marie havde et stærkt, personligt motiv til at standse ham.",
+  marie_alibi_conclusion:
+    "Marie var ikke i grupperummet under hele det afgørende tidsrum. Hendes alibi dækker ikke mordøjeblikket.",
+  marie_passage_conclusion:
+    "Marie kendte passagen, før Ryan døde. Hun kunne nå afsatsen uden at blive set på den normale vej.",
+  marie_physical_conclusion:
+    "Papiret i Ryans hånd blev revet direkte fra Maries side. De må have været i fysisk kontakt umiddelbart før faldet.",
+  marie_confessed: "Marie har tilstået",
+  marie_murder_method_known:
+    "Marie fulgte Ryan gennem passagen og skubbede ham i affekt",
+  marie_reconstruction_recorded:
+    "Jørgens private Marie-rekonstruktion er gemt",
+  marie_prevention_plan:
+    "Plan: Sikr Maries arbejde og stands mødet ved passagen",
+  marie_work_secured:
+    "Maries arbejde er tidsstemplet og anerkendt foran gruppen",
 };
 
 function button(
@@ -667,10 +706,13 @@ export function getNotebookKnowledgeIds(
     .map(([id]) => id as KnowledgeId);
 }
 
-function renderKnowledge(state: GameState): string {
+export function renderKnowledge(state: GameState): string {
   const discoveries = getNotebookKnowledgeIds(state);
 
-  if (discoveries.length === 0) {
+  if (
+    discoveries.length === 0 &&
+    !isDirectorsCutCaseId(state.selectedCaseId)
+  ) {
     return "<p class=\"empty-state\">Du har endnu ikke samlet nogen spor.</p>";
   }
 
@@ -1110,7 +1152,10 @@ async function playSceneInteraction(
   const cue = canPerform ? interaction.cue : interaction.blockedCue;
   if (cue) {
     const result = await narrativeHost.play(cue);
-    if (!isCompletedPlayback(result.status)) {
+    if (
+      !isCompletedPlayback(result.status) &&
+      result.status === "aborted"
+    ) {
       return;
     }
   }
@@ -1165,13 +1210,8 @@ async function completePendingTransition(
   }
 
   if (result.status !== "aborted") {
-    if (dismiss?.isConnected) {
-      dismiss.disabled = false;
-    }
-    if (status?.isConnected) {
-      status.textContent =
-        PLAYBACK_ERROR_LABELS[result.status] ??
-        "Sekvensen blev afbrudt.";
+    if (store.getState().pendingTransition === pending) {
+      store.dispatch({ type: "COMPLETE_TRANSITION" });
     }
   }
 }

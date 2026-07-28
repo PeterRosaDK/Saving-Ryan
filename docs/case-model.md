@@ -1,6 +1,6 @@
 # Director’s Cut case model
 
-Status: David- og Barbara-sagerne er implementeret og spilbare; Laura er
+Status: David-, Barbara- og Marie-sagerne er implementeret og spilbare; Laura er
 fortsat det isolerede originalforløb.
 
 ## Modes og valg
@@ -14,14 +14,14 @@ Titlen tilbyder uden progression-gate:
 dagsloop. `RESET_GAME` nulstiller viden, statistik og case-lokal state. Et nyt
 Director’s Cut-spil foretager derefter et nyt registry-valg. Poolen indeholder
 aktuelt `david` og `barbara`; normal selection er uniform, mens injicerede
-random-værdier gør begge udfald deterministisk testbare.
+random-værdier gør alle udfald deterministisk testbare.
 
 Til målrettet QA læses `?dcCase=<case-id>`. Et gyldigt, aktiveret
 Director’s Cut-ID vælges deterministisk og logges i konsollen; et ukendt eller
 inaktivt ID giver en advarsel og falder tilbage til normal registry-udvælgelse.
 Parameteren bruges kun, når spilleren vælger Director’s Cut, og kan derfor ikke
 ændre Original historie. Se `docs/david-playtest.md` og
-`docs/barbara-playtest.md`.
+`docs/barbara-playtest.md` og `docs/marie-playtest.md`.
 
 `?qa=1` viser desuden en skjult registry-drevet vælger på titelskærmen med
 **Tilfældig case** og én mulighed pr. aktiv Director’s Cut-case. Valget
@@ -94,6 +94,24 @@ Casefiltreringen gælder også interaktioner, dialog, tilståelse, rekonstruktio
 og prevention, så en action fra en anden case afvises selv ved direkte
 state-machine-dispatch.
 
+## Marie knowledge graph
+
+Marie-casen afleder fire rækkefølgeuafhængige konklusioner:
+
+1. **Motiv:** Maries dokumenterede forfatterskab + Ryans trussel om at fjerne
+   hendes navn + truslen mod Laura.
+2. **Brudt alibi:** Marie forlader D2 før skriget + hævder bagefter, at hun kun
+   var væk et øjeblik.
+3. **Adgang:** Marie opdager passagen + passagen til afsatsen er verificeret.
+4. **Fysisk kontakt:** fragmentet i Ryans hånd + Maries rettelser/initialer +
+   resten af den friskrevne side i hendes mappe.
+
+Ingen enkelt del gør Marie skyldig. Papiret fastslår først fysisk kontakt, når
+begge stykker og de individuelle kendetegn er kendt. Motivet kræver både det
+dokumenterede arbejdsmønster og dagens konkrete trussel. Efter tilståelsen skal
+spilleren først sikre en tidsstemplet kopi og gruppens vidner i D1/D2. Først
+derefter kan mødet ved passagen standses i C2.
+
 ## Kildegrænse
 
 Director-dumpet er autoritativt for geografi, tider og eksisterende
@@ -112,7 +130,7 @@ grund af filnavnet.
 ## Loop, rekonstruktion og prevention
 
 Efter tilståelsen starter næste morgen i fasen `reconstruction`. De fem
-David-kort eller seks Barbara-kort gemmes i notesbogen, også hvis spilleren
+David-kort, seks Barbara-kort eller syv Marie-kort gemmes i notesbogen, også hvis spilleren
 springer visningen over. Derefter er `Vent ved bogreolen` tilgængelig kun i C2
 og kun med den aktuelle cases rekonstruktion og prevention-plan. Hvis vinduet
 misses, fortsætter mordet og loopet normalt, mens planen består. Barbara-finalen
@@ -140,6 +158,15 @@ støttebeviser. Barbara-casens verificerede `parDays` er 3:
 Barbara har to valgfrie støttebeviser: Maries observation ved tasken og Davids
 observation af ruten mod læsesalen. Parametrene står på case-definitionen.
 
+Maries verificerede `parDays` er 2:
+
+- dag 1: E1-konfrontationen, Maries mappe og trussel, D2-fraværet, alibiet,
+  papirfragmentet, den matchende side, støv-/passagesporet og tilståelsen;
+- dag 2: privat rekonstruktion, sikring af Maries arbejde og prevention i C2.
+
+Maries to valgfrie støttebeviser er Ryans længere mønster med at tage æren og
+Lauras observation af Marie med støv fra læsesalen.
+
 ## Text-first assets
 
 Nye scener og replikker er autoritative tekstforløb. Manglende produktion er
@@ -147,6 +174,6 @@ registreret maskinlæsbart i
 `src/media/directorsCutAssetManifest.ts` og læsevenligt i
 `docs/directors-cut-asset-manifest.md`. Hver runtime-placeholder bærer et stabilt
 manifest-ID. Senere medier må ændre præsentationen, men ikke knowledge-effects.
-Barbara bruger samme centrale manifest; der findes ikke et parallelt
+Barbara og Marie bruger samme centrale manifest; der findes ikke et parallelt
 case-manifest. Tekstfallback og skip-resumé er den autoritative semantik, så
 manglende produktion ikke blokerer progression.

@@ -11,6 +11,10 @@ import {
   BARBARA_CORE_CONCLUSIONS,
   deriveBarbaraLead,
 } from "./barbaraCase";
+import {
+  MARIE_CORE_CONCLUSIONS,
+  deriveMarieLead,
+} from "./marieCase";
 
 export const INVESTIGATION_STEP_IDS = [
   "observe_barbara_programming",
@@ -264,6 +268,43 @@ export function learnKnowledge(
     }
   }
 
+  if (state.selectedCaseId === "marie") {
+    if (
+      nextKnowledge.marie_wrote_report &&
+      nextKnowledge.ryan_threatened_remove_marie_credit &&
+      nextKnowledge.ryan_threatened_laura &&
+      !nextKnowledge.marie_motive_conclusion
+    ) {
+      nextKnowledge.marie_motive_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.marie_left_group_before_scream &&
+      nextKnowledge.marie_claimed_no_absence &&
+      !nextKnowledge.marie_alibi_conclusion
+    ) {
+      nextKnowledge.marie_alibi_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.marie_discovered_passage &&
+      nextKnowledge.secret_passage_exists &&
+      !nextKnowledge.marie_passage_conclusion
+    ) {
+      nextKnowledge.marie_passage_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.marie_fragment_in_ryan_hand &&
+      nextKnowledge.marie_fragment_has_edits &&
+      nextKnowledge.marie_torn_page_in_folder &&
+      !nextKnowledge.marie_physical_conclusion
+    ) {
+      nextKnowledge.marie_physical_conclusion = true;
+      changed = true;
+    }
+  }
+
   if (!changed) return state;
 
   const caseConclusions =
@@ -271,6 +312,8 @@ export function learnKnowledge(
       ? DAVID_CORE_CONCLUSIONS
       : state.selectedCaseId === "barbara"
         ? BARBARA_CORE_CONCLUSIONS
+        : state.selectedCaseId === "marie"
+          ? MARIE_CORE_CONCLUSIONS
         : [];
   const newlyDerived = caseConclusions.filter(
     (id) => nextKnowledge[id] && !state.knowledge[id],
@@ -296,7 +339,7 @@ export function learnKnowledge(
           currentLead: deriveDavidLead(knowledgeState),
         },
       }
-    : state.selectedCaseId === "barbara"
+      : state.selectedCaseId === "barbara"
       ? {
           ...knowledgeState,
           caseProgress: {
@@ -304,6 +347,14 @@ export function learnKnowledge(
             currentLead: deriveBarbaraLead(knowledgeState),
           },
         }
+      : state.selectedCaseId === "marie"
+        ? {
+            ...knowledgeState,
+            caseProgress: {
+              ...knowledgeState.caseProgress,
+              currentLead: deriveMarieLead(knowledgeState),
+            },
+          }
       : knowledgeState;
 }
 

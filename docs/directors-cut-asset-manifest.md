@@ -50,3 +50,25 @@ og fuldt spilbare.
 
 Manifestet indeholder desuden præcis replik/billedbeskrivelse, levering,
 kontekst før/efter og case-ID for hvert behov.
+
+## Marie
+
+| Asset-ID | Scene | Type | Person | Prioritet | Genbrug | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `dc-marie-morning-humiliation-sequence` | E1 | sequence | Marie/Ryan | nødvendig | legacy E1 som semantisk grundlag | placeholder |
+| `dc-marie-work-folder-sequence` | D1–D4 | still | dokument | nødvendig | ingen | placeholder |
+| `dc-marie-work-dialogue` | Marie-dialog | voice | Marie | ønskelig | ingen | placeholder |
+| `dc-marie-threat-dialogue` | Marie-dialog | voice | Marie | nødvendig | legacy-fortrolighed afvist semantisk | placeholder |
+| `dc-marie-passage-discovery-sequence` | C1 | sequence | Marie | nødvendig | neutral læsesalsbaggrund | placeholder |
+| `dc-marie-leaves-group-sequence` | D2 | sequence | Marie | nødvendig | legacy D2 som semantisk grundlag | placeholder |
+| `dc-marie-alibi-dialogue` | Marie-dialog | voice | Marie | nødvendig | legacy-alibi ikke godkendt | placeholder |
+| `dc-marie-body-fragment-still` | A3/A4 | still | fortæller | nødvendig | eksisterende bodystills som baggrund | placeholder |
+| `dc-marie-torn-page-comparison` | D3/D4 | still | dokument | nødvendig | ingen | placeholder |
+| `dc-marie-dust-witness-dialogue` | Laura-dialog | voice | Laura | ønskelig | ingen | placeholder |
+| `dc-marie-passage-trace-sequence` | C3/C4 | still | fortæller | nødvendig | neutral læsesalsbaggrund | placeholder |
+| `dc-marie-accusation-sequence` | konfrontation | sequence | Jørgen/Marie | nødvendig | ingen | placeholder |
+| `dc-marie-confession-voice` | tilståelse | voice | Marie | nødvendig | ingen | placeholder |
+| `dc-marie-reconstruction-sequence` | sidste morgen | sequence | Jørgen | nødvendig | ingen | placeholder |
+| `dc-marie-secure-work-sequence` | D1/D2-finalen | sequence | gruppen | nødvendig | ingen | placeholder |
+| `dc-marie-prevention-sequence` | C2-finalen | sequence | Jørgen/Marie/Ryan | nødvendig | ingen | placeholder |
+| `dc-marie-epilogue-sequence` | epilog | sequence | fortæller | ønskelig | ingen | placeholder |

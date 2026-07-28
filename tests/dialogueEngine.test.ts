@@ -737,7 +737,10 @@ describe("legacy dialogue rules", () => {
             topic !== "david_saw_ryan" &&
             topic !== "laura_necklace_bag" &&
             topic !== "laura_bag_access" &&
-            topic !== "barbara_time_with_ryan",
+            topic !== "barbara_time_with_ryan" &&
+            topic !== "marie_work" &&
+            topic !== "marie_threat" &&
+            topic !== "marie_location",
         ),
       ),
     );

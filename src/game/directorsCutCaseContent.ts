@@ -9,6 +9,11 @@ import {
   DAVID_OPTIONAL_EVIDENCE,
   DAVID_RECONSTRUCTION_CARDS,
 } from "./davidCase";
+import {
+  MARIE_CORE_CONCLUSIONS,
+  MARIE_OPTIONAL_EVIDENCE,
+  MARIE_RECONSTRUCTION_CARDS,
+} from "./marieCase";
 
 export type DirectorsCutCaseId = Exclude<CaseId, "laura">;
 
@@ -66,6 +71,27 @@ export const DIRECTORS_CUT_CASE_CONTENT: Readonly<
     ],
     reconstructionAssetId: "dc-barbara-reconstruction-sequence",
     epilogueAssetId: "dc-barbara-epilogue-sequence",
+  },
+  marie: {
+    caseId: "marie",
+    coreConclusions: MARIE_CORE_CONCLUSIONS,
+    optionalEvidence: MARIE_OPTIONAL_EVIDENCE,
+    reconstructionCards: MARIE_RECONSTRUCTION_CARDS,
+    confessionKnowledgeId: "marie_confessed",
+    reconstructionKnowledgeId: "marie_reconstruction_recorded",
+    preventionPlanKnowledgeId: "marie_prevention_plan",
+    startLead:
+      "Find ud af, hvad Ryan truede Marie med, og hvor meget af rapporten der faktisk er hendes arbejde.",
+    finalLead:
+      "Sikr Maries arbejde i grupperummet, og stands derefter mødet ved passagen.",
+    epilogue: [
+      "Ryan overlevede. Maries tidsstemplede sider og gruppens vidner gjorde det umuligt for ham at udslette hendes bidrag.",
+      "Marie fulgte ikke Ryan ind i passagen. Laura blev ikke udstillet som led i hans trussel, og Marie stod ikke længere alene med ham.",
+      "Stormen lagde sig i løbet af aftenen.",
+      "Næste morgen vågnede Jørgen til en ny dag. For første gang gentog gårsdagen sig ikke.",
+    ],
+    reconstructionAssetId: "dc-marie-reconstruction-sequence",
+    epilogueAssetId: "dc-marie-epilogue-sequence",
   },
 };
 

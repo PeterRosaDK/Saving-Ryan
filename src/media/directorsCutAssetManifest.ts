@@ -11,7 +11,7 @@ export type DirectorsCutAssetType =
 
 export interface DirectorsCutAssetNeed {
   id: string;
-  caseId: "david" | "barbara";
+  caseId: "david" | "barbara" | "marie";
   scene: string;
   type: DirectorsCutAssetType;
   person: string;
@@ -40,6 +40,16 @@ function barbaraNeed(
   return {
     ...value,
     caseId: "barbara",
+    status: "placeholder",
+  };
+}
+
+function marieNeed(
+  value: Omit<DirectorsCutAssetNeed, "caseId" | "status">,
+): DirectorsCutAssetNeed {
+  return {
+    ...value,
+    caseId: "marie",
     status: "placeholder",
   };
 }
@@ -509,6 +519,233 @@ export const DIRECTORS_CUT_ASSET_MANIFEST = [
     delivery: "Rolig forløsning med tydelig afslutning for alle centrale tråde.",
     before: "Mordet er forhindret.",
     after: "Resultatkortet viser fire af fire konklusioner.",
+    priority: "ønskelig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-morning-humiliation-sequence",
+    scene: "E1, morgen til middag",
+    type: "sequence",
+    person: "Marie og Ryan",
+    exactContent:
+      "Ryan tager en gennemrettet projektside, kalder arbejdet ubrugeligt og siger, at Maries navn bliver fjernet.",
+    delivery: "Offentlig, kontrollerende ydmygelse; Marie er vred og såret.",
+    before: "Jørgen opholder sig i gangen om morgenen.",
+    after: "Ryans krav om Maries arbejde og navn registreres.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Legacy E1 bekræfter mobningen, men intet klip dokumenterer den nye ordlyd.",
+  }),
+  marieNeed({
+    id: "dc-marie-work-folder-sequence",
+    scene: "D1–D4, Maries projektmappe",
+    type: "still",
+    person: "Dokument",
+    exactContent:
+      "Maries initialer og karakteristiske røde rettelser går igen på analysesider, som matcher fællesrapporten.",
+    delivery: "Læsbar, neutral dokumentation af forfatterskab.",
+    before: "Jørgen undersøger Maries projektmappe.",
+    after: "Maries væsentlige arbejde registreres som faktum.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-work-dialogue",
+    scene: "Dialog med Marie",
+    type: "voice",
+    person: "Marie",
+    exactContent:
+      "Analysen er min. Jeg har også gennemrettet de centrale afsnit, men Ryan afleverer siderne, som om de er hans.",
+    delivery: "Forsigtig, men præcis og efterhånden mere fast.",
+    before: "Jørgen spørger, hvor meget af rapporten der er hendes.",
+    after: "Maries forfatterskab registreres.",
+    priority: "ønskelig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-threat-dialogue",
+    scene: "Dialog med Marie efter morgenkonfrontationen",
+    type: "voice",
+    person: "Marie",
+    exactContent:
+      "Ryan vil fjerne hendes navn og bruge Lauras private fortid mod dem, hvis Marie protesterer.",
+    delivery: "Lavmælt og skamfuld over at gentage truslen, ikke anklagende.",
+    before: "Jørgen har set Ryans krav om Maries arbejde.",
+    after: "Den konkrete trussel mod Laura registreres.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Marie-Fortrolighed-klippene bevares til Original historie; ny semantik kræver tekstfallback.",
+  }),
+  marieNeed({
+    id: "dc-marie-passage-discovery-sequence",
+    scene: "C1, morgen til middag",
+    type: "sequence",
+    person: "Marie",
+    exactContent:
+      "Marie søger ind i læsesalen, støtter sig til bogreolen og opdager tilfældigt den skjulte dør uden at gå hele vejen.",
+    delivery: "Stille chok og nysgerrighed; scenen må ikke fremstå som mordplanlægning.",
+    before: "Marie er blevet ydmyget.",
+    after: "Hendes forhåndskendskab til passagen registreres neutralt.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "sektorC1 kan bruges som neutral læsesalsbaggrund; legacy har ingen Marie-passagehandling.",
+  }),
+  marieNeed({
+    id: "dc-marie-leaves-group-sequence",
+    scene: "D2, middag til eftermiddag",
+    type: "sequence",
+    person: "Marie",
+    exactContent:
+      "Marie lægger mappen fra sig, forlader grupperummet kort før skriget og vender senere rystet tilbage.",
+    delivery: "Observerende og tidsligt præcis uden at vise mordet.",
+    before: "Jørgen er i grupperummet ved middag.",
+    after: "Maries fravær registreres.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Legacy D2 fastslår, at Marie går før skriget, og er semantisk grundlag for teksten.",
+  }),
+  marieNeed({
+    id: "dc-marie-alibi-dialogue",
+    scene: "Dialog med Marie efter mordet",
+    type: "voice",
+    person: "Marie",
+    exactContent:
+      "Marie hævder, at hun var i grupperummet og kun gik ud et øjeblik for at få luft.",
+    delivery: "Rystet, kortfattet og bevidst upræcis.",
+    before: "Jørgen spørger til mordøjeblikket.",
+    after: "Påstanden kan sammenholdes med D2-observationen.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Marie-omAlibi er ikke genbrugt uden dokumenteret transskription af den nye casepåstand.",
+  }),
+  marieNeed({
+    id: "dc-marie-body-fragment-still",
+    scene: "A3/A4, Ryans hånd",
+    type: "still",
+    person: "Fortæller",
+    exactContent:
+      "Et friskrevet papirfragment i Ryans hånd med røde rettelser, initialerne M.S. og en halv håndskrevet sætning.",
+    delivery: "Nøgtern gerningsstedsdetalje uden skyldkonklusion.",
+    before: "Jørgen undersøger liget.",
+    after: "Fragmentet kan sammenlignes med Maries mappe.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "sektorA3-Ryan1 / sektorA3-Ryan2 kan bære tekstfallback, men viser ikke papiret.",
+  }),
+  marieNeed({
+    id: "dc-marie-torn-page-comparison",
+    scene: "D3/D4, dokumentundersøgelse",
+    type: "still",
+    person: "Dokument",
+    exactContent:
+      "Fragment og friskrevet side vises side om side; tekst, initialer og ujævnt rivemønster passer fysisk sammen.",
+    delivery: "Kriminalteknisk tydelig og uden ekstra fortolkning.",
+    before: "Fragmentet er fundet i Ryans hånd.",
+    after: "Den fysiske kontaktkonklusion udledes.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-dust-witness-dialogue",
+    scene: "Dialog med Laura efter mordet",
+    type: "voice",
+    person: "Laura",
+    exactContent:
+      "Laura så Marie komme fra læsesalens retning, rystet og med lyst murstøv på ærmet.",
+    delivery: "Bekymret og forsigtig; Laura så ikke selve mordet.",
+    before: "Jørgen spørger, om Laura så Marie vende tilbage.",
+    after: "Et valgfrit støttebevis og et lead mod læsesalen registreres.",
+    priority: "ønskelig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-passage-trace-sequence",
+    scene: "C3/C4, læsesalen",
+    type: "still",
+    person: "Fortæller",
+    exactContent:
+      "Lyst murstøv bag bogreolen matcher Maries ærme, og hendes håndaftryk bryder støvlaget ved mekanismen.",
+    delivery: "Nøgtern fysisk observation.",
+    before: "Laura har bemærket støvet på Marie.",
+    after: "Maries kendskab til passagen registreres.",
+    priority: "nødvendig",
+    reuseCandidate: "sektorC3 som neutral baggrund; selve sporet mangler.",
+  }),
+  marieNeed({
+    id: "dc-marie-accusation-sequence",
+    scene: "Kvalificeret eller for tidlig anklage efter mordet",
+    type: "sequence",
+    person: "Jørgen og Marie",
+    exactContent:
+      "Jørgen fremlægger kun de beviskategorier, han faktisk har; Marie afviser tidlige anklager og presses af den fulde kæde.",
+    delivery: "Bevisbaseret, alvorlig og uden at frikende handlingen.",
+    before: "Spilleren anklager Marie.",
+    after: "Efterforskningen fortsætter eller tilståelsen begynder.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-confession-voice",
+    scene: "Den dokumenterede konfrontation",
+    type: "voice",
+    person: "Marie",
+    exactContent:
+      "Marie forklarer det langvarige tyveri af hendes arbejde, dagens trussel, passagefundet, den iturevne side, det impulsive skub og løgnen bagefter.",
+    delivery: "Sammenbrudt og præcis; anger uden krav om frifindelse.",
+    before: "Alle fire kernekonklusioner er kendt.",
+    after: "Mordmetoden og den aktive prevention-plan er kendt.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-reconstruction-sequence",
+    scene: "Næste morgen efter tilståelsen",
+    type: "sequence",
+    person: "Jørgen",
+    exactContent:
+      "Syv private kort om nedbrydning, trussel, passage, konfrontation, papirspor, mord og plan.",
+    delivery: "Kort, empatisk og analytisk.",
+    before: "Dagen nulstilles efter tilståelsen.",
+    after: "Rekonstruktionen gemmes og finaleloopet begynder.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-secure-work-sequence",
+    scene: "D1/D2, sidste loop",
+    type: "sequence",
+    person: "Jørgen, Marie, Laura, David og Ryan",
+    exactContent:
+      "Jørgen tager tidsstemplede kopier, får gruppens vidner og dokumenterer Maries forfatterskab og Ryans trussel.",
+    delivery: "Fast og praktisk; dette fjerner Ryans konkrete magtmiddel.",
+    before: "Rekonstruktionen er gennemført.",
+    after: "Maries arbejde er sikret, men mødet ved passagen skal stadig standses.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-prevention-sequence",
+    scene: "C2, sidste loop",
+    type: "sequence",
+    person: "Jørgen, Marie og Ryan",
+    exactContent:
+      "Jørgen møder Marie før passagen, fortæller at hendes arbejde er sikret og forhindrer, at hun følger Ryan alene.",
+    delivery: "Anspændt og menneskelig; ingen fysisk kamp.",
+    before: "Maries arbejde er sikret.",
+    after: "Ryan overlever.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  marieNeed({
+    id: "dc-marie-epilogue-sequence",
+    scene: "Efter prevention",
+    type: "sequence",
+    person: "Fortæller",
+    exactContent:
+      "Ryan overlever, Maries arbejde anerkendes, Laura udstilles ikke, stormen lægger sig, og dagen gentager sig ikke.",
+    delivery: "Rolig forløsning uden at bagatellisere den afværgede handling.",
+    before: "Mødet på afsatsen er forhindret.",
+    after: "Resultatkortet vises.",
     priority: "ønskelig",
     reuseCandidate: null,
   }),

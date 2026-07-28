@@ -6,7 +6,7 @@ export type AppPhase =
   | "reconstruction"
   | "ending";
 
-export const CASE_IDS = ["laura", "david", "barbara"] as const;
+export const CASE_IDS = ["laura", "david", "barbara", "marie"] as const;
 
 export type CaseId = (typeof CASE_IDS)[number];
 
@@ -77,6 +77,26 @@ export const KNOWLEDGE_IDS = [
   "barbara_murder_method_known",
   "barbara_reconstruction_recorded",
   "barbara_prevention_plan",
+  "marie_wrote_report",
+  "ryan_claimed_marie_work",
+  "ryan_threatened_remove_marie_credit",
+  "ryan_threatened_laura",
+  "marie_discovered_passage",
+  "marie_left_group_before_scream",
+  "marie_claimed_no_absence",
+  "marie_fragment_in_ryan_hand",
+  "marie_fragment_has_edits",
+  "marie_torn_page_in_folder",
+  "marie_returned_dusty",
+  "marie_motive_conclusion",
+  "marie_alibi_conclusion",
+  "marie_passage_conclusion",
+  "marie_physical_conclusion",
+  "marie_confessed",
+  "marie_murder_method_known",
+  "marie_reconstruction_recorded",
+  "marie_prevention_plan",
+  "marie_work_secured",
 ] as const;
 
 export type KnowledgeId = (typeof KNOWLEDGE_IDS)[number];
@@ -104,6 +124,9 @@ export const DIALOGUE_TOPIC_IDS = [
   "laura_necklace_bag",
   "laura_bag_access",
   "barbara_time_with_ryan",
+  "marie_work",
+  "marie_threat",
+  "marie_location",
 ] as const;
 
 export type DialogueTopicId = (typeof DIALOGUE_TOPIC_IDS)[number];
@@ -137,9 +160,14 @@ export type SceneInteractionId =
   | "prevent_ryans_murder"
   | "prevent_david_murder"
   | "prevent_barbara_murder"
+  | "prevent_marie_murder"
   | "inspect_barbaras_computer"
   | "inspect_barbara_building_plans"
-  | "compare_barbara_timestamps";
+  | "compare_barbara_timestamps"
+  | "inspect_marie_folder"
+  | "inspect_marie_torn_page"
+  | "inspect_marie_passage_trace"
+  | "secure_marie_work";
 
 export type SceneInteractionTrigger = "enter" | "manual";
 

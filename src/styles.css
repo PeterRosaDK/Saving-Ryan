@@ -113,6 +113,7 @@ button {
 .case-option {
   display: flex;
   align-items: start;
+  min-width: 0;
   min-height: 250px;
   padding: clamp(24px, 4vw, 38px);
   border: 1px solid var(--line);
@@ -142,6 +143,7 @@ button {
 
 .qa-case-picker {
   display: grid;
+  min-width: 0;
   width: 100%;
   gap: 8px;
   margin: 12px 0 24px;
@@ -159,6 +161,8 @@ button {
 }
 
 .qa-case-picker select {
+  min-width: 0;
+  max-width: 100%;
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--line);
@@ -171,6 +175,7 @@ button {
 .qa-case-picker small {
   color: rgba(244, 240, 231, 0.62);
   line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .intro-score {
@@ -1124,6 +1129,8 @@ button {
 
 @media (max-width: 500px) {
   .main-menu-copy {
+    min-width: 0;
+    width: 100%;
     padding: 28px 20px;
   }
 

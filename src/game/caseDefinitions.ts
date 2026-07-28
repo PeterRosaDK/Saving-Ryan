@@ -88,6 +88,25 @@ export const CASE_DEFINITIONS: Readonly<
       optionalEvidenceBonus: 25,
     },
   },
+  marie: {
+    id: "marie",
+    mode: "directors_cut",
+    enabled: true,
+    murderer: "Marie",
+    menu: {
+      title: "Director’s Cut",
+      description:
+        "Spil en alternativ version, hvor morderen vælges tilfældigt blandt de tilgængelige Director’s Cut-sager.",
+    },
+    score: {
+      parDays: 2,
+      base: 1000,
+      extraDayPenalty: 100,
+      wrongAccusationPenalty: 100,
+      prematureAccusationPenalty: 50,
+      optionalEvidenceBonus: 25,
+    },
+  },
 };
 
 export function getCaseDefinition(caseId: CaseId): CaseDefinition {

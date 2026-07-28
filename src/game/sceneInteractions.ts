@@ -283,6 +283,117 @@ export const SCENE_INTERACTIONS = {
       "inspect_barbara_building_plans",
     ],
   },
+  inspect_marie_folder: {
+    id: "inspect_marie_folder",
+    scenes: ["D1", "D2", "D3", "D4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Undersøg Maries projektmappe",
+    requires: [],
+    effects: [{ type: "LEARN", id: "marie_wrote_report" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Maries mappe er fuld af gennemrettede analysesider. De samme formuleringer står næsten ordret i gruppens fælles rapport.",
+        "Hendes initialer og et konsekvent system af røde rettelser går igen side efter side.",
+        "Det er ikke sporadisk korrektur. Marie har skrevet og gennemarbejdet en væsentlig del af rapporten.",
+      ],
+      "dc-marie-work-folder-sequence",
+    ),
+  },
+  inspect_marie_torn_page: {
+    id: "inspect_marie_torn_page",
+    scenes: ["D3", "D4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Sammenlign fragmentet med Maries mappe",
+    requires: ["marie_fragment_in_ryan_hand"],
+    effects: [{ type: "LEARN", id: "marie_torn_page_in_folder" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Øverst i Maries mappe ligger en nyskrevet side med en frisk, ujævn rivning langs kanten.",
+        "Fragmentet fra Ryans hånd fuldender både sætningen, Maries initialer og selve rivemønstret.",
+        "Papiret blev revet over, mens Ryan og Marie stod sammen.",
+      ],
+      "dc-marie-torn-page-comparison",
+    ),
+    replaces: ["inspect_marie_folder"],
+  },
+  inspect_marie_passage_trace: {
+    id: "inspect_marie_passage_trace",
+    scenes: ["C3", "C4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Undersøg støvet ved bogreolen",
+    requires: ["marie_returned_dusty"],
+    effects: [
+      { type: "LEARN", id: "marie_discovered_passage" },
+      { type: "LEARN", id: "secret_passage_exists" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Bag bogreolen ligger det samme lyse murstøv, som sidder på Maries ærme.",
+        "Et aftryk fra hendes hånd bryder støvlaget ved den skjulte mekanisme.",
+        "Hun må have åbnet passagen, før Ryan døde.",
+      ],
+      "dc-marie-passage-trace-sequence",
+    ),
+    replaces: ["inspect_secret_passage_book"],
+  },
+  secure_marie_work: {
+    id: "secure_marie_work",
+    scenes: ["D1", "D2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Sikr Maries arbejde foran gruppen",
+    requires: [
+      "marie_prevention_plan",
+      "marie_reconstruction_recorded",
+    ],
+    effects: [{ type: "LEARN", id: "marie_work_secured" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen samler gruppen omkring Maries mappe og tager tidsstemplede kopier af hendes analyser.",
+        "Laura og David bekræfter, at rettelserne og formuleringerne er Maries. Kopierne bliver sendt til vejlederen med alle som vidner.",
+        "Jørgen gør det klart for Ryan, at Maries navn ikke kan fjernes, og at enhver trussel mod Laura vil blive dokumenteret.",
+        "Marie ser på kopierne. For første gang denne dag står hendes arbejde ikke kun i Ryans hænder.",
+      ],
+      "dc-marie-secure-work-sequence",
+    ),
+  },
+  prevent_marie_murder: {
+    id: "prevent_marie_murder",
+    scenes: ["C2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Stands Marie ved passagen",
+    requires: [
+      "marie_prevention_plan",
+      "marie_reconstruction_recorded",
+      "marie_work_secured",
+    ],
+    effects: [{ type: "LEARN", id: "ryan_was_saved" }],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen venter ved den skjulte dør, før Ryan når afsatsen.",
+        "Marie kommer med den rettede side i hånden. Jørgen træder frem, inden hun kan følge Ryan alene.",
+        "Jørgen: Dit arbejde er sikret. Ryan kan ikke fjerne dit navn, og Laura står ikke alene med hans trussel.",
+        "Marie: Jeg troede, der ikke var nogen anden vej.",
+        "Jørgen: Der var en anden vej. Du skulle bare ikke stå alene med ham.",
+        "Ryan bliver kaldt tilbage til gruppen. Mødet på afsatsen finder aldrig sted.",
+      ],
+      "dc-marie-prevention-sequence",
+    ),
+    replaces: [
+      "inspect_secret_passage_book",
+      "inspect_marie_passage_trace",
+    ],
+    concludesStory: true,
+  },
 } as const satisfies Record<SceneInteractionId, SceneInteraction>;
 
 const LAURA_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
@@ -300,6 +411,14 @@ const BARBARA_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
   "prevent_barbara_murder",
   "inspect_barbara_building_plans",
   "compare_barbara_timestamps",
+]);
+
+const MARIE_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
+  "prevent_marie_murder",
+  "inspect_marie_folder",
+  "inspect_marie_torn_page",
+  "inspect_marie_passage_trace",
+  "secure_marie_work",
 ]);
 
 const DAVID_STORY_INTERACTIONS = new Set<SceneInteractionId>([
@@ -401,6 +520,34 @@ const BARBARA_INTERACTION_OVERRIDES: Partial<
   },
 };
 
+const MARIE_INTERACTION_OVERRIDES: Partial<
+  Record<SceneInteractionId, SceneInteraction>
+> = {
+  inspect_ryans_body_and_necklace: {
+    ...SCENE_INTERACTIONS.inspect_ryans_body_and_necklace,
+    label: "Undersøg liget og papirfragmentet",
+    effects: [
+      { type: "LEARN", id: "marie_fragment_in_ryan_hand" },
+      { type: "LEARN", id: "marie_fragment_has_edits" },
+    ],
+    cue: stillsCue(
+      [
+        {
+          image: "sektorA3-Ryan1",
+          alt: "Ryan ligger livløs på kantinens gulv.",
+        },
+        {
+          image: "sektorA3-Ryan2",
+          alt: "Ryans knyttede hånd med et iturevet papirfragment.",
+          text:
+            "I Ryans hånd sidder et friskrevet papirfragment. Det bærer røde rettelser, initialerne M.S. og den halve ende af en håndskrevet sætning.",
+        },
+      ],
+      "dc-marie-body-fragment-still",
+    ),
+  },
+};
+
 export function getSceneInteraction(
   id: SceneInteractionId,
   state?: Pick<GameState, "selectedCaseId">,
@@ -411,6 +558,10 @@ export function getSceneInteraction(
 
   if (state?.selectedCaseId === "barbara") {
     return BARBARA_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
+  }
+
+  if (state?.selectedCaseId === "marie") {
+    return MARIE_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
   }
 
   return SCENE_INTERACTIONS[id];
@@ -427,14 +578,23 @@ export function getSceneInteractions(
       interaction.trigger === trigger &&
       (state.selectedCaseId === "laura"
         ? !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
-          !BARBARA_ONLY_INTERACTIONS.has(interaction.id)
+          !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
+          !MARIE_ONLY_INTERACTIONS.has(interaction.id)
         : state.selectedCaseId === "david"
           ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
             !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
-            !BARBARA_ONLY_INTERACTIONS.has(interaction.id)
-          : !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
-            !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
-            interaction.id !== "inspect_girlfriend_letter"),
+            !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
+            !MARIE_ONLY_INTERACTIONS.has(interaction.id)
+          : state.selectedCaseId === "barbara"
+            ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
+              !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+              !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
+              interaction.id !== "inspect_girlfriend_letter"
+            : !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
+              !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+              !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
+              !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
+              interaction.id !== "inspect_girlfriend_letter"),
   ).map((interaction) => getSceneInteraction(interaction.id, state));
 }
 

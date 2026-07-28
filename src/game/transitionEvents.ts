@@ -271,6 +271,70 @@ const BARBARA_TRANSITION_OVERRIDES: Partial<
   ),
 };
 
+const MARIE_TRANSITION_OVERRIDES: Partial<
+  Record<SceneId, LocationTransitionEvent>
+> = {
+  B4: defineTransitionEvent(
+    "B4",
+    "Marie forlader lokalet. Du venter lidt, før den nye morgen begynder.",
+  ),
+  C1: defineTransitionEvent(
+    "C1",
+    "Marie kommer ind for at være alene. Da hun støtter sig til bogreolen, giver den efter med en tung, skrabende lyd.",
+    {
+      specialCue: textSequenceCue(
+        [
+          "Marie kommer ind i læsesalen, tydeligt rystet efter mødet med Ryan.",
+          "Hun læner sig hårdt mod bogreolen. En skjult mekanisme klikker, og en smal dør glider nogle centimeter til side.",
+          "Marie stirrer ind i mørket, lukker døren igen og går. Hun ved nu, at passagen findes.",
+        ],
+        "dc-marie-passage-discovery-sequence",
+      ),
+      effects: [
+        { type: "LEARN", id: "marie_discovered_passage" },
+        { type: "LEARN", id: "secret_passage_exists" },
+      ],
+    },
+  ),
+  D2: defineTransitionEvent(
+    "D2",
+    "Marie lægger sin mappe fra sig og forlader grupperummet kort før skriget.",
+    {
+      specialCue: textCue(
+        "Marie er væk i det afgørende tidsrum. Da hun vender tilbage, er hun rystet og har lyst støv på ærmet.",
+        "dc-marie-leaves-group-sequence",
+      ),
+      effects: [
+        { type: "LEARN", id: "marie_left_group_before_scream" },
+      ],
+    },
+  ),
+  E1: defineTransitionEvent(
+    "E1",
+    "Ryan standser Marie i gangen og taler højt nok til, at de nærmeste kan høre ham.",
+    {
+      specialCue: textSequenceCue(
+        [
+          "Ryan vifter med en gennemrettet projektside foran Marie.",
+          "Ryan: Det her kan ikke bruges. Jeg skriver afsnittet om og afleverer det som mit.",
+          "Marie: Det er allerede mit afsnit. Det er mig, der har lavet analysen.",
+          "Ryan: Ikke når dit navn er væk. Ingen tror alligevel, at du kunne have skrevet det.",
+          "Han tager siden med sig og efterlader Marie ydmyget i gangen.",
+        ],
+        "dc-marie-morning-humiliation-sequence",
+      ),
+      effects: [
+        { type: "LEARN", id: "ryan_bullied_marie" },
+        { type: "LEARN", id: "ryan_claimed_marie_work" },
+        {
+          type: "LEARN",
+          id: "ryan_threatened_remove_marie_credit",
+        },
+      ],
+    },
+  ),
+};
+
 export function getLocationTransitionEvent(
   id: TransitionEventId,
   caseId: CaseId = "laura",
@@ -281,6 +345,10 @@ export function getLocationTransitionEvent(
 
   if (caseId === "barbara") {
     return BARBARA_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id];
+  }
+
+  if (caseId === "marie") {
+    return MARIE_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id];
   }
 
   return LOCATION_TRANSITION_EVENTS[id];
