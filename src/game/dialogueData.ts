@@ -259,6 +259,7 @@ function getLegacySpecialChoices(
         accusationSolvesCase
           ? textCue(
               "Laura bryder sammen. Ryan forlod hende, og da han fandt den skjulte passage bag bogreolen i læsesalen, fulgte hun efter ham op på afsatsen. Der skubbede hun ham. Den hemmelige dør er vejen til første sal.",
+              "legacy-laura-confession-sequence",
             )
           : null,
         accusationSolvesCase
@@ -309,11 +310,8 @@ function getLegacySpecialChoices(
   );
 
   if (person === "Marie") {
-    const hasEarnedTrust = state.loopState.dialogue.askedChoices.includes(
-      "Marie:marie_and_ryan",
-    );
     const canConfide =
-      hasEarnedTrust &&
+      state.knowledge.marie_trust_earned &&
       state.knowledge.ryan_and_laura_were_together;
     choices.push(
       defineChoice(
@@ -331,11 +329,23 @@ function getLegacySpecialChoices(
                 { type: "LEARN", id: "ryan_left_laura" },
               ],
               effectsOnSkip: true,
-              responseKey: "Marie:marie_and_ryan:confidence",
+              label: "Hvad ved du om Ryan og Lauras forhold?",
+              skipSummary:
+                "Marie fortæller, at Ryan forlod Laura, og at Laura stadig var dybt påvirket af bruddet.",
+              responseKey: "Marie:marie_and_ryan:revelation",
+              isNewTopic: true,
             }
           : {
               requires: ["ryan_bullied_marie"],
+              effects: [
+                { type: "LEARN", id: "marie_trust_earned" },
+              ],
+              effectsOnSkip: true,
+              label: "Ryan gik hårdt efter dig. Er du okay?",
+              skipSummary:
+                "Jørgen støtter Marie efter mobningen. Hun får tillid til ham og er klar til at tale mere åbent.",
               responseKey: "Marie:marie_and_ryan:initial",
+              isNewTopic: true,
             },
       ),
     );
@@ -398,7 +408,9 @@ function getLegacySpecialChoices(
                   id: "laura_owns_polar_bear_necklace",
                 },
               ],
-              effectsOnSkip: false,
+              effectsOnSkip: true,
+              skipSummary:
+                "Barbara afslutter undersøgelsen og viser, at Laura har været på en institution og ejer isbjørnehalskæden.",
               responseKey: "Barbara:ask_barbara_for_help:ready",
             }
           : {
@@ -423,7 +435,7 @@ function getLegacySpecialChoices(
               text:
                 "Jørgen spørger: Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
             },
-          ]),
+          ], "legacy-laura-sarah-question-voice"),
           videoCue("Ryan-omSaraOgLaura"),
           {
             requires: ["ryan_has_girlfriend_sarah"],

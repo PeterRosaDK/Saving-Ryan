@@ -177,6 +177,7 @@ export const SCENE_INTERACTIONS = {
     timeCost: 0,
     cue: textCue(
       "Du trækker i bogen, åbner den skjulte dør og følger passagen op mod afsatsen. Denne gang når du frem først. Da Laura viser sig, står du allerede mellem hende og Ryan. Du griber ind, før hun kan nå ham, og hendes skjulte rute er afsløret. Ryan bliver ikke skubbet.",
+      "legacy-laura-prevention-sequence",
     ),
     replaces: ["inspect_secret_passage_book"],
     concludesStory: true,

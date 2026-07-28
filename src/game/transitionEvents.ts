@@ -180,6 +180,30 @@ export const TRANSITION_TEXT = Object.fromEntries(
   ]),
 ) as Readonly<Record<SceneId, string>>;
 
+const LAURA_TRANSITION_OVERRIDES: Partial<
+  Record<SceneId, LocationTransitionEvent>
+> = {
+  E1: defineTransitionEvent(
+    "E1",
+    "David kommer ud fra grupperummet. Laura kommer fra kantinen og snakker med ham. Imens begynder Ryan at mobbe Marie.",
+    {
+      specialCue: textSequenceCue(
+        [
+          "Ryan går efter Marie — Mens de andre taler videre, begynder Ryan at nedgøre Maries arbejde. Hun forsøger at forsvare sig, men han fortsætter, indtil hun tydeligt er rystet.",
+          "Nyt spor: Ryan mobber Marie. Hun virkede tydeligt påvirket; tal med hende om, hvad der skete.",
+        ],
+        "legacy-laura-e1-bullying-still",
+      ),
+      effects: [
+        {
+          type: "LEARN",
+          id: "ryan_bullied_marie",
+        },
+      ],
+    },
+  ),
+};
+
 const DAVID_TRANSITION_OVERRIDES: Partial<
   Record<SceneId, LocationTransitionEvent>
 > = {
@@ -425,6 +449,10 @@ export function getLocationTransitionEvent(
   id: TransitionEventId,
   caseId: CaseId = "laura",
 ): LocationTransitionEvent {
+  if (caseId === "laura") {
+    return LAURA_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id];
+  }
+
   if (caseId === "david") {
     return DAVID_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id];
   }

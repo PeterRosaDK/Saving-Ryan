@@ -261,6 +261,7 @@ describe("legacy dialogue rules", () => {
             "Jørgen spørger: Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
         },
       ],
+      placeholderAssetId: "legacy-laura-sarah-question-voice",
     });
     expect(videoClip(choice?.answerCue)).toBe("Ryan-omSaraOgLaura");
 
@@ -360,6 +361,10 @@ describe("legacy dialogue rules", () => {
     expect(videoClip(first.choice?.questionCue)).toBe(
       "Marie-Fortrolighed",
     );
+    expect(first.choice?.label).toBe(
+      "Ryan gik hårdt efter dig. Er du okay?",
+    );
+    expect(first.state.knowledge.marie_trust_earned).toBe(true);
     expect(first.state.knowledge.ryan_left_laura).toBe(false);
 
     const ready = learnKnowledge(first.state, [
@@ -372,6 +377,9 @@ describe("legacy dialogue rules", () => {
     );
     expect(videoClip(confidence.choice?.questionCue)).toBe(
       "Marie-Fortrolighed2",
+    );
+    expect(confidence.choice?.label).toBe(
+      "Hvad ved du om Ryan og Lauras forhold?",
     );
     expect(confidence.state.knowledge.ryan_left_laura).toBe(true);
   });
@@ -403,7 +411,7 @@ describe("legacy dialogue rules", () => {
     expect(confession.state.knowledge.ryan_left_laura).toBe(true);
   });
 
-  it("requires Marie's confidence exchange again after a day reset", () => {
+  it("preserves Marie's earned trust across a day reset", () => {
     const ready = learnKnowledge(
       startedState({
         location: "D",
@@ -425,7 +433,8 @@ describe("legacy dialogue rules", () => {
     );
 
     expect(nextDay.knowledge.ryan_and_laura_were_together).toBe(true);
-    expect(videoClip(choice?.questionCue)).toBe("Marie-Fortrolighed");
+    expect(nextDay.knowledge.marie_trust_earned).toBe(true);
+    expect(videoClip(choice?.questionCue)).toBe("Marie-Fortrolighed2");
   });
 
   it("keeps necklace questions as explicit dead ends", () => {
@@ -596,6 +605,7 @@ describe("legacy dialogue rules", () => {
       "witness_ryan_bullying_marie",
       "discover_secret_passage",
       "earn_maries_confidence",
+      "learn_breakup_from_marie",
       "observe_barbara_programming",
       "ask_david_about_barbara",
       "inspect_barbara_files",

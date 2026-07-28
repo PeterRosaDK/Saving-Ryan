@@ -11,7 +11,7 @@ export type DirectorsCutAssetType =
 
 export interface DirectorsCutAssetNeed {
   id: string;
-  caseId: "david" | "barbara" | "marie" | "jorgen" | "ryan";
+  caseId: "laura" | "david" | "barbara" | "marie" | "jorgen" | "ryan";
   scene: string;
   type: DirectorsCutAssetType;
   person: string;
@@ -31,6 +31,17 @@ type DirectorsCutAssetInput = Omit<
 > & {
   fallbackText?: string;
 };
+
+function legacyNeed(
+  value: DirectorsCutAssetInput,
+): DirectorsCutAssetNeed {
+  return {
+    ...value,
+    fallbackText: value.fallbackText ?? value.exactContent,
+    caseId: "laura",
+    status: "placeholder",
+  };
+}
 
 function need(
   value: DirectorsCutAssetInput,
@@ -88,6 +99,88 @@ function ryanNeed(
 }
 
 export const DIRECTORS_CUT_ASSET_MANIFEST = [
+  legacyNeed({
+    id: "legacy-laura-e1-bullying-still",
+    scene: "E1, morgen til middag",
+    type: "still",
+    person: "Ryan og Marie",
+    exactContent:
+      "Ryan nedgør Maries arbejde i gangen, mens hun forsøger at forsvare sig og bliver tydeligt rystet.",
+    delivery:
+      "Observerende og alvorlig; Ryan er dominerende, Marie presset, uden karikeret fysisk trussel.",
+    before:
+      "Den oprindelige overgangstekst placerer David og Laura i samtale længere nede ad gangen.",
+    after:
+      "Spillet viser tydeligt: Nyt spor — Ryan mobber Marie.",
+    fallbackText:
+      "Ryan går efter Marie. Mens de andre taler videre, nedgør han hendes arbejde, indtil hun tydeligt er rystet.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "sektorE1 er en semantisk neutral gangbaggrund, men viser ikke personerne; ny still ønskes.",
+  }),
+  legacyNeed({
+    id: "legacy-laura-sarah-question-voice",
+    scene: "Dialog med Ryan før mordet",
+    type: "voice",
+    person: "Jørgen",
+    exactContent:
+      "Jeg fandt et brev fra Sarah. Hvad skete der mellem dig og Laura?",
+    delivery: "Roligt undersøgende og uden anklagende tone.",
+    before: "Sarahs brev er fundet i grupperummets papirkurv.",
+    after:
+      "Det eksisterende Ryan-omSaraOgLaura-klip afspilles som svar.",
+    priority: "ønskelig",
+    reuseCandidate:
+      "Ryans eksisterende portræt og svarvideo bruges allerede; kun Jørgens spørgsmål mangler som lyd.",
+  }),
+  legacyNeed({
+    id: "legacy-laura-confession-sequence",
+    scene: "Den afgørende Laura-konfrontation efter mordet",
+    type: "sequence",
+    person: "Laura og Jørgen",
+    exactContent:
+      "Efter Peter-BeskyldLaura3 forklarer Laura bruddet, den skjulte passage og skubbet på afsatsen.",
+    delivery:
+      "Presset og sammenbrudt, men forståelig; passagens placering og mordforløbet skal være entydige.",
+    before:
+      "Jørgen fremlægger både motivet og halskædens forbindelse til gerningsstedet.",
+    after:
+      "Laura tilstår, passagen registreres, og det senere prevention-loop åbnes.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Peter-BeskyldLaura3 leverer anklagen, men Director indeholder ingen dækkende svarsekvens.",
+  }),
+  legacyNeed({
+    id: "legacy-laura-prevention-sequence",
+    scene: "C1, sidste loop",
+    type: "sequence",
+    person: "Jørgen, Laura og Ryan",
+    exactContent:
+      "Jørgen bruger passagen, når afsatsen først og stiller sig mellem Laura og Ryan, før skubbet kan ske.",
+    delivery:
+      "Anspændt og geografisk klar; indgrebet sker før fysisk skade.",
+    before:
+      "Laura har tilstået, og en almindelig advarsel til Ryan er allerede slået fejl.",
+    after: "Ryan lever, og tidsløkken brydes.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Læsesals- og kantinestills kan etablere stederne, men der findes ingen legacy-finale.",
+  }),
+  legacyNeed({
+    id: "legacy-laura-epilogue-sequence",
+    scene: "Efter det afværgede mord",
+    type: "sequence",
+    person: "Fortæller og gruppen",
+    exactContent:
+      "Ryan overlever, Laura standses, Jørgens viden forklarer indgrebet, og dagen fortsætter uden endnu et reset.",
+    delivery:
+      "Kort og forløsende uden at bagatellisere mordforsøget.",
+    before: "Jørgen har afværget skubbet på afsatsen.",
+    after: "Resultatskærmen viser, at Ryan lever.",
+    priority: "ønskelig",
+    reuseCandidate:
+      "A1-kantinebaggrunden bruges allerede i slutvisningen, men ingen egentlig epilogsekvens findes.",
+  }),
   need({
     id: "dc-david-letter-still",
     scene: "D1–D4",

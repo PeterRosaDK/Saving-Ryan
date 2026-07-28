@@ -198,7 +198,6 @@ every timed interaction to provide an elapsed-time cue.
 Conversation progress now belongs to `loopState.dialogue`:
 
 - asked choice IDs remain available for faded/repeat UI and same-day responses;
-- Marie remembers whether Jørgen has earned her confidence;
 - Ryan uses his second warning clip only after being warned earlier that day;
 - Barbara's request/ready/completed help state is local to the day;
 - a character inconclusively accused by Jørgen refuses further questions until
@@ -207,13 +206,14 @@ Conversation progress now belongs to `loopState.dialogue`:
 Ordinary time changes preserve this state. Evening-to-morning uses one
 `createInitialLoopState()` boundary to reset conversation history and transition
 history together. Permanent facts learned from those conversations remain in
-`knowledge`, so Ryan may forget the warning while Jørgen remembers that warning
-alone was ineffective.
+`knowledge`. This includes Marie's earned trust, so discovering the Ryan/Laura
+relationship in a later loop immediately exposes her follow-up topic. Ryan may
+forget the warning while Jørgen remembers that warning alone was ineffective.
 
 No trust score, anger scale, departure, or cross-character warning is included.
-Tests cover same-day retention, new-day reset, Marie's trust restart, Ryan's
-warning restart, the minimal accusation refusal, permanent knowledge, and the
-complete Laura path.
+Tests cover same-day retention, new-day reset, Marie's permanent story trust,
+Ryan's warning restart, the minimal accusation refusal, permanent knowledge,
+and the complete Laura path.
 
 ## Observation loopback slice
 

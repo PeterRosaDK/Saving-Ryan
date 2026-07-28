@@ -12,7 +12,7 @@ on pages 71 and 76–77 of `Legacy/Projektet.pdf`:
 
 | Pillar | Required fact | Provenance |
 | --- | --- | --- |
-| Motive | `ryan_left_laura` | Sarah letter → Ryan/Laura relationship → Marie's two confidence stages |
+| Motive | `ryan_left_laura` | Sarah letter → Ryan/Laura relationship + E1 bullying → Marie trust → Marie follow-up |
 | Evidence | `necklace_connects_laura_to_scene` | murder-scene necklace + Barbara's discovery that Laura owned it |
 
 General suspicion, Lauras hidden computer activity, her institution history, or
@@ -72,6 +72,17 @@ NPC disposition or loop-memory system.
 
 ### New minimal connective material
 
+- The original E1 transition now continues into a dedicated text-first bullying
+  event and explicit clue feedback. Its optional Ryan–Marie still is a tracked
+  placeholder; the scene and `ryan_bullied_marie` effect never depend on it.
+- `marie_trust_earned` is permanent protagonist knowledge. Combined with the
+  independently discoverable Ryan/Laura relationship it immediately exposes a
+  separately worded Marie follow-up, in either discovery order and across
+  loops.
+- Completing, skipping, or falling back from `BarbaraHacker` directly records
+  Laura's institution history and necklace ownership. If the scene necklace is
+  already known, the existing derivation immediately adds
+  `necklace_connects_laura_to_scene`; no extra conversation is required.
 - `prevent_ryans_murder` reuses the C1 book hotspot after the complete case has
   been solved and Ryan's warning has failed. Its short text cue describes
   Jørgen reaching the ledge first and physically intervening.

@@ -73,7 +73,9 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
   barbara_forged_grades: "Barbara har ændret sine karakterer",
   barbara_and_ryan_argued: "Barbara og Ryan havde en skjult konflikt",
   ryan_has_girlfriend_sarah: "Ryan har en kæreste, Sarah",
-  ryan_bullied_marie: "Ryan behandler Marie ondt",
+  ryan_bullied_marie: "Ryan mobber Marie",
+  marie_trust_earned:
+    "Marie har fået tillid til Jørgen efter den støttende samtale",
   laura_hid_computer_activity: "Laura skjuler sin computeraktivitet",
   laura_acknowledged_barbara_and_ryan:
     "Laura ved mere om Barbara og Ryan",
@@ -331,6 +333,19 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
 };
 
 function getClueLabel(state: GameState, id: KnowledgeId): string {
+  if (
+    state.selectedCaseId === "laura" &&
+    id === "ryan_left_laura"
+  ) {
+    return "Konklusion: Ryan forlod Laura. Hun havde et muligt motiv til at ønske ham ondt.";
+  }
+  if (
+    state.selectedCaseId === "laura" &&
+    id === "necklace_connects_laura_to_scene"
+  ) {
+    return "Konklusion: Ryan havde Lauras halskæde i hånden.";
+  }
+
   if (state.selectedCaseId === "ryan") {
     if (id === "ryan_was_murdered") {
       return "Ryan døde efter faldet fra afsatsen";
@@ -867,6 +882,14 @@ export function renderKnowledge(state: GameState): string {
         )
         .join("")}
     </ul>
+    ${
+      state.caseProgress.currentLead
+        ? `<section class="notebook-section notebook-lead">
+            <h3>Aktuelt lead</h3>
+            <p>${state.caseProgress.currentLead}</p>
+          </section>`
+        : ""
+    }
   `;
   }
 
@@ -1093,13 +1116,10 @@ function renderDialogue(
 
   const options = root.querySelector("[data-dialogue-options]");
   choices.forEach((choice) => {
-    const asked = state.loopState.dialogue.askedChoices.includes(
-      choice.id,
-    );
     const visuallyAsked = hasSeenCurrentDialogueResponse(state, choice);
     options?.append(
       button(
-        `${choice.isNewTopic && !asked ? "Nyt emne · " : ""}${choice.label}`,
+        `${choice.isNewTopic && !visuallyAsked ? "Nyt emne · " : ""}${choice.label}`,
         `dialogue-choice${visuallyAsked ? " is-asked" : ""}`,
         () => {
           void playDialogueChoice(
@@ -1224,7 +1244,7 @@ function renderEnding(
 
   root.innerHTML = `
     <main class="app-shell ending-shell">
-      <section class="ending-card" aria-labelledby="ending-title">
+      <section class="ending-card" aria-labelledby="ending-title" data-placeholder-asset-id="legacy-laura-epilogue-sequence">
         <div class="ending-image">
           <img
             src="${getSceneBackgroundUrl("A1")}"

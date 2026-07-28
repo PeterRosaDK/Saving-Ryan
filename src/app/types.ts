@@ -32,6 +32,7 @@ export const KNOWLEDGE_IDS = [
   "barbara_and_ryan_argued",
   "ryan_has_girlfriend_sarah",
   "ryan_bullied_marie",
+  "marie_trust_earned",
   "laura_hid_computer_activity",
   "laura_acknowledged_barbara_and_ryan",
   "heard_scraping_behind_bookcase",

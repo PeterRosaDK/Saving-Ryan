@@ -23,6 +23,10 @@ import {
   RYAN_CORE_CONCLUSIONS,
   deriveRyanLead,
 } from "./ryanCase";
+import {
+  LAURA_CORE_CONCLUSIONS,
+  deriveLauraLead,
+} from "./lauraCase";
 
 export const INVESTIGATION_STEP_IDS = [
   "observe_barbara_programming",
@@ -37,6 +41,7 @@ export const INVESTIGATION_STEP_IDS = [
   "watch_secret_passage",
   "discover_secret_passage",
   "earn_maries_confidence",
+  "learn_breakup_from_marie",
   "observe_laura_at_computer",
   "get_barbaras_help",
   "inspect_murder_necklace",
@@ -120,8 +125,13 @@ export const INVESTIGATION_STEPS = {
   },
   earn_maries_confidence: {
     id: "earn_maries_confidence",
+    requires: ["ryan_bullied_marie"],
+    effects: ["marie_trust_earned"],
+  },
+  learn_breakup_from_marie: {
+    id: "learn_breakup_from_marie",
     requires: [
-      "ryan_bullied_marie",
+      "marie_trust_earned",
       "ryan_and_laura_were_together",
     ],
     effects: ["ryan_left_laura"],
@@ -448,7 +458,7 @@ export function learnKnowledge(
             ? JORGEN_CORE_CONCLUSIONS
             : state.selectedCaseId === "ryan"
               ? RYAN_CORE_CONCLUSIONS
-              : [];
+              : LAURA_CORE_CONCLUSIONS;
   const newlyDerived = caseConclusions.filter(
     (id) => nextKnowledge[id] && !state.knowledge[id],
   );
@@ -505,7 +515,13 @@ export function learnKnowledge(
                   currentLead: deriveRyanLead(knowledgeState),
                 },
               }
-            : knowledgeState;
+            : {
+                ...knowledgeState,
+                caseProgress: {
+                  ...knowledgeState.caseProgress,
+                  currentLead: deriveLauraLead(knowledgeState),
+                },
+              };
 }
 
 export function executeInvestigationStep(

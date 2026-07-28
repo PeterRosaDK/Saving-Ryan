@@ -414,8 +414,13 @@ Current completion:
 - the report-backed Sarah topic uses a text question plus the existing
   `Ryan-omSaraOgLaura` answer, because Director contains the answer asset but no
   reachable question implementation;
-- Marie's confidence exchange is enforced as a real first step before her second
-  clip can reveal that Ryan left Laura.
+- the original E1 text now opens a separate bullying event with explicit clue
+  feedback; Marie's first confidence exchange permanently records trust, and
+  her distinctly worded follow-up opens as soon as the independently learned
+  Ryan/Laura relationship is also known, in either order and across loops;
+- Barbara's completed Laura-computer investigation grants the institution and
+  necklace facts directly on full playback, skip, or media-error fallback, with
+  immediate necklace-scene derivation and no third conversation.
 
 ### Phase 3 — Build the application shell and intro
 

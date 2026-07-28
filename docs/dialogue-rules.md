@@ -45,17 +45,19 @@ the murder route.
   `Peter-omRyanOgMarie` clip.
 - The truncated `VedIkk` member name resolves to the closed `*-VedIkke`
   catalogue.
-- Marie's two confidence clips are explicit stages: the second can reveal the
-  breakup only after Jørgen knows both that Ryan bullied Marie and that Ryan
-  and Laura were together.
-- Barbara's help keeps the legacy request/ready/completed sequence and only
-  applies its discoveries after the hacker sequence completes.
+- Marie's two confidence clips are explicit stages. The first permanently
+  records `marie_trust_earned`; the second can reveal the breakup only after
+  Jørgen also knows that Ryan and Laura were together.
+- Barbara's help keeps the legacy request/ready/completed sequence and applies
+  its discoveries when the hacker sequence completes, is skipped, or falls
+  back after a media error.
 
 Asked choices are recorded in loop-local dialogue state but remain repeatable,
 matching the report's description of faded yet reusable dialogue options. They
-and Barbara's helper stage reset the next morning; knowledge gained from a
-completed choice does not. Knowledge effects are not applied when playback is
-skipped unless a choice explicitly opts into that policy.
+and Barbara's helper stage reset the next morning; permanent knowledge gained
+from a completed choice does not. Marie's trust is such a story fact rather
+than a volatile conversation flag. Knowledge effects are not applied when
+playback is skipped unless a choice explicitly opts into that policy.
 
 The Director uses post-murder dialogue frames for alibi, theory, and accusation.
 Other conditional topics unlocked through `BetingetLink` remain available after
@@ -80,10 +82,22 @@ portrait before the original answer clip. It can later be upgraded with
 voice-over without changing the dialogue rule.
 
 Marie's route is also kept as the report describes it: the first
-`Marie-Fortrolighed` exchange earns her confidence, and only a later repeat with
-the Ryan/Laura relationship known uses `Marie-Fortrolighed2` and reveals that
-Ryan left Laura. Knowing both facts before the first conversation no longer
-skips the confidence exchange.
+`Marie-Fortrolighed` exchange permanently earns her confidence. A distinct
+follow-up topic uses `Marie-Fortrolighed2` and reveals that Ryan left Laura once
+the Ryan/Laura relationship is known. Prerequisites are derived directly from
+permanent knowledge, so either discovery order works without replaying an
+earlier conversation after a new loop.
+
+The original E1 transition text remains verbatim, but the bullying clause now
+continues into a separate text-first event and explicit
+`Nyt spor: Ryan mobber Marie` feedback. Its optional still is tracked as
+`legacy-laura-e1-bullying-still`; the fallback itself always records the same
+fact and can safely be repeated in later loops.
+
+Once Barbara completes the Laura-computer investigation, its single completion
+effect records both Laura's institution history and ownership of the polar-bear
+necklace. No third help request is required. Completion, skip, and media-error
+fallback use the same idempotent effects.
 
 Repeat styling follows stable response variants rather than the question ID alone.
 Ryan's second warning, Barbara's second help request, and Marie's second

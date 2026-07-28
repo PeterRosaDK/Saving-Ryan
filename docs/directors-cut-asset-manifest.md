@@ -1,8 +1,37 @@
-# Director’s Cut — manglende assets
+# Director’s Cut og fælles Legacy — manglende assets
 
 Den autoritative, maskinlæsbare liste er
 `src/media/directorsCutAssetManifest.ts`. Tekstfallbacks er allerede integreret
 og fuldt spilbare.
+
+Manifestet rummer aktuelt 93 placeholders: 71 nødvendige og 22 ønskelige.
+Fordelingen er 23 stillbilleder, 23 voice-klip, 46 redigerede sekvenser og ét
+lyddesign-klip. Fem af de 93 tilhører Original-historien; resten fordeler sig
+på David (16), Barbara (20), Marie (17), Jørgen (18) og Ryan (17).
+
+Et `still` kan normalt løses som ét komponeret billede, og `voice` som lyd over
+en eksisterende visuel fallback. Et `sequence` er derimod et produktionsbehov:
+det kan godt udføres som en motion-comic med AI-billeder, stemmer og lyddesign,
+men kræver flere kontinuitetsbevidste billeder, timing og redigering. Dokument-
+og computerstills bør sættes typografisk i hånden, så de forbliver læsbare;
+`dc-jorgen-reset-ambience` er rent lyddesign. Manifestet forudsætter ikke
+syntetiske kopier af de oprindelige skuespillerstemmer.
+
+## Original historie / fælles Legacy
+
+| Asset-ID | Scene | Type | Person | Prioritet | Genbrug | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `legacy-laura-e1-bullying-still` | E1 | still | Ryan/Marie | nødvendig | eksisterende E1-still er tomt og kun egnet som baggrund | placeholder |
+| `legacy-laura-sarah-question-voice` | Ryan-dialog | voice | Jørgen | ønskelig | intet godkendt spørgsmålsklip | placeholder |
+| `legacy-laura-confession-sequence` | Laura-konfrontation | sequence | Laura/Jørgen | nødvendig | ingen færdig tilståelsessekvens | placeholder |
+| `legacy-laura-prevention-sequence` | C1-finalen | sequence | Jørgen/Laura/Ryan | nødvendig | eksisterende C1-still kan indgå som baggrund | placeholder |
+| `legacy-laura-epilogue-sequence` | epilog | sequence | Fortæller | ønskelig | eksisterende A1-baggrund kan indgå | placeholder |
+
+De fem punkter ovenfor er de eneste registrerede mangler til den fuldt spilbare
+Original-historie. E1-scenen er tekstbaseret, så det nødvendige stillbillede kan
+tilføjes senere uden at ændre knowledge-effekten.
+
+## David
 
 | Asset-ID | Scene | Type | Person | Prioritet | Genbrug | Status |
 | --- | --- | --- | --- | --- | --- | --- |

@@ -122,7 +122,7 @@ validation boundary are in
 The phase 10 case registry, selection lifecycle, and alternative-case
 implementation are in
 [docs/case-model.md](docs/case-model.md).
-Missing Director’s Cut production assets are listed in
+Missing Director’s Cut and shared Original-story production assets are listed in
 [docs/directors-cut-asset-manifest.md](docs/directors-cut-asset-manifest.md).
 Den målrettede David-playtest, herunder `?dcCase=david`, er beskrevet i
 [docs/david-playtest.md](docs/david-playtest.md).
