@@ -1,4 +1,13 @@
-export type AppPhase = "intro" | "exploration" | "dialogue" | "ending";
+export type AppPhase =
+  | "menu"
+  | "intro"
+  | "exploration"
+  | "dialogue"
+  | "ending";
+
+export const CASE_IDS = ["laura"] as const;
+
+export type CaseId = (typeof CASE_IDS)[number];
 
 export type LocationId = "A" | "B" | "C" | "D" | "E";
 
@@ -112,7 +121,8 @@ export interface PendingTransition {
 }
 
 export interface GameState {
-  version: 1;
+  version: 2;
+  selectedCaseId: CaseId;
   phase: AppPhase;
   location: LocationId;
   timeSlot: TimeSlot;
@@ -124,6 +134,7 @@ export interface GameState {
 }
 
 export type GameAction =
+  | { type: "START_CASE"; caseId: CaseId }
   | { type: "INTRO_FINISHED" }
   | { type: "SKIP_INTRO" }
   | { type: "MOVE_TO_LOCATION"; location: LocationId }

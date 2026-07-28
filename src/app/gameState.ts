@@ -1,9 +1,11 @@
 import {
   KNOWLEDGE_IDS,
+  type CaseId,
   type GameState,
   type KnowledgeId,
   type LoopState,
 } from "./types";
+import { DEFAULT_CASE_ID } from "../game/caseDefinitions";
 
 function createInitialKnowledge(): Record<KnowledgeId, boolean> {
   return Object.fromEntries(
@@ -22,10 +24,14 @@ export function createInitialLoopState(): LoopState {
   };
 }
 
-export function createInitialGameState(): GameState {
+function createBaseGameState(
+  selectedCaseId: CaseId,
+  phase: GameState["phase"],
+): GameState {
   return {
-    version: 1,
-    phase: "intro",
+    version: 2,
+    selectedCaseId,
+    phase,
     location: "A",
     timeSlot: 1,
     loop: 1,
@@ -36,4 +42,12 @@ export function createInitialGameState(): GameState {
     loopState: createInitialLoopState(),
     pendingTransition: null,
   };
+}
+
+export function createInitialGameState(): GameState {
+  return createBaseGameState(DEFAULT_CASE_ID, "menu");
+}
+
+export function createCaseGameState(caseId: CaseId): GameState {
+  return createBaseGameState(caseId, "intro");
 }

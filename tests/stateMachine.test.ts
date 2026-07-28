@@ -11,15 +11,26 @@ import { SCENES, toSceneId } from "../src/game/sceneRegistry";
 import { reduceGameState } from "../src/game/stateMachine";
 import { getNotebookKnowledgeIds } from "../src/ui/App";
 
+function beginIntro(state = createInitialGameState()): GameState {
+  return reduceGameState(state, {
+    type: "START_CASE",
+    caseId: "laura",
+  });
+}
+
 function finishIntro(state = createInitialGameState()): GameState {
-  return reduceGameState(state, { type: "INTRO_FINISHED" });
+  return reduceGameState(beginIntro(state), {
+    type: "INTRO_FINISHED",
+  });
 }
 
 describe("legacy game state", () => {
-  it("starts before the intro has revealed any knowledge", () => {
+  it("starts at the case menu without revealing any knowledge", () => {
     const state = createInitialGameState();
 
-    expect(state.phase).toBe("intro");
+    expect(state.version).toBe(2);
+    expect(state.selectedCaseId).toBe("laura");
+    expect(state.phase).toBe("menu");
     expect(toSceneId(state.location, state.timeSlot)).toBe("A1");
     expect(state.loop).toBe(1);
     expect(state.dialogue.activePerson).toBeNull();
@@ -37,7 +48,7 @@ describe("legacy game state", () => {
   it.each(["INTRO_FINISHED", "SKIP_INTRO"] as const)(
     "%s enters the first A1 without foreknowledge of Ryan's murder",
     (type) => {
-      const started = reduceGameState(createInitialGameState(), { type });
+      const started = reduceGameState(beginIntro(), { type });
 
       expect(started.phase).toBe("exploration");
       expect(toSceneId(started.location, started.timeSlot)).toBe("A1");

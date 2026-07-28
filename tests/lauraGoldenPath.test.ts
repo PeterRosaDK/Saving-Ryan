@@ -42,6 +42,7 @@ describe("playable Laura golden path", () => {
       dispatch({ type: "CLOSE_DIALOGUE" });
     };
 
+    dispatch({ type: "START_CASE", caseId: "laura" });
     dispatch({ type: "INTRO_FINISHED" });
 
     move("B");

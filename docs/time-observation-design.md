@@ -255,9 +255,10 @@ preserving the restored Director behavior.
 - The mutually exclusive C2/E2 observations and later surveillance are covered
   as an executable multi-loop reducer test.
 
-The selected-case reset invariant cannot be tested before a selected case
-exists. It is a phase 10 acceptance criterion rather than unfinished phase 9
-state.
+Phase 10 now supplies the selected-case boundary and covers this acceptance
+criterion: `selectedCaseId` survives the evening-to-morning reset while a full
+game reset returns to the case menu. See
+[`case-model.md`](case-model.md).
 
 ## Deliberately deferred beyond phase 9
 

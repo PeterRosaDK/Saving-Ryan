@@ -24,8 +24,12 @@ import { VIDEO_CLIP_IDS } from "../src/media/videoManifest";
 function startedState(
   overrides: Partial<GameState> = {},
 ): GameState {
+  const intro = reduceGameState(createInitialGameState(), {
+    type: "START_CASE",
+    caseId: "laura",
+  });
   return {
-    ...reduceGameState(createInitialGameState(), {
+    ...reduceGameState(intro, {
       type: "INTRO_FINISHED",
     }),
     ...overrides,

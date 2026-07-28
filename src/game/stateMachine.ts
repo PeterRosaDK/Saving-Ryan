@@ -1,4 +1,5 @@
 import {
+  createCaseGameState,
   createInitialGameState,
   createInitialLoopState,
 } from "../app/gameState";
@@ -70,6 +71,14 @@ export function reduceGameState(
   action: GameAction,
 ): GameState {
   switch (action.type) {
+    case "START_CASE": {
+      if (state.phase !== "menu") {
+        return state;
+      }
+
+      return createCaseGameState(action.caseId);
+    }
+
     case "INTRO_FINISHED":
     case "SKIP_INTRO": {
       if (state.phase !== "intro") {

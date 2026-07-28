@@ -76,7 +76,8 @@ NPC disposition or loop-memory system.
   been solved and Ryan's warning has failed. Its short text cue describes
   Jørgen reaching the ledge first and physically intervening.
 - The ending view reuses the A1 canteen background, states that Ryan survived,
-  and offers a complete reset to the intro.
+  and offers a complete reset. Phase 10 now routes that reset through the main
+  menu before a new intro.
 
 These two text presentations are new because neither the Director score nor
 the supplied media contains a prevention or epilogue sequence. They use the
@@ -106,7 +107,7 @@ voice-over without changing game rules.
   cannot be performed prematurely during the first morning.
 - Completing prevention changes the phase to `ending`; exploration actions are
   then rejected, preventing effects from being applied twice.
-- “Spil igen fra introen” dispatches the existing full `RESET_GAME`.
+- “Tilbage til hovedmenuen” dispatches the existing full `RESET_GAME`.
 
 The reducer-level golden path covers intro, all required investigation
 branches, confession, another day, warning, prevention, epilogue, and reset.

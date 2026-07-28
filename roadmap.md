@@ -556,7 +556,7 @@ Completed:
 - after an ordinary Director day reset, the C1 passage becomes the minimal
   text-backed prevention route;
 - prevention records that Ryan was saved, enters a clear epilogue, applies only
-  once, and offers a full reset to the intro;
+  once, and offers a full reset (now routed through the phase 10 main menu);
 - the full reducer golden path covers intro → investigation → confession → new
   loop → warning → prevention → epilogue.
 
@@ -642,10 +642,15 @@ in [`docs/legacy-fresh-audit.md`](docs/legacy-fresh-audit.md).
 
 Only after Laura is stable as the reference implementation:
 
-- add a minimal `CaseDefinition` boundary and persistent selected case;
-- keep Laura as the default and add **Mystisk case** separately;
+- [x] add a minimal `CaseDefinition` boundary and persistent selected case;
+- [x] keep Laura as the default and add **Mystisk case** separately;
 - introduce one hand-authored alternative murderer as a proof of concept;
 - extend to further curated cases only after narrative validation.
+
+The completed foundation is documented in
+[`docs/case-model.md`](docs/case-model.md). **Mystisk case** remains visibly
+disabled until the first complete alternative is authored; a partial case is
+never registered as playable.
 
 ### Later production improvements
 

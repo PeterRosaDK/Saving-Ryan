@@ -27,6 +27,12 @@ analytics, external API, environment variable, or runtime secret. Pages serves
 the compiled module, CSS, images, video, and audio. Cloudflare Access is the
 only production authentication boundary.
 
+The phase 10 case boundary lives in `src/game/caseDefinitions.ts`.
+`selectedCaseId` is top-level version 2 game state: the main menu selects it
+once for a new game, and ordinary day-loop resets leave it unchanged.
+Unfinished cases are not registered, so the visible **Mystisk case** menu
+option remains disabled until at least one complete curated definition exists.
+
 Arbitrary paths must return the committed `404.html`; the application does not
 use client-side routing. Static JSON liveness and readiness responses are valid
 because the deployed site's core dependencies are exactly its uploaded assets.

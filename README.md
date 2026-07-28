@@ -6,8 +6,9 @@ interactive mystery.
 ## Current status
 
 The tagged Director restoration is preserved as `legacy-restoration-v1`, the
-canonical Laura story is playable from intro to epilogue, and phase 9's
-expanded time-loop mechanics are complete:
+canonical Laura story is playable from intro to epilogue, phase 9's expanded
+time-loop mechanics are complete, and the phase 10 case boundary is ready for
+the first authored alternative:
 
 - legacy Director files and the original report are preserved in `Legacy/`;
 - converted MP4 files are served from `public/Video/`;
@@ -16,6 +17,10 @@ expanded time-loop mechanics are complete:
 - eight recovered location-music masters and the original clock sound are served
   from `public/assets/audio/`;
 - the A1–E4 location/time model is implemented as a typed state machine;
+- a main menu starts the canonical Laura case by default and exposes
+  **Mystisk case** separately without enabling unfinished content;
+- the selected case is stored at the top level of version 2 game state and
+  survives every daily loop unchanged;
 - waiting is a two-step transition, so narration and special sequences complete
   before the time slot changes;
 - knowledge persists when evening wraps into another morning;
@@ -34,7 +39,7 @@ expanded time-loop mechanics are complete:
   the necklace evidence;
 - a reducer-level golden-path test now reaches Lauras confession through the
   actual scene and dialogue actions, begins another day, prevents the murder,
-  reaches the epilogue, and resets to the intro;
+  reaches the epilogue, and resets to the main menu;
 - question and answer cues play sequentially and update the same tested state
   machine used by exploration;
 - all 20 transition narrations use the recovered `Spillet.dir` wording;
@@ -93,6 +98,9 @@ decisions are in
 The completed phase 9 event matrix, time-action rules, loop-local memory, and
 validation boundary are in
 [docs/time-observation-design.md](docs/time-observation-design.md).
+The phase 10 case registry, selection lifecycle, and alternative-case
+readiness boundary are in
+[docs/case-model.md](docs/case-model.md).
 
 ## Commands
 

@@ -22,6 +22,12 @@ import {
   START_PROLOGUE_PARAGRAPHS,
 } from "../game/introPresentation";
 import {
+  DEFAULT_CASE_ID,
+  getCaseDefinition,
+  getMysteryCaseIds,
+  selectMysteryCaseId,
+} from "../game/caseDefinitions";
+import {
   DIRECTOR_STAGE,
   DIRECTOR_TOOL_RECTS,
   directorHotspotRectStyle,
@@ -228,6 +234,84 @@ function connectHotspotLabel(
   hotspot.addEventListener("pointerleave", reset);
   hotspot.addEventListener("focus", show);
   hotspot.addEventListener("blur", reset);
+}
+
+function renderMainMenu(root: HTMLElement, store: GameStore): void {
+  const defaultCase = getCaseDefinition(DEFAULT_CASE_ID);
+  const mysteryAvailable = getMysteryCaseIds().length > 0;
+
+  root.innerHTML = `
+    <main class="app-shell menu-shell">
+      <section class="main-menu" aria-labelledby="main-menu-title">
+        <img
+          class="main-menu-background"
+          src="${getImageUrl("sektorA1")}"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="main-menu-copy">
+          <p class="eyebrow">Den restaurerede Director-fortælling</p>
+          <h1 id="main-menu-title">Saving Ryan</h1>
+          <p class="main-menu-intro">
+            Gennemlev dagen igen og igen, saml sporene og stands mordet,
+            før det sker.
+          </p>
+          <div class="case-options">
+            <article class="case-option">
+              <p class="eyebrow">Standard</p>
+              <h2>${defaultCase.menu.title}</h2>
+              <p>${defaultCase.menu.description}</p>
+              <button
+                class="primary-action"
+                type="button"
+                data-start-default-case
+              >
+                Start spil
+              </button>
+            </article>
+            <article class="case-option case-option--mystery">
+              <p class="eyebrow">Kuraterede variationer</p>
+              <h2>Mystisk case</h2>
+              <p id="mystery-case-description">
+                ${
+                  mysteryAvailable
+                    ? "Vælg en håndskrevet alternativ sag uden at kende gerningspersonen på forhånd."
+                    : "Den første alternative sag tilføjes som næste fortælletrin."
+                }
+              </p>
+              <button
+                class="secondary-action"
+                type="button"
+                data-start-mystery-case
+                aria-describedby="mystery-case-description"
+                ${mysteryAvailable ? "" : "disabled"}
+              >
+                Mystisk case
+              </button>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+  `;
+
+  root
+    .querySelector("[data-start-default-case]")
+    ?.addEventListener("click", () => {
+      store.dispatch({
+        type: "START_CASE",
+        caseId: DEFAULT_CASE_ID,
+      });
+    });
+
+  root
+    .querySelector("[data-start-mystery-case]")
+    ?.addEventListener("click", () => {
+      const caseId = selectMysteryCaseId();
+      if (caseId) {
+        store.dispatch({ type: "START_CASE", caseId });
+      }
+    });
 }
 
 function renderIntro(root: HTMLElement, store: GameStore): void {
@@ -680,7 +764,7 @@ function renderEnding(
             <div><dt>Udfald</dt><dd>Ryan lever</dd></div>
           </dl>
           <button class="primary-action" type="button" data-restart>
-            Spil igen fra introen
+            Tilbage til hovedmenuen
           </button>
         </div>
       </section>
@@ -1011,7 +1095,7 @@ function renderExploration(
       "tegn-afslut2",
       DIRECTOR_TOOL_RECTS.quit,
       () => {
-        if (window.confirm("Vil du forlade spillet og begynde forfra?")) {
+        if (window.confirm("Vil du forlade spillet og gå til hovedmenuen?")) {
           store.dispatch({ type: "RESET_GAME" });
         }
       },
@@ -1085,6 +1169,11 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
         ? state.location
         : null,
     );
+
+    if (state.phase === "menu") {
+      renderMainMenu(appView, store);
+      return;
+    }
 
     if (state.phase === "intro") {
       renderIntro(appView, store);
