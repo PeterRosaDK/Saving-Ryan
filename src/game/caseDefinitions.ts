@@ -11,7 +11,8 @@ export interface CaseDefinition {
   id: CaseId;
   mode: "original" | "directors_cut";
   enabled: boolean;
-  murderer: CharacterId | "Jørgen";
+  responsibleParty: CharacterId | "Jørgen";
+  resolutionLabel: "Morder" | "Sagens ansvarlige";
   menu: {
     title: string;
     description: string;
@@ -35,7 +36,8 @@ export const CASE_DEFINITIONS: Readonly<
     id: "laura",
     mode: "original",
     enabled: true,
-    murderer: "Laura",
+    responsibleParty: "Laura",
+    resolutionLabel: "Morder",
     menu: {
       title: "Original historie",
       description:
@@ -54,7 +56,8 @@ export const CASE_DEFINITIONS: Readonly<
     id: "david",
     mode: "directors_cut",
     enabled: true,
-    murderer: "David",
+    responsibleParty: "David",
+    resolutionLabel: "Morder",
     menu: {
       title: "Director’s Cut",
       description:
@@ -73,7 +76,8 @@ export const CASE_DEFINITIONS: Readonly<
     id: "barbara",
     mode: "directors_cut",
     enabled: true,
-    murderer: "Barbara",
+    responsibleParty: "Barbara",
+    resolutionLabel: "Morder",
     menu: {
       title: "Director’s Cut",
       description:
@@ -92,7 +96,8 @@ export const CASE_DEFINITIONS: Readonly<
     id: "marie",
     mode: "directors_cut",
     enabled: true,
-    murderer: "Marie",
+    responsibleParty: "Marie",
+    resolutionLabel: "Morder",
     menu: {
       title: "Director’s Cut",
       description:
@@ -111,7 +116,8 @@ export const CASE_DEFINITIONS: Readonly<
     id: "jorgen",
     mode: "directors_cut",
     enabled: true,
-    murderer: "Jørgen",
+    responsibleParty: "Jørgen",
+    resolutionLabel: "Morder",
     menu: {
       title: "Director’s Cut",
       description:
@@ -119,6 +125,26 @@ export const CASE_DEFINITIONS: Readonly<
     },
     score: {
       parDays: 4,
+      base: 1000,
+      extraDayPenalty: 100,
+      wrongAccusationPenalty: 100,
+      prematureAccusationPenalty: 50,
+      optionalEvidenceBonus: 25,
+    },
+  },
+  ryan: {
+    id: "ryan",
+    mode: "directors_cut",
+    enabled: true,
+    responsibleParty: "Ryan",
+    resolutionLabel: "Sagens ansvarlige",
+    menu: {
+      title: "Director’s Cut",
+      description:
+        "Spil en alternativ version, hvor sagens ansvarlige vælges tilfældigt blandt de tilgængelige Director’s Cut-sager.",
+    },
+    score: {
+      parDays: 2,
       base: 1000,
       extraDayPenalty: 100,
       wrongAccusationPenalty: 100,

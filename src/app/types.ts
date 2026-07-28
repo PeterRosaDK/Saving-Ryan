@@ -12,6 +12,7 @@ export const CASE_IDS = [
   "barbara",
   "marie",
   "jorgen",
+  "ryan",
 ] as const;
 
 export type CaseId = (typeof CASE_IDS)[number];
@@ -131,6 +132,42 @@ export const KNOWLEDGE_IDS = [
   "jorgen_decoy_planted",
   "jorgen_later_self_dissolved",
   "jorgen_paradox_broken",
+  "ryan_fall_caused_death",
+  "ryan_necklace_in_hand",
+  "ryan_necklace_torn_clasp",
+  "ryan_laura_on_ledge",
+  "ryan_laura_owns_necklace",
+  "ryan_laura_neck_injury",
+  "ryan_laura_pushed",
+  "ryan_laura_says_attacked_first",
+  "ryan_laura_partial_admission",
+  "ryan_physical_action_open_conclusion",
+  "ryan_laura_dossier",
+  "ryan_knew_dossier",
+  "ryan_used_private_history_to_control",
+  "ryan_group_manipulation_pattern",
+  "ryan_silencing_motive_conclusion",
+  "ryan_sent_meeting_message",
+  "ryan_message_before_murder",
+  "ryan_planned_alone",
+  "ryan_knew_passage_before_meeting",
+  "ryan_arranged_ledge_meeting_conclusion",
+  "ryan_institution_research",
+  "ryan_false_suicide_draft",
+  "ryan_research_deleted",
+  "ryan_premeditation_timestamp",
+  "ryan_false_suicide_plan_conclusion",
+  "ryan_self_defense_conclusion",
+  "ryan_responsibility_conclusion",
+  "ryan_manipulative_denial",
+  "ryan_reconstruction_recorded",
+  "ryan_prevention_plan",
+  "ryan_message_copy_secured",
+  "ryan_plan_files_secured",
+  "ryan_laura_warned",
+  "ryan_attack_prevented",
+  "ryan_laura_saved",
+  "ryan_ryan_saved",
 ] as const;
 
 export type KnowledgeId = (typeof KNOWLEDGE_IDS)[number];
@@ -162,6 +199,7 @@ export const DIALOGUE_TOPIC_IDS = [
   "marie_threat",
   "marie_location",
   "jorgen_sighting",
+  "ryan_warning",
 ] as const;
 
 export type DialogueTopicId = (typeof DIALOGUE_TOPIC_IDS)[number];
@@ -211,7 +249,15 @@ export type SceneInteractionId =
   | "compare_jorgen_notebook"
   | "confront_later_jorgen"
   | "plant_jorgen_decoy"
-  | "prevent_jorgen_murder";
+  | "prevent_jorgen_murder"
+  | "inspect_ryan_lure_message"
+  | "inspect_laura_ryan_dossier"
+  | "inspect_ryan_passage_plan"
+  | "inspect_ryan_research_cache"
+  | "inspect_ryan_deleted_draft"
+  | "compare_ryan_premeditation_timestamps"
+  | "secure_ryan_evidence"
+  | "prevent_ryan_attack";
 
 export type SceneInteractionTrigger = "enter" | "manual";
 

@@ -636,6 +636,221 @@ export const SCENE_INTERACTIONS = {
     ],
     concludesStory: true,
   },
+  inspect_ryan_lure_message: {
+    id: "inspect_ryan_lure_message",
+    scenes: ["D3", "D4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Sikr Ryans besked til Laura",
+    requires: ["ryan_laura_partial_admission"],
+    effects: [
+      { type: "LEARN", id: "ryan_sent_meeting_message" },
+      { type: "LEARN", id: "ryan_message_before_murder" },
+      { type: "LEARN", id: "ryan_planned_alone" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Laura viser Jørgen den besked, hun skjulte efter faldet.",
+        "Ryan: “Mød mig i læsesalen ved middagstid. Jeg har noget, der tilhører dig. Kom alene.”",
+        "Afsenderdata og telefonens lokale tidsstempel viser, at beskeden kom fra Ryan før mødet.",
+        "Formuleringen er lokkende, men ønsket om et møde alene er tydeligt.",
+      ],
+      "dc-ryan-lure-message",
+    ),
+  },
+  inspect_laura_ryan_dossier: {
+    id: "inspect_laura_ryan_dossier",
+    scenes: ["D3", "D4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Gennemgå Lauras dokumentation mod Ryan",
+    requires: ["ryan_laura_partial_admission"],
+    effects: [
+      { type: "LEARN", id: "ryan_laura_dossier" },
+      { type: "LEARN", id: "ryan_knew_dossier" },
+      {
+        type: "LEARN",
+        id: "ryan_used_private_history_to_control",
+      },
+      {
+        type: "LEARN",
+        id: "ryan_group_manipulation_pattern",
+      },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Lauras mappe forbinder Ryans afpresning af Barbara, tyveriet af Maries arbejde og hans manipulation af Sarah og David.",
+        "En kladde til gruppen samler mønstret og beskriver, hvordan Ryan brugte Lauras private institutionsophold til at få hende til at tie.",
+        "Filhistorikken viser, at Ryan åbnede dokumentet. Kort efter skrev han til Laura, at ingen ville tro hendes version.",
+        "Lauras fortid er ikke et skyldbevis. Det er det våben, Ryan vidste, at han kunne bruge mod hende.",
+      ],
+      "dc-ryan-laura-dossier",
+    ),
+  },
+  inspect_ryan_passage_plan: {
+    id: "inspect_ryan_passage_plan",
+    scenes: ["C3", "C4"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Undersøg Ryans spor i passagen",
+    requires: ["ryan_laura_partial_admission"],
+    effects: [
+      {
+        type: "LEARN",
+        id: "ryan_knew_passage_before_meeting",
+      },
+      { type: "LEARN", id: "secret_passage_exists" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Ved den skjulte mekanisme sidder et frisk aftryk fra den mørke voks, Ryan bruger på sin lædertaske.",
+        "Inde i passagen er støvet tørret væk langs én planlagt rute mod afsatsen. En lille kile har holdt døren lydløs.",
+        "Forberedelsen er ældre end kampen. Ryan kendte vejen, før han sendte mødebeskeden.",
+      ],
+      "dc-ryan-passage-plan",
+    ),
+    replaces: ["inspect_secret_passage_book"],
+  },
+  inspect_ryan_research_cache: {
+    id: "inspect_ryan_research_cache",
+    scenes: ["B3"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Undersøg Ryans research-cache",
+    requires: ["ryan_laura_partial_admission"],
+    effects: [
+      { type: "LEARN", id: "ryan_institution_research" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "En synkroniseret browsercache fra Ryans konto indeholder en gemt side om Lauras tidligere institutionsophold.",
+        "Søgningerne handler ikke om at hjælpe hende. De kombinerer hendes navn med formuleringer om troværdighed, selvmord og adgang til afsatsen.",
+        "Siden blev åbnet før mødet. Dens indhold beskriver ikke Laura sandt; den viser, hvilken fordom Ryan ville udnytte.",
+      ],
+      "dc-ryan-institution-research",
+    ),
+  },
+  inspect_ryan_deleted_draft: {
+    id: "inspect_ryan_deleted_draft",
+    scenes: ["B3"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Gendan den slettede kladde",
+    requires: ["ryan_institution_research"],
+    effects: [
+      { type: "LEARN", id: "ryan_false_suicide_draft" },
+      { type: "LEARN", id: "ryan_research_deleted" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "I cachelageret ligger rester af en slettet tekstkladde fra Ryans konto.",
+        "“Hun havde været dårlig længe. Ingen af os forstod, hvor alvorligt det var.”",
+        "En planlagt besked skulle først sendes efter mødet. Sletningen fjernede filnavnet, men ikke indholdet.",
+        "Teksten er Ryans fabrikerede forklaring. Den er ikke en sand beskrivelse af Laura.",
+      ],
+      "dc-ryan-false-suicide-draft",
+    ),
+    replaces: ["inspect_ryan_research_cache"],
+  },
+  compare_ryan_premeditation_timestamps: {
+    id: "compare_ryan_premeditation_timestamps",
+    scenes: ["B3"],
+    kind: "inspect",
+    trigger: "manual",
+    label: "Sammenlign Ryans tidsstempler",
+    requires: [
+      "ryan_institution_research",
+      "ryan_false_suicide_draft",
+      "ryan_research_deleted",
+    ],
+    effects: [
+      { type: "LEARN", id: "ryan_premeditation_timestamp" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Browserhistorikken, kladden og mødebeskeden er oprettet i samme kæde før middag.",
+        "Kladden blev ændret, efter Ryan havde fundet passagen, og markeret til senere afsendelse.",
+        "Sletningen skete umiddelbart før mødet. Ryan forberedte fortællingen, før Laura kom til læsesalen.",
+      ],
+      "dc-ryan-premeditation-metadata",
+    ),
+    replaces: [
+      "inspect_ryan_research_cache",
+      "inspect_ryan_deleted_draft",
+    ],
+  },
+  secure_ryan_evidence: {
+    id: "secure_ryan_evidence",
+    scenes: ["B1", "B2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Sikr beskeden, kladden og metadata",
+    requires: [
+      "ryan_responsibility_conclusion",
+      "ryan_prevention_plan",
+      "ryan_reconstruction_recorded",
+    ],
+    effects: [
+      { type: "LEARN", id: "ryan_message_copy_secured" },
+      { type: "LEARN", id: "ryan_plan_files_secured" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen eksporterer Ryans mødebesked med afsenderdata og tager en kontrolleret kopi af Lauras telefon.",
+        "Barbara hjælper med en skrivebeskyttet eksport af browsercache, slettet kladde og tidsstempler. Hun kan ikke ændre originalerne.",
+        "Kopierne sendes til flere modtagere. Ryan kan ikke længere slette planen eller gøre Lauras private fortid til det eneste efterladte spor.",
+      ],
+      "dc-ryan-secure-evidence",
+    ),
+  },
+  prevent_ryan_attack: {
+    id: "prevent_ryan_attack",
+    scenes: ["C2"],
+    kind: "special",
+    trigger: "manual",
+    label: "Gå gennem passagen og stands Ryan",
+    requires: [
+      "ryan_responsibility_conclusion",
+      "ryan_prevention_plan",
+      "ryan_reconstruction_recorded",
+      "ryan_message_copy_secured",
+      "ryan_plan_files_secured",
+      "ryan_laura_warned",
+    ],
+    effects: [
+      { type: "LEARN", id: "ryan_was_saved" },
+      { type: "LEARN", id: "ryan_attack_prevented" },
+      { type: "LEARN", id: "ryan_laura_saved" },
+      { type: "LEARN", id: "ryan_ryan_saved" },
+    ],
+    timeCost: 0,
+    cue: textSequenceCue(
+      [
+        "Jørgen går ind i passagen før mødet og venter skjult ved afsatsen.",
+        "Ryan fører Laura derud og træder tættere på hende.",
+        "Ryan: Ingen vil tro dig. Når de finder dig, vil de allerede kende forklaringen.",
+        "Hans hånd bevæger sig mod hendes skulder. Jørgen træder ud fra passagen, før Laura er i dødelig fare.",
+        "Ryan: Hun har fyldt dig med løgne.",
+        "Jørgen: Nej. Du skrev løgnen, før hun overhovedet kom herop.",
+        "Jørgen fremlægger beskeden, adgangsvejen, den tidsstemplede research og den slettede kladde.",
+        "Laura bliver stående. Jørgen gør hende ikke passiv, men hun behøver ikke længere forsvare sit liv alene.",
+        "Ryan fortsætter med at benægte. Ingen falder, og de sikrede kopier består.",
+      ],
+      "dc-ryan-prevention-sequence",
+    ),
+    replaces: [
+      "inspect_secret_passage_book",
+      "inspect_ryan_passage_plan",
+    ],
+    concludesStory: true,
+  },
 } as const satisfies Record<SceneInteractionId, SceneInteraction>;
 
 const LAURA_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
@@ -673,6 +888,17 @@ const JORGEN_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
   "confront_later_jorgen",
   "plant_jorgen_decoy",
   "prevent_jorgen_murder",
+]);
+
+const RYAN_ONLY_INTERACTIONS = new Set<SceneInteractionId>([
+  "inspect_ryan_lure_message",
+  "inspect_laura_ryan_dossier",
+  "inspect_ryan_passage_plan",
+  "inspect_ryan_research_cache",
+  "inspect_ryan_deleted_draft",
+  "compare_ryan_premeditation_timestamps",
+  "secure_ryan_evidence",
+  "prevent_ryan_attack",
 ]);
 
 const DAVID_STORY_INTERACTIONS = new Set<SceneInteractionId>([
@@ -830,6 +1056,35 @@ const JORGEN_INTERACTION_OVERRIDES: Partial<
   },
 };
 
+const RYAN_INTERACTION_OVERRIDES: Partial<
+  Record<SceneInteractionId, SceneInteraction>
+> = {
+  inspect_ryans_body_and_necklace: {
+    ...SCENE_INTERACTIONS.inspect_ryans_body_and_necklace,
+    label: "Undersøg liget og den knækkede halskæde",
+    effects: [
+      { type: "LEARN", id: "ryan_fall_caused_death" },
+      { type: "LEARN", id: "ryan_necklace_in_hand" },
+      { type: "LEARN", id: "ryan_necklace_torn_clasp" },
+    ],
+    cue: stillsCue(
+      [
+        {
+          image: "sektorA3-Ryan1",
+          alt: "Ryan ligger livløs efter faldet.",
+        },
+        {
+          image: "sektorA3-Ryan2",
+          alt: "Ryans hånd holder en knækket isbjørnehalskæde.",
+          text:
+            "Ryan døde af faldet. Hans hånd er stadig lukket om isbjørnehalskæden. Låsen er ikke åbnet; et led er revet over med voldsom kraft.",
+        },
+      ],
+      "dc-ryan-body-necklace-still",
+    ),
+  },
+};
+
 export function getSceneInteraction(
   id: SceneInteractionId,
   state?: Pick<GameState, "selectedCaseId">,
@@ -850,6 +1105,10 @@ export function getSceneInteraction(
     return JORGEN_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
   }
 
+  if (state?.selectedCaseId === "ryan") {
+    return RYAN_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
+  }
+
   return SCENE_INTERACTIONS[id];
 }
 
@@ -866,30 +1125,43 @@ export function getSceneInteractions(
         ? !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
           !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
           !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
-          !JORGEN_ONLY_INTERACTIONS.has(interaction.id)
+          !JORGEN_ONLY_INTERACTIONS.has(interaction.id) &&
+          !RYAN_ONLY_INTERACTIONS.has(interaction.id)
         : state.selectedCaseId === "david"
           ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
             !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
             !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
             !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
-            !JORGEN_ONLY_INTERACTIONS.has(interaction.id)
+            !JORGEN_ONLY_INTERACTIONS.has(interaction.id) &&
+            !RYAN_ONLY_INTERACTIONS.has(interaction.id)
           : state.selectedCaseId === "barbara"
             ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
               !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
               !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
               !JORGEN_ONLY_INTERACTIONS.has(interaction.id) &&
+              !RYAN_ONLY_INTERACTIONS.has(interaction.id) &&
               interaction.id !== "inspect_girlfriend_letter"
             : state.selectedCaseId === "marie"
               ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
                 !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
                 !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
                 !JORGEN_ONLY_INTERACTIONS.has(interaction.id) &&
+                !RYAN_ONLY_INTERACTIONS.has(interaction.id) &&
                 !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
                 interaction.id !== "inspect_girlfriend_letter"
-              : !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
-                !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
-                !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
-                !MARIE_ONLY_INTERACTIONS.has(interaction.id)),
+              : state.selectedCaseId === "jorgen"
+                ? !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
+                  !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+                  !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
+                  !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
+                  !RYAN_ONLY_INTERACTIONS.has(interaction.id)
+                : !LAURA_ONLY_INTERACTIONS.has(interaction.id) &&
+                  !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+                  !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
+                  !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
+                  !JORGEN_ONLY_INTERACTIONS.has(interaction.id) &&
+                  !LEGACY_BARBARA_INTERACTIONS.has(interaction.id) &&
+                  interaction.id !== "inspect_girlfriend_letter"),
   ).map((interaction) => getSceneInteraction(interaction.id, state));
 }
 

@@ -374,6 +374,10 @@ export function reduceGameState(
           type: "LEARN",
           id: caseContent.reconstructionKnowledgeId,
         },
+        {
+          type: "LEARN",
+          id: caseContent.preventionPlanKnowledgeId,
+        },
       ]);
       return {
         ...recorded,

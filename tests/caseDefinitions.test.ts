@@ -18,7 +18,8 @@ describe("case registry and story modes", () => {
     expect(CASE_DEFINITIONS.laura).toMatchObject({
       mode: "original",
       enabled: true,
-      murderer: "Laura",
+      responsibleParty: "Laura",
+      resolutionLabel: "Morder",
       menu: {
         title: "Original historie",
         description:
@@ -28,7 +29,8 @@ describe("case registry and story modes", () => {
     expect(CASE_DEFINITIONS.david).toMatchObject({
       mode: "directors_cut",
       enabled: true,
-      murderer: "David",
+      responsibleParty: "David",
+      resolutionLabel: "Morder",
       menu: {
         title: "Director’s Cut",
         description:
@@ -38,37 +40,45 @@ describe("case registry and story modes", () => {
     expect(CASE_DEFINITIONS.barbara).toMatchObject({
       mode: "directors_cut",
       enabled: true,
-      murderer: "Barbara",
+      responsibleParty: "Barbara",
       menu: CASE_DEFINITIONS.david.menu,
     });
     expect(CASE_DEFINITIONS.marie).toMatchObject({
       mode: "directors_cut",
       enabled: true,
-      murderer: "Marie",
+      responsibleParty: "Marie",
       menu: CASE_DEFINITIONS.david.menu,
     });
     expect(CASE_DEFINITIONS.jorgen).toMatchObject({
       mode: "directors_cut",
       enabled: true,
-      murderer: "Jørgen",
+      responsibleParty: "Jørgen",
       menu: CASE_DEFINITIONS.david.menu,
+    });
+    expect(CASE_DEFINITIONS.ryan).toMatchObject({
+      mode: "directors_cut",
+      enabled: true,
+      responsibleParty: "Ryan",
+      resolutionLabel: "Sagens ansvarlige",
     });
     expect(getMysteryCaseIds()).toEqual([
       "david",
       "barbara",
       "marie",
       "jorgen",
+      "ryan",
     ]);
   });
 
   it("selects Director's Cut deterministically and keeps the id through loops", () => {
     expect(selectMysteryCaseId(0)).toBe("david");
     expect(selectMysteryCaseId(0.3)).toBe("barbara");
-    expect(selectMysteryCaseId(0.6)).toBe("marie");
-    expect(selectMysteryCaseId(0.999)).toBe("jorgen");
+    expect(selectMysteryCaseId(0.5)).toBe("marie");
+    expect(selectMysteryCaseId(0.7)).toBe("jorgen");
+    expect(selectMysteryCaseId(0.999)).toBe("ryan");
     let state = reduceGameState(createInitialGameState(), {
       type: "START_CASE",
-      caseId: selectMysteryCaseId(0.2)!,
+      caseId: selectMysteryCaseId(0.1)!,
     });
     state = reduceGameState(state, { type: "INTRO_FINISHED" });
     state = { ...state, timeSlot: 4 };
@@ -152,7 +162,7 @@ describe("case registry and story modes", () => {
       requestedCaseId: null,
     });
     expect(secondGame).toEqual({
-      caseId: "jorgen",
+      caseId: "ryan",
       source: "random",
       requestedCaseId: null,
     });

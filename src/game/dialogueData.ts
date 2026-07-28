@@ -26,6 +26,10 @@ import {
   getMissingMarieConclusionLabels,
   hasAllMarieConclusions,
 } from "./marieCase";
+import {
+  hasAllRyanConclusions,
+  hasRyanPartialAdmissionEvidence,
+} from "./ryanCase";
 
 export const CHARACTERS = [
   "Barbara",
@@ -55,7 +59,7 @@ export interface DialogueChoice {
   repeatable: boolean;
   effectsOnSkip: boolean;
   skipSummary?: string;
-  accusationOutcome?: "wrong" | "premature" | "conclusive";
+  accusationOutcome?: "wrong" | "premature" | "partial" | "conclusive";
   isNewTopic?: boolean;
   responseKey: string;
 }
@@ -85,6 +89,7 @@ const TOPIC_LABELS: Readonly<Record<DialogueTopicId, string>> = {
   marie_threat: "Hvad truede Ryan dig med?",
   marie_location: "Så du Marie vende tilbage?",
   jorgen_sighting: "Så du nogen ved læsesalen?",
+  ryan_warning: "Jeg ved, hvad Ryan har planlagt.",
 };
 
 function choiceId(
@@ -212,6 +217,9 @@ export function isConclusiveAccusation(
     return person === "Marie" && hasAllMarieConclusions(state);
   }
   if (state.selectedCaseId === "jorgen") {
+    return false;
+  }
+  if (state.selectedCaseId === "ryan") {
     return false;
   }
   return (
@@ -1373,6 +1381,239 @@ function getJorgenSpecialChoices(
   return choices;
 }
 
+function getRyanLauraAccusationAnswer(state: GameState): NarrativeCue {
+  if (!hasRyanPartialAdmissionEvidence(state)) {
+    return textSequenceCue(
+      [
+        "Jørgen: Halskæden er din, og du var på afsatsen.",
+        "Laura: Ja. Men du ved ikke endnu, hvordan kæden endte hos Ryan, eller hvad der skete mellem os.",
+        "Jørgen tænker: Mistanken er rationel, men ejerskab og tilstedeværelse fastslår ikke, hvem der angreb først.",
+      ],
+      "dc-ryan-premature-laura-accusation",
+    );
+  }
+
+  return textSequenceCue(
+    [
+      "Jørgen: Du var på afsatsen. Ryan døde med din iturevne halskæde i hånden, og mærket ved din hals passer med, at den blev revet af.",
+      "Laura: Jeg skubbede ham. Det er sandt.",
+      "Laura: Men han prøvede at skubbe mig først.",
+      "Ryan sendte beskeden. Jeg troede, han ville returnere min dokumentation og det sidste fra vores forhold.",
+      "Han førte mig gennem passagen. Ude på afsatsen sagde han, at ingen ville tro mig, og at alle ville kalde det selvmord.",
+      "Han havde begge hænder på mig. Da jeg kæmpede imod, greb han min halskæde.",
+      "Jeg prøvede bare at få ham væk. Kæden knækkede, han mistede balancen, og så faldt han.",
+      "Jeg løb. Jeg vidste, at han allerede havde forberedt en historie, hvor min fortid gjorde mig skyldig.",
+      "Jørgen: Jeg tror på, at du er bange. Men jeg skal kunne bevise, hvad han havde planlagt.",
+    ],
+    "dc-ryan-laura-partial-admission",
+  );
+}
+
+function getRyanSpecialChoices(
+  state: GameState,
+  person: CharacterId,
+): DialogueChoice[] {
+  const choices: DialogueChoice[] = [];
+  const afterMurder = state.timeSlot >= 3;
+
+  if (afterMurder && person !== "Ryan") {
+    const partialAdmission =
+      person === "Laura" && hasRyanPartialAdmissionEvidence(state);
+    const outcome =
+      person === "Laura"
+        ? partialAdmission
+          ? "partial"
+          : "premature"
+        : "wrong";
+    choices.push(
+      defineCueChoice(
+        person,
+        "alibi",
+        textCue(`Jørgen spørger ${person} om tiden omkring faldet.`),
+        textCue(
+          person === "Laura"
+            ? "Laura: Jeg var ved læsesalen. Jeg kan ikke fortælle resten endnu."
+            : `${person} forklarer sin rute uden at blive forbundet med afsatsen.`,
+          person === "Laura"
+            ? "dc-ryan-laura-partial-admission"
+            : undefined,
+        ),
+        {
+          effectsOnSkip: true,
+          skipSummary:
+            person === "Laura"
+              ? "Laura indrømmer kun, at hun var ved læsesalen, og er tydeligt bange for resten."
+              : `${person}s alibi forbinder ikke personen med faldet.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "theory",
+        textCue("Jørgen: Hvad tror du skete med Ryan?"),
+        textCue(
+          `${person}: Jeg ved det ikke. Men halskæden fortæller ikke nødvendigvis hele historien.`,
+        ),
+        {
+          effectsOnSkip: true,
+          skipSummary:
+            `${person} kan ikke fastslå ansvar ud fra halskæden alene.`,
+        },
+      ),
+      defineCueChoice(
+        person,
+        "accuse",
+        textCue(
+          person === "Laura"
+            ? "Jørgen konfronterer Laura med afsatsen og halskæden."
+            : `Jørgen anklager ${person} for Ryans død.`,
+          person === "Laura"
+            ? "dc-ryan-laura-partial-admission"
+            : undefined,
+        ),
+        person === "Laura"
+          ? getRyanLauraAccusationAnswer(state)
+          : textCue(
+              `${person} afviser anklagen. Intet forbinder personen med kampen på afsatsen.`,
+            ),
+        {
+          effects:
+            partialAdmission
+              ? [
+                  { type: "LEARN", id: "ryan_laura_pushed" },
+                  {
+                    type: "LEARN",
+                    id: "ryan_laura_says_attacked_first",
+                  },
+                  {
+                    type: "LEARN",
+                    id: "ryan_laura_partial_admission",
+                  },
+                ]
+              : [],
+          effectsOnSkip: true,
+          accusationOutcome: outcome,
+          responseKey: `Ryan:accuse:${person}:${outcome}`,
+          skipSummary:
+            partialAdmission
+              ? "Laura indrømmer, at hun skubbede Ryan væk, men forklarer, at han angreb først og rev halskæden af hende."
+              : "Anklagen afgør ikke ansvaret; efterforskningen fortsætter.",
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Laura" &&
+    afterMurder &&
+    state.knowledge.ryan_necklace_in_hand
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "necklace",
+        textCue(
+          "Jørgen: Ryan havde denne isbjørnehalskæde i hånden. Er den din?",
+          "dc-ryan-laura-necklace-injury",
+        ),
+        textSequenceCue(
+          [
+            "Laura: Ja. Den sad om min hals tidligere i dag.",
+            "Da hun flytter håret, ses et frisk rødt mærke ved halsbenet. Kæden er ikke åbnet ved låsen; et led er revet over.",
+            "Laura: Jeg tabte den ikke. Mere kan jeg ikke sige lige nu.",
+          ],
+          "dc-ryan-laura-necklace-injury",
+        ),
+        {
+          effects: [
+            { type: "LEARN", id: "ryan_laura_owns_necklace" },
+            { type: "LEARN", id: "ryan_laura_neck_injury" },
+          ],
+          effectsOnSkip: true,
+          skipSummary:
+            "Laura ejer halskæden og har et frisk mærke ved halsen, som passer med den voldsomme afrivning.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Ryan" &&
+    state.timeSlot <= 2 &&
+    state.knowledge.ryan_laura_partial_admission
+  ) {
+    const fullyDocumented = hasAllRyanConclusions(state);
+    choices.push(
+      defineCueChoice(
+        person,
+        "accuse",
+        textCue(
+          "Jørgen: Jeg ved, at du lokkede Laura ud på afsatsen.",
+          "dc-ryan-manipulative-denial",
+        ),
+        textSequenceCue(
+          [
+            "Ryan: Du har et ord fra Laura og en håndfuld tilfældigheder.",
+            "Ryan: Hun overdriver. Det gør hun altid, når nogen siger hende imod.",
+            "Ryan: Tænk dig nu om, Jørgen. Hvem tror du, de andre vil tro på?",
+            fullyDocumented
+              ? "Jørgen tænker: Benægtelsen ændrer ikke tidsstemplerne. Men jeg kan kun bevise forsøget ved at standse ham, mens planen udfolder sig."
+              : "Jørgen tænker: Hans manipulation er tydelig, men jeg mangler stadig den dokumenterede plan.",
+          ],
+          "dc-ryan-manipulative-denial",
+        ),
+        {
+          effects: [
+            { type: "LEARN", id: "ryan_manipulative_denial" },
+          ],
+          effectsOnSkip: true,
+          accusationOutcome: fullyDocumented ? "partial" : "premature",
+          responseKey: `Ryan:accuse:${fullyDocumented ? "documented" : "premature"}`,
+          skipSummary:
+            "Ryan afviser anklagen og forsøger at bruge fordomme om Laura til at få Jørgen til at tvivle.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  if (
+    person === "Laura" &&
+    state.timeSlot <= 2 &&
+    state.knowledge.ryan_reconstruction_recorded &&
+    state.knowledge.ryan_message_copy_secured &&
+    state.knowledge.ryan_plan_files_secured
+  ) {
+    choices.push(
+      defineCueChoice(
+        person,
+        "ryan_warning",
+        textCue(
+          "Jørgen: Jeg har Ryans besked, kladden og tidsstemplerne. Du skal ikke stå alene med ham.",
+          "dc-ryan-warn-laura",
+        ),
+        textSequenceCue(
+          [
+            "Laura: Jeg går ikke bare hjem og lader ham gøre det mod den næste.",
+            "Jørgen: Det beder jeg dig heller ikke om. Beviserne er sikret, og jeg går ind i passagen før jer.",
+            "Laura: Så møder jeg ham. Men denne gang ved han ikke, at du lytter.",
+          ],
+          "dc-ryan-warn-laura",
+        ),
+        {
+          effects: [{ type: "LEARN", id: "ryan_laura_warned" }],
+          effectsOnSkip: true,
+          skipSummary:
+            "Laura er advaret og vælger handlekraftigt at møde Ryan, mens Jørgen går i forvejen med sikrede beviser.",
+          isNewTopic: true,
+        },
+      ),
+    );
+  }
+
+  return choices;
+}
+
 export function getDialogueChoices(
   state: GameState,
   person: CharacterId,
@@ -1401,6 +1642,8 @@ export function getDialogueChoices(
           ? getMarieSpecialChoices(state, person)
           : state.selectedCaseId === "jorgen"
             ? getJorgenSpecialChoices(state, person)
-      : getLegacySpecialChoices(state, person)),
+            : state.selectedCaseId === "ryan"
+              ? getRyanSpecialChoices(state, person)
+              : getLegacySpecialChoices(state, person)),
   ];
 }

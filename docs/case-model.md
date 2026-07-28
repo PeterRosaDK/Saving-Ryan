@@ -1,7 +1,7 @@
 # Director’s Cut case model
 
-Status: David-, Barbara-, Marie- og Jørgen-sagerne er implementeret og spilbare; Laura er
-fortsat det isolerede originalforløb.
+Status: David-, Barbara-, Marie-, Jørgen- og Ryan-sagerne er implementeret og
+spilbare; Laura er fortsat det isolerede originalforløb.
 
 ## Modes og valg
 
@@ -13,16 +13,16 @@ Titlen tilbyder uden progression-gate:
 `selectedCaseId` ligger i version 3 af `GameState` og ændres aldrig af et
 dagsloop. `RESET_GAME` nulstiller viden, statistik og case-lokal state. Et nyt
 Director’s Cut-spil foretager derefter et nyt registry-valg. Poolen indeholder
-aktuelt `david`, `barbara`, `marie` og `jorgen`; normal selection er uniform, mens injicerede
-random-værdier gør alle udfald deterministisk testbare.
+aktuelt `david`, `barbara`, `marie`, `jorgen` og `ryan`; normal selection er
+uniform, mens injicerede random-værdier gør alle udfald deterministisk testbare.
 
 Til målrettet QA læses `?dcCase=<case-id>`. Et gyldigt, aktiveret
 Director’s Cut-ID vælges deterministisk og logges i konsollen; et ukendt eller
 inaktivt ID giver en advarsel og falder tilbage til normal registry-udvælgelse.
 Parameteren bruges kun, når spilleren vælger Director’s Cut, og kan derfor ikke
 ændre Original historie. Se `docs/david-playtest.md`,
-`docs/barbara-playtest.md`, `docs/marie-playtest.md` og
-`docs/jorgen-playtest.md`.
+`docs/barbara-playtest.md`, `docs/marie-playtest.md`,
+`docs/jorgen-playtest.md` og `docs/ryan-playtest.md`.
 
 `?qa=1` viser desuden en skjult registry-drevet vælger på titelskærmen med
 **Tilfældig case** og én mulighed pr. aktiv Director’s Cut-case. Valget
@@ -32,9 +32,11 @@ QA-links. Almindelige spillere ser aldrig morderlisten.
 ## Registry
 
 `src/game/caseDefinitions.ts` er den centrale liste. En case angiver stabilt ID,
-mode, enabled-flag, morder, spoilerfri menutekst og scoreparametre. Nye sager
-registreres som disabled, indtil deres egen knowledge graph, dialog, overgange,
-anklage, prevention og ending er komplette.
+mode, enabled-flag, ansvarlig part, resultatetiketten **Morder** eller
+**Sagens ansvarlige**, spoilerfri menutekst og scoreparametre. Skellet gør det
+muligt at beskrive Ryan-sagen præcist uden at kalde Laura morder alene på grund
+af det fysiske skub. Nye sager registreres som disabled, indtil deres egen
+knowledge graph, dialog, overgange, anklage, prevention og ending er komplette.
 
 Case-specifikt indhold vælges ved grænserne for:
 
@@ -118,12 +120,14 @@ derefter kan mødet ved passagen standses i C2.
 Den delte casekontrakt har to finaleformer:
 
 - `npc-confession` for David, Barbara og Marie;
-- `special-revelation` for Jørgen.
+- `special-revelation` for Jørgen og Ryan.
 
 Begge former angiver et `finaleKnowledgeId`, som ved næste reset åbner den samme
 genlæselige rekonstruktionsfase. Jørgen bruger dermed ikke en kunstig
 NPC-tilståelse, men genbruger stadig loop, notebook, leads, prevention, score og
-ending.
+ending. Ryan bruger samme form, fordi Laura kun afgiver en delvis indrømmelse:
+hun erkender skubbet, men ansvarskonklusionen opstår først, når den samlede
+vidensgraf dokumenterer Ryans plan.
 
 ## Jørgen knowledge graph
 
@@ -160,30 +164,66 @@ State machine bevarer kun et passageobjekt i `jorgen`-casen. Kontrolobjektet
 udenfor nulstilles, og andre cases får ingen fysisk persistens af de samme
 knowledge-id’er.
 
+## Ryan knowledge graph
+
+Ryan-sagen er en omvendt ansvarssag. A2 og ligundersøgelsen fastslår faldet,
+Ryans greb om Lauras halskæde og en overrevet kæde med lukket lås. Når Laura
+også har identificeret kæden, og mærket ved hendes hals er observeret, kan hun
+konfronteres. Hun indrømmer, at hun skubbede Ryan, men forklarer, at han angreb
+først. Det er en delvis indrømmelse, ikke en afslutning eller en dom over Laura.
+
+Vidensgrafen afleder seks kernekonklusioner:
+
+1. **Den fysiske handling er fastslået, men ansvaret er åbent:** Laura var på
+   afsatsen, skubbede Ryan, og halskæden blev revet over under kampen.
+2. **Motiv til at bringe Laura til tavshed:** Lauras dossier, Ryans kendskab til
+   det og hans brug af hendes private historie forbindes.
+3. **Et arrangeret møde på afsatsen:** Ryans besked før dødsfaldet bad Laura
+   komme alene, og spor i passagen viser hans forhåndskendskab.
+4. **En planlagt falsk selvmordsforklaring:** research, kladde, sletning og
+   tidsstempler er alle nødvendige. Institutionsopholdet er her noget Ryan vil
+   misbruge, aldrig et skyldbevis mod Laura.
+5. **Lauras skub var selvforsvar:** den delvise indrømmelse og de fysiske spor
+   sammenholdes med den dokumenterede angrebsplan.
+6. **Ryan er sagens ansvarlige:** motiv, lokkemøde, falsk forklaring og
+   selvforsvarskonklusionen er alle kendt.
+
+Rækkefølgen mellem dossier, besked, passage og computerfund er fri. Hverken
+Lauras tilstedeværelse, ejerskab af halskæden, indrømmelse af skubbet eller
+institutionshistorie er alene tilstrækkelig. En konfrontation med den levende
+Ryan giver kun en manipulerende benægtelse og afslutter aldrig sagen.
+
 ## Kildegrænse
 
 Director-dumpet er autoritativt for geografi, tider og eksisterende
-sceneplaceringer. Det bekræfter især C2-rækkefølgen: Ryan går ind i læsesalen,
-og David følger efter før skriget. Projektrapporten og den restaurerede kode
-beskriver derimod Laura som originalens tiltænkte morder og indeholder ikke den
-færdige David-forklaring. David som morder, Sarah-motivet, pickup-scenen,
-tilståelsen og preventionen kommer derfor fra den godkendte Director’s
-Cut-kanon, mens de ligger oven på den verificerede legacy-geografi.
+sceneplaceringer. Det bekræfter især A2's råb og fald samt C2-rækkefølgen, hvor
+Ryan går ind i læsesalen, og David følger efter før skriget. Projektrapporten og
+den restaurerede kode beskriver derimod Laura som originalens tiltænkte morder
+og indeholder hverken den færdige David- eller Ryan-forklaring. David som
+morder og Ryan som planlæggende ansvarlig kommer derfor fra den godkendte
+Director’s Cut-kanon oven på den verificerede legacy-geografi.
 
 Castet indeholder `Ryan-omSaraOgDavid`, men der er ingen dokumenteret,
 semantisk sikker runtime-vej eller transskription, som beviser, at klippet siger
 den nye kanoniske replik. Det er derfor bevaret urørt og ikke genbrugt alene på
-grund af filnavnet.
+grund af filnavnet. Ryan-sagens nye kamphandling, lokkebesked, dossier og falske
+selvmordsplan har heller ingen semantisk sikre legacy-klip og er derfor
+tekst-first placeholders.
 
 ## Loop, rekonstruktion og prevention
 
 Efter tilståelsen eller den særlige afsløring starter næste morgen i fasen
-`reconstruction`. De fem David-kort, seks Barbara-kort, syv Marie-kort eller
-syv Jørgen-kort gemmes i notesbogen, også hvis spilleren
+`reconstruction`. De fem David-kort, seks Barbara-kort, syv Marie-kort, syv
+Jørgen-kort eller otte Ryan-kort gemmes i notesbogen, også hvis spilleren
 springer visningen over. Derefter er `Vent ved bogreolen` tilgængelig kun i C2
 og kun med den aktuelle cases rekonstruktion og prevention-plan. Hvis vinduet
 misses, fortsætter mordet og loopet normalt, mens planen består. Barbara-finalen
 viser eksplicit, at Jørgen griber hendes håndled før skubbet.
+
+Ryan-finalen kræver mere end at nå C2: beskeden og planfilerne skal sikres i
+B1/B2, og Laura skal orienteres i E2. Laura er en aktiv deltager i planen.
+Jørgen går derefter i forvejen gennem passagen og standser angrebet, så både
+Laura og Ryan overlever.
 
 ## Statistik og score
 
@@ -224,9 +264,19 @@ Jørgens verificerede `parDays` er 4:
   senere Jørgen gennem reset;
 - dag 4 gemmer rekonstruktionen, planter den falske plan og forhindrer mordet.
 
-Resultatkortets normale statistik suppleres datadrevet med to registrerede
-Jørgener og én tidsmæssig selvmodsigelse. Andre cases bruger fortsat den
-almindelige resultatvisning.
+Ryan-sagens verificerede `parDays` er 2:
+
+- dag 1: A2-faldet, halskæden og skaden, Lauras delvise indrømmelse, besked,
+  dossier, passagespor, research, kladde og tidsstempler;
+- dag 2: otte-korts rekonstruktion, sikring af begge bevisklasser, information
+  til Laura i E2 og aktiv prevention i C2.
+
+Resultatkortets normale statistik suppleres datadrevet med case-specifikke
+felter. Jørgen viser to registrerede Jørgener og én tidsmæssig
+selvmodsigelse. Ryan viser planlagt offer, fysisk skub, fysisk dødsårsag,
+selvforsvarsvurdering, to reddede personer og én afsløret falsk
+selvmordsfortælling. Overskriften bruger **Sagens ansvarlige: Ryan**, ikke
+**Morder**, mens de øvrige cases beholder deres eksisterende etiketter.
 
 ## Text-first assets
 
@@ -235,6 +285,7 @@ registreret maskinlæsbart i
 `src/media/directorsCutAssetManifest.ts` og læsevenligt i
 `docs/directors-cut-asset-manifest.md`. Hver runtime-placeholder bærer et stabilt
 manifest-ID. Senere medier må ændre præsentationen, men ikke knowledge-effects.
-Barbara, Marie og Jørgen bruger samme centrale manifest; der findes ikke et parallelt
-case-manifest. Tekstfallback og skip-resumé er den autoritative semantik, så
-manglende produktion ikke blokerer progression.
+Barbara, Marie, Jørgen og Ryan bruger samme centrale manifest; der findes ikke
+et parallelt case-manifest. Ryan har 17 registrerede placeholders. Tekstfallback
+og skip-resumé er den autoritative semantik, så manglende produktion ikke
+blokerer progression.

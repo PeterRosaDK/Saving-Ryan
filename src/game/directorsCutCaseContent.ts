@@ -19,6 +19,11 @@ import {
   JORGEN_OPTIONAL_EVIDENCE,
   JORGEN_RECONSTRUCTION_CARDS,
 } from "./jorgenCase";
+import {
+  RYAN_CORE_CONCLUSIONS,
+  RYAN_OPTIONAL_EVIDENCE,
+  RYAN_RECONSTRUCTION_CARDS,
+} from "./ryanCase";
 
 export type DirectorsCutCaseId = Exclude<CaseId, "laura">;
 
@@ -38,8 +43,12 @@ export interface DirectorsCutCaseContent {
   reconstructionAssetId: string;
   epilogueAssetId: string;
   result?: {
-    murdererLabel?: string;
+    responsiblePartyLabel?: string;
     topRating?: string;
+    resolutionDetails?: readonly {
+      label: string;
+      value: string;
+    }[];
     extraStatistics?: readonly {
       label: string;
       value: string;
@@ -134,11 +143,56 @@ export const DIRECTORS_CUT_CASE_CONTENT: Readonly<
     reconstructionAssetId: "dc-jorgen-reconstruction-sequence",
     epilogueAssetId: "dc-jorgen-epilogue-sequence",
     result: {
-      murdererLabel: "Jørgen (senere)",
+      responsiblePartyLabel: "Jørgen (senere)",
       topRating: "Kronologisk umulig",
       extraStatistics: [
         { label: "Registrerede Jørgener", value: "2" },
         { label: "Tidsmæssige selvmodsigelser", value: "1" },
+      ],
+    },
+  },
+  ryan: {
+    caseId: "ryan",
+    finaleKind: "special-revelation",
+    coreConclusions: RYAN_CORE_CONCLUSIONS,
+    optionalEvidence: RYAN_OPTIONAL_EVIDENCE,
+    reconstructionCards: RYAN_RECONSTRUCTION_CARDS,
+    finaleKnowledgeId: "ryan_responsibility_conclusion",
+    reconstructionKnowledgeId: "ryan_reconstruction_recorded",
+    preventionPlanKnowledgeId: "ryan_prevention_plan",
+    startLead:
+      "Gennemlev faldet, og undersøg hvorfor Lauras halskæde endte i Ryans hånd.",
+    finalLead:
+      "Sikr beviserne, advar Laura og afbryd Ryan ved passagen, før nogen falder.",
+    epilogue: [
+      "Laura overlevede og blev ikke gjort ansvarlig for den situation, Ryan havde planlagt. Hendes tidligere institutionsophold var aldrig et bevis på farlighed eller skyld.",
+      "Ryan overlevede også. Han fortsatte med at benægte, men mødebeskeden, den slettede kladde og tidsstemplerne dokumenterede forsøget på at få Lauras død til at ligne selvmord.",
+      "Maries arbejde, Barbaras karaktersag og Davids forhold til Sarah blev set som dele af det samme mønster af manipulation, ikke som våben Ryan fortsat kunne bruge hver for sig.",
+      "Jørgen brød loopet ved at forhindre både det planlagte angreb og det dødelige fald. Næste morgen fortsatte tiden fremad.",
+    ],
+    reconstructionAssetId: "dc-ryan-reconstruction-sequence",
+    epilogueAssetId: "dc-ryan-epilogue-sequence",
+    result: {
+      responsiblePartyLabel: "Ryan",
+      topRating: "Den omvendte sag",
+      resolutionDetails: [
+        { label: "Planlagt offer", value: "Laura" },
+        {
+          label: "Fysisk skub i det tidligere loop",
+          value: "Laura skubbede Ryan væk",
+        },
+        {
+          label: "Fysisk dødsårsag i det tidligere loop",
+          value: "Fald under selvforsvar",
+        },
+        { label: "Vurdering", value: "Selvforsvar" },
+      ],
+      extraStatistics: [
+        { label: "Reddede personer", value: "2" },
+        {
+          label: "Falske selvmordsfortællinger afsløret",
+          value: "1",
+        },
       ],
     },
   },

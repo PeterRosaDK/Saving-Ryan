@@ -384,6 +384,43 @@ const JORGEN_TRANSITION_OVERRIDES: Partial<
   ),
 };
 
+const RYAN_TRANSITION_OVERRIDES: Partial<
+  Record<SceneId, LocationTransitionEvent>
+> = {
+  A2: defineTransitionEvent(
+    "A2",
+    "Ryan kalder på Jørgen fra afsatsen. Laura står bag ham, og deres bevægelser bliver pludselig voldsomme.",
+    {
+      specialCue: textSequenceCue(
+        [
+          "Ryan står på afsatsen med en isbjørnehalskæde i hånden.",
+          "Ryan: Jørgen! Kom lige og se, hvad jeg har fundet!",
+          "Laura står bag ham. Ryan vender sig, griber efter hende, og de kæmper ved kanten.",
+          "Laura skubber ham væk. Ryan mister balancen og falder stadig med halskæden i hånden.",
+          "Fra denne afstand kan Jørgen se den fysiske handling, men ikke hvem der begyndte angrebet.",
+        ],
+        "dc-ryan-fall-sequence",
+      ),
+      effects: [
+        { type: "LEARN", id: "ryan_laura_on_ledge" },
+        { type: "LEARN", id: "ryan_fall_caused_death" },
+      ],
+    },
+  ),
+  B4: defineTransitionEvent(
+    "B4",
+    "Marie forlader lokalet. Du venter lidt, før den nye morgen begynder.",
+  ),
+  C2: defineTransitionEvent(
+    "C2",
+    "Ryan og Laura forsvinder ind bag bogreolen. Kort efter høres Ryans råb og skriget fra kantinen.",
+  ),
+  E2: defineTransitionEvent(
+    "E2",
+    "Laura læser en besked, lægger telefonen væk og går mod læsesalen. David går i den modsatte retning.",
+  ),
+};
+
 export function getLocationTransitionEvent(
   id: TransitionEventId,
   caseId: CaseId = "laura",
@@ -402,6 +439,10 @@ export function getLocationTransitionEvent(
 
   if (caseId === "jorgen") {
     return JORGEN_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id];
+  }
+
+  if (caseId === "ryan") {
+    return RYAN_TRANSITION_OVERRIDES[id] ?? LOCATION_TRANSITION_EVENTS[id];
   }
 
   return LOCATION_TRANSITION_EVENTS[id];

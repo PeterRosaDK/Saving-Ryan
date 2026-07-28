@@ -56,6 +56,7 @@ describe("Director's Cut: Jørgen", () => {
       "barbara",
       "marie",
       "jorgen",
+      "ryan",
     ]);
     expect(
       selectDirectorsCutCase({
@@ -84,10 +85,10 @@ describe("Director's Cut: Jørgen", () => {
     expect(selectDirectorsCutCase({ randomValue: 0.3 }).caseId).toBe(
       "barbara",
     );
-    expect(selectDirectorsCutCase({ randomValue: 0.6 }).caseId).toBe(
+    expect(selectDirectorsCutCase({ randomValue: 0.5 }).caseId).toBe(
       "marie",
     );
-    expect(selectDirectorsCutCase({ randomValue: 0.999 }).caseId).toBe(
+    expect(selectDirectorsCutCase({ randomValue: 0.7 }).caseId).toBe(
       "jorgen",
     );
     const original = reduceGameState(createInitialGameState(), {
@@ -616,7 +617,7 @@ describe("Director's Cut: Jørgen", () => {
   it("renders dry case-specific result metadata without changing other cases", () => {
     const content = getDirectorsCutCaseContent("jorgen");
     expect(content.result).toEqual({
-      murdererLabel: "Jørgen (senere)",
+      responsiblePartyLabel: "Jørgen (senere)",
       topRating: "Kronologisk umulig",
       extraStatistics: [
         { label: "Registrerede Jørgener", value: "2" },

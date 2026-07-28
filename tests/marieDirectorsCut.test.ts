@@ -63,6 +63,7 @@ describe("Director's Cut: Marie", () => {
       "barbara",
       "marie",
       "jorgen",
+      "ryan",
     ]);
     expect(
       selectDirectorsCutCase({
@@ -82,7 +83,7 @@ describe("Director's Cut: Marie", () => {
     expect(selectDirectorsCutCase({ randomValue: 0.3 }).caseId).toBe(
       "barbara",
     );
-    expect(selectDirectorsCutCase({ randomValue: 0.6 }).caseId).toBe(
+    expect(selectDirectorsCutCase({ randomValue: 0.5 }).caseId).toBe(
       "marie",
     );
     const original = reduceGameState(createInitialGameState(), {

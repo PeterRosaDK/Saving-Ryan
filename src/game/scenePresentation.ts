@@ -215,6 +215,10 @@ const INTERACTIONS = {
       interactionId: "inspect_jorgen_login_audit",
       rect: hotspotRect(283, 244, 94, 104),
     },
+    {
+      interactionId: "secure_ryan_evidence",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
   ],
   B3: [
     {
@@ -233,11 +237,29 @@ const INTERACTIONS = {
       interactionId: "inspect_jorgen_login_audit",
       rect: hotspotRect(283, 244, 94, 104),
     },
+    {
+      interactionId: "inspect_ryan_research_cache",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+    {
+      interactionId: "inspect_ryan_deleted_draft",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+    {
+      interactionId: "compare_ryan_premeditation_timestamps",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
   ],
-  B1: [{
-    interactionId: "inspect_jorgen_login_audit",
-    rect: hotspotRect(283, 244, 94, 104),
-  }],
+  B1: [
+    {
+      interactionId: "inspect_jorgen_login_audit",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+    {
+      interactionId: "secure_ryan_evidence",
+      rect: hotspotRect(283, 244, 94, 104),
+    },
+  ],
   C1: [{
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
@@ -275,6 +297,9 @@ const INTERACTIONS = {
   }, {
     interactionId: "prevent_jorgen_murder",
     rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "prevent_ryan_attack",
+    rect: hotspotRect(117, 294, 14, 46),
   }],
   C3: [{
     interactionId: "inspect_secret_passage_book",
@@ -287,6 +312,9 @@ const INTERACTIONS = {
     rect: hotspotRect(117, 294, 14, 46),
   }, {
     interactionId: "inspect_jorgen_passage_test",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "inspect_ryan_passage_plan",
     rect: hotspotRect(117, 294, 14, 46),
   }],
   C4: [{
@@ -303,6 +331,9 @@ const INTERACTIONS = {
     rect: hotspotRect(117, 294, 14, 46),
   }, {
     interactionId: "confront_later_jorgen",
+    rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "inspect_ryan_passage_plan",
     rect: hotspotRect(117, 294, 14, 46),
   }],
   D1: [
@@ -374,6 +405,14 @@ const INTERACTIONS = {
       interactionId: "compare_jorgen_notebook",
       rect: hotspotRect(148, 384, 62, 24),
     },
+    {
+      interactionId: "inspect_ryan_lure_message",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_laura_ryan_dossier",
+      rect: hotspotRect(232, 344, 174, 64),
+    },
   ],
   D4: [
     {
@@ -399,6 +438,14 @@ const INTERACTIONS = {
     {
       interactionId: "compare_jorgen_notebook",
       rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_ryan_lure_message",
+      rect: hotspotRect(148, 384, 62, 24),
+    },
+    {
+      interactionId: "inspect_laura_ryan_dossier",
+      rect: hotspotRect(232, 344, 174, 64),
     },
   ],
 } as const satisfies Partial<Record<SceneId, readonly InteractionHotspot[]>>;

@@ -95,3 +95,25 @@ kontekst før/efter og case-ID for hvert behov.
 | `dc-jorgen-decoy-plan` | D1/D2 | still | dokument | nødvendig | ingen | placeholder |
 | `dc-jorgen-paradox-prevention` | C2/afsatsen | sequence | Ryan/to Jørgener | nødvendig | ingen | placeholder |
 | `dc-jorgen-epilogue-sequence` | epilog | sequence | fortæller | ønskelig | ingen | placeholder |
+
+## Ryan
+
+| Asset-ID | Scene | Type | Person | Prioritet | Genbrug | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `dc-ryan-fall-sequence` | A2 | sequence | Ryan/Laura/Jørgen | nødvendig | legacy råb/fald kun som geografisk grundlag | placeholder |
+| `dc-ryan-body-necklace-still` | A3/A4 | still | fortæller | nødvendig | eksisterende bodystills som baggrund | placeholder |
+| `dc-ryan-laura-necklace-injury` | Laura-dialog | sequence | Laura | nødvendig | neutralt Laura-portræt | placeholder |
+| `dc-ryan-premature-laura-accusation` | for tidlig Laura-anklage | sequence | Jørgen/Laura | nødvendig | legacy-anklage afvist semantisk | placeholder |
+| `dc-ryan-laura-partial-admission` | dokumenteret Laura-konfrontation | sequence | Laura/Jørgen | nødvendig | legacy-klip afvist semantisk | placeholder |
+| `dc-ryan-lure-message` | D3/D4 | still | dokument | nødvendig | ingen | placeholder |
+| `dc-ryan-laura-dossier` | D3/D4 | sequence | dokument | nødvendig | ingen | placeholder |
+| `dc-ryan-passage-plan` | C3/C4 | still | fortæller | nødvendig | neutral læsesalsbaggrund | placeholder |
+| `dc-ryan-institution-research` | B3 | still | computerinterface | nødvendig | neutral legacy-computerflade | placeholder |
+| `dc-ryan-false-suicide-draft` | B3 | still | dokument | nødvendig | ingen | placeholder |
+| `dc-ryan-premeditation-metadata` | B3 | sequence | computerinterface | nødvendig | ingen | placeholder |
+| `dc-ryan-manipulative-denial` | Ryan-dialog | sequence | Ryan/Jørgen | nødvendig | legacy-klip afvist semantisk | placeholder |
+| `dc-ryan-reconstruction-sequence` | sidste morgen | sequence | Jørgen | nødvendig | ingen | placeholder |
+| `dc-ryan-secure-evidence` | B1/B2-finalen | sequence | Jørgen/Barbara | nødvendig | neutral legacy-computerflade | placeholder |
+| `dc-ryan-warn-laura` | E2-finalen | sequence | Laura/Jørgen | nødvendig | ingen | placeholder |
+| `dc-ryan-prevention-sequence` | C2/afsatsen | sequence | Ryan/Laura/Jørgen | nødvendig | ingen | placeholder |
+| `dc-ryan-epilogue-sequence` | epilog | sequence | fortæller | ønskelig | ingen | placeholder |

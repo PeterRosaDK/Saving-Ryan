@@ -11,7 +11,7 @@ export type DirectorsCutAssetType =
 
 export interface DirectorsCutAssetNeed {
   id: string;
-  caseId: "david" | "barbara" | "marie" | "jorgen";
+  caseId: "david" | "barbara" | "marie" | "jorgen" | "ryan";
   scene: string;
   type: DirectorsCutAssetType;
   person: string;
@@ -19,47 +19,70 @@ export interface DirectorsCutAssetNeed {
   delivery: string;
   before: string;
   after: string;
+  fallbackText: string;
   priority: "nødvendig" | "ønskelig";
   reuseCandidate: string | null;
   status: "mangler" | "placeholder" | "leveret" | "integreret";
 }
 
+type DirectorsCutAssetInput = Omit<
+  DirectorsCutAssetNeed,
+  "caseId" | "status" | "fallbackText"
+> & {
+  fallbackText?: string;
+};
+
 function need(
-  value: Omit<DirectorsCutAssetNeed, "caseId" | "status">,
+  value: DirectorsCutAssetInput,
 ): DirectorsCutAssetNeed {
   return {
     ...value,
+    fallbackText: value.fallbackText ?? value.exactContent,
     caseId: "david",
     status: "placeholder",
   };
 }
 
 function barbaraNeed(
-  value: Omit<DirectorsCutAssetNeed, "caseId" | "status">,
+  value: DirectorsCutAssetInput,
 ): DirectorsCutAssetNeed {
   return {
     ...value,
+    fallbackText: value.fallbackText ?? value.exactContent,
     caseId: "barbara",
     status: "placeholder",
   };
 }
 
 function marieNeed(
-  value: Omit<DirectorsCutAssetNeed, "caseId" | "status">,
+  value: DirectorsCutAssetInput,
 ): DirectorsCutAssetNeed {
   return {
     ...value,
+    fallbackText: value.fallbackText ?? value.exactContent,
     caseId: "marie",
     status: "placeholder",
   };
 }
 
 function jorgenNeed(
-  value: Omit<DirectorsCutAssetNeed, "caseId" | "status">,
+  value: DirectorsCutAssetInput,
 ): DirectorsCutAssetNeed {
   return {
     ...value,
+    fallbackText: value.fallbackText ?? value.exactContent,
     caseId: "jorgen",
+    status: "placeholder",
+  };
+}
+
+function ryanNeed(
+  value: DirectorsCutAssetInput,
+): DirectorsCutAssetNeed {
+  return {
+    ...value,
+    fallbackText: value.fallbackText ?? value.exactContent,
+    caseId: "ryan",
     status: "placeholder",
   };
 }
@@ -997,6 +1020,257 @@ export const DIRECTORS_CUT_ASSET_MANIFEST = [
     delivery: "Rolig, alvorlig og med en rest af ubehag.",
     before: "Den senere Jørgen spørger: Så hvem bliver du nu?",
     after: "Resultatkortet viser to registrerede Jørgener.",
+    priority: "ønskelig",
+    reuseCandidate: null,
+  }),
+  ryanNeed({
+    id: "dc-ryan-fall-sequence",
+    scene: "A2, faldøjeblikket",
+    type: "sequence",
+    person: "Ryan, Laura og Jørgen",
+    exactContent:
+      "Ryan kalder på Jørgen med halskæden i hånden; Laura og Ryan kæmper; Laura skubber ham væk, og han falder. Det kan ikke ses, hvem der angreb først.",
+    delivery:
+      "Chokerende og fysisk tydelig, men neutral om ansvar og årsagsretning.",
+    before: "Jørgen er i kantinen ved middag.",
+    after:
+      "Lauras tilstedeværelse og fysiske skub er observeret uden en skyldkonklusion.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Legacy A2 fastslår Ryans råb og fald, men ikke kampen eller hvem der angreb først.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-body-necklace-still",
+    scene: "A3/A4, Ryans hånd",
+    type: "still",
+    person: "Fortæller",
+    exactContent:
+      "Ryan ligger efter faldet med Lauras isbjørnehalskæde fastholdt i hånden; et led er revet over, mens låsen er lukket.",
+    delivery:
+      "Nøgtern kriminalteknisk observation uden at kalde ejeren skyldig.",
+    before: "Jørgen undersøger liget.",
+    after: "Kædens ejer og afrivningsskaden skal undersøges.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "sektorA3-Ryan1 / sektorA3-Ryan2 kan bruges som baggrund; den præcise kædeskade mangler.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-laura-necklace-injury",
+    scene: "Dialog med Laura efter faldet",
+    type: "sequence",
+    person: "Laura",
+    exactContent:
+      "Laura identificerer halskæden som sin; et frisk rødt mærke ved halsbenet passer med den voldsomme afrivning.",
+    delivery:
+      "Bange og tilbageholdende, men faktuel; skaden må ikke seksualiseres eller dramatiseres.",
+    before: "Kæden er fundet i Ryans hånd.",
+    after: "Den fysiske forbindelse er dokumenteret, men ansvaret er åbent.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Eksisterende Laura-portræt kan bruges som neutral baggrund; legacy-klip dokumenterer ikke skaden.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-premature-laura-accusation",
+    scene: "For tidlig konfrontation med Laura",
+    type: "sequence",
+    person: "Jørgen og Laura",
+    exactContent:
+      "Jørgen fremlægger kun ejerskab eller tilstedeværelse; Laura påpeger, at det ikke forklarer, hvordan kæden kom til Ryan eller hvem der angreb først.",
+    delivery:
+      "Mistanken anerkendes som rationel, men fejlslutningen korrigeres roligt.",
+    before: "Spilleren anklager Laura uden hele den fysiske kæde.",
+    after: "Efterforskningen fortsætter uden softlock eller falsk finale.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Peter-BeskyldLaura-klippene afvises, fordi deres semantik antager normal mordskyld.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-laura-partial-admission",
+    scene: "Dokumenteret konfrontation med Laura efter faldet",
+    type: "sequence",
+    person: "Laura og Jørgen",
+    exactContent:
+      "Laura indrømmer skubbet, forklarer Ryans lokkemad, passage, trussel, angreb og greb i halskæden samt sin frygt for at blive gjort skyldig.",
+    delivery:
+      "Bange, vred og præcis; sandheden er ikke en mordertilståelse eller automatisk frifindelse.",
+    before:
+      "Laura er placeret på afsatsen, og halskædens ejerskab, skade og afrivning er dokumenteret.",
+    after:
+      "Anden efterforskningsfase åbnes med Ryans handlinger før mødet som lead.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Laura-omAlibi og Peter-BeskyldLaura-klippene afvises; de indeholder ikke den omvendte årsagsretning.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-lure-message",
+    scene: "D3/D4, Lauras telefon",
+    type: "still",
+    person: "Dokument",
+    exactContent:
+      "Ryans tidsstemplede besked: “Mød mig i læsesalen ved middagstid. Jeg har noget, der tilhører dig. Kom alene.”",
+    delivery:
+      "Teknisk læsbar og neutral; beskeden alene beviser ikke et mordforsøg.",
+    before: "Laura har forklaret mødet.",
+    after: "Afsender, tidspunkt og ønsket om at være alene registreres.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  ryanNeed({
+    id: "dc-ryan-laura-dossier",
+    scene: "D3/D4, Lauras dokumentationsmappe",
+    type: "sequence",
+    person: "Dokument",
+    exactContent:
+      "Mappen forbinder Ryans pres mod Barbara, Marie, David og Laura; filhistorikken viser, at Ryan kendte materialet og truede Laura med hendes private fortid.",
+    delivery:
+      "Dokumentarisk og respektfuld; institutionsopholdet er Ryans våben, aldrig et skyldbevis.",
+    before: "Lauras partielle forklaring er kendt.",
+    after: "Ryans motiv til at bringe Laura til tavshed kan udledes.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  ryanNeed({
+    id: "dc-ryan-passage-plan",
+    scene: "C3/C4, den skjulte passage",
+    type: "still",
+    person: "Fortæller",
+    exactContent:
+      "Voksaftryk fra Ryans taske, en ryddet rute og en kile ved døren viser, at han kendte og forberedte passagen før mødet.",
+    delivery:
+      "Kriminalteknisk klar og uden at lade selve passagen bevise hele planen.",
+    before: "Laura har fortalt, at Ryan førte hende gennem passagen.",
+    after: "Mødebesked, alenetid og mordvej kan kombineres.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "sektorC3/C4 kan bruges som neutral baggrund; de nye spor er ikke i legacy-materialet.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-institution-research",
+    scene: "B3, Ryans browsercache",
+    type: "still",
+    person: "Computerinterface",
+    exactContent:
+      "En gemt institutionsside og søgninger kombinerer Lauras navn med troværdighed, selvmord og adgang til afsatsen.",
+    delivery:
+      "Teknisk og sobert; UI-teksten skal eksplicit afvise researchens påstand som sand beskrivelse af Laura.",
+    before: "Lauras angrebsforklaring er kendt.",
+    after: "Den slettede kladde kan gendannes.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Barbaras legacy-computerflade kan være baggrund, men viser ikke Ryans konto eller research.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-false-suicide-draft",
+    scene: "B3, slettet cachefil",
+    type: "still",
+    person: "Dokument",
+    exactContent:
+      "Slettet kladde: “Hun havde været dårlig længe. Ingen af os forstod, hvor alvorligt det var.” Den var planlagt til afsendelse efter mødet.",
+    delivery:
+      "Kold, fabrikeret tekst; fortælleren markerer tydeligt, at den er Ryans løgn.",
+    before: "Institutionsresearchen er fundet.",
+    after: "Sletning og indhold registreres, men tidspunktet mangler.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  ryanNeed({
+    id: "dc-ryan-premeditation-metadata",
+    scene: "B3, teknisk sammenligning",
+    type: "sequence",
+    person: "Computerinterface",
+    exactContent:
+      "Browserhistorik, kladde, passage-søgning og mødebesked sammenholdes og viser oprettelse og sletning før middag.",
+    delivery:
+      "Metodisk og forståelig uden unødigt teknisk jargon.",
+    before: "Research og slettet kladde er fundet.",
+    after: "Den falske selvmordsplan kan udledes som præmediteret.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  ryanNeed({
+    id: "dc-ryan-manipulative-denial",
+    scene: "Tidlig eller dokumenteret konfrontation med Ryan",
+    type: "sequence",
+    person: "Ryan og Jørgen",
+    exactContent:
+      "Ryan kalder beviserne tilfældigheder, siger at Laura overdriver og spørger, hvem gruppen vil tro på.",
+    delivery:
+      "Kontrolleret og manipulerende uden karikatur; spillet bekræfter ikke hans fremstilling.",
+    before: "Jørgen konfronterer den levende Ryan i et senere loop.",
+    after:
+      "Konfrontationen tælles, men åbner aldrig finalen uden den aktive prevention.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Ryan-omLaura afvises uden semantisk transskription af den nye trussel.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-reconstruction-sequence",
+    scene: "Næste morgen efter ansvarskonklusionen",
+    type: "sequence",
+    person: "Jørgen",
+    exactContent:
+      "Otte korte kort om trussel, lokkemad, passage, falsk forklaring, angreb, halskæde, selvforsvarsfald og prevention.",
+    delivery:
+      "Klar, alvorlig og eksplicit om forskellen mellem fysisk handling og planlagt ansvar.",
+    before: "Alle seks kernekonklusioner er opnået.",
+    after: "Rekonstruktion og prevention-plan gemmes i notebooken.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  ryanNeed({
+    id: "dc-ryan-secure-evidence",
+    scene: "B1/B2, finaleloop",
+    type: "sequence",
+    person: "Jørgen og Barbara",
+    exactContent:
+      "Mødebesked, telefondata, cache, kladde og tidsstempler eksporteres skrivebeskyttet og sendes til flere modtagere.",
+    delivery:
+      "Praktisk og troværdig; Barbara hjælper uden at kunne omskrive originalerne.",
+    before: "Rekonstruktionen er gennemført.",
+    after: "Ryan kan ikke slette beskeden eller den falske fortælling.",
+    priority: "nødvendig",
+    reuseCandidate:
+      "Legacy-computerfladen kan være neutral baggrund; eksporthandlingen er ny.",
+  }),
+  ryanNeed({
+    id: "dc-ryan-warn-laura",
+    scene: "E2, finaleloop",
+    type: "sequence",
+    person: "Laura og Jørgen",
+    exactContent:
+      "Jørgen viser de sikrede beviser; Laura nægter at blive passiv, og de aftaler, at hun møder Ryan, mens Jørgen går i forvejen.",
+    delivery:
+      "Laura er bange, vred og handlekraftig; advarslen fratager hende ikke agens.",
+    before: "Besked og planfiler er sikret.",
+    after: "Laura er informeret, men Ryan skal stadig standses fysisk.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  ryanNeed({
+    id: "dc-ryan-prevention-sequence",
+    scene: "C2, finaleloop og afsatsen",
+    type: "sequence",
+    person: "Ryan, Laura og Jørgen",
+    exactContent:
+      "Ryan gentager truslen og bevæger sig mod Laura; Jørgen træder ud før dødelig fare og fremlægger besked, passage, research, kladde og tidsstempler.",
+    delivery:
+      "Anspændt og sober; Ryan er farlig, Laura står fast, og ingen falder.",
+    before: "Beviserne er sikret, og Laura er advaret.",
+    after: "Både Laura og Ryan lever, og loopet brydes.",
+    priority: "nødvendig",
+    reuseCandidate: null,
+  }),
+  ryanNeed({
+    id: "dc-ryan-epilogue-sequence",
+    scene: "Efter prevention",
+    type: "sequence",
+    person: "Fortæller",
+    exactContent:
+      "Laura og Ryan overlever; planen afsløres; gruppens øvrige manipulationstråde får kontekst; Lauras institutionsophold afvises som skyldbevis; tiden fortsætter.",
+    delivery:
+      "Alvorlig og nøgtern uden en for pæn moralsk forløsning.",
+    before: "Ryans angreb er afbrudt og beviserne består.",
+    after: "Resultatkortet skelner mellem ansvar, fysisk skub og selvforsvar.",
     priority: "ønskelig",
     reuseCandidate: null,
   }),

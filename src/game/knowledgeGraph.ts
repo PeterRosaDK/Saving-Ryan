@@ -19,6 +19,10 @@ import {
   JORGEN_CORE_CONCLUSIONS,
   deriveJorgenLead,
 } from "./jorgenCase";
+import {
+  RYAN_CORE_CONCLUSIONS,
+  deriveRyanLead,
+} from "./ryanCase";
 
 export const INVESTIGATION_STEP_IDS = [
   "observe_barbara_programming",
@@ -367,6 +371,70 @@ export function learnKnowledge(
     }
   }
 
+  if (state.selectedCaseId === "ryan") {
+    if (
+      nextKnowledge.ryan_laura_on_ledge &&
+      nextKnowledge.ryan_laura_pushed &&
+      nextKnowledge.ryan_necklace_torn_clasp &&
+      !nextKnowledge.ryan_physical_action_open_conclusion
+    ) {
+      nextKnowledge.ryan_physical_action_open_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.ryan_laura_dossier &&
+      nextKnowledge.ryan_knew_dossier &&
+      nextKnowledge.ryan_used_private_history_to_control &&
+      !nextKnowledge.ryan_silencing_motive_conclusion
+    ) {
+      nextKnowledge.ryan_silencing_motive_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.ryan_sent_meeting_message &&
+      nextKnowledge.ryan_message_before_murder &&
+      nextKnowledge.ryan_planned_alone &&
+      nextKnowledge.ryan_knew_passage_before_meeting &&
+      !nextKnowledge.ryan_arranged_ledge_meeting_conclusion
+    ) {
+      nextKnowledge.ryan_arranged_ledge_meeting_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.ryan_institution_research &&
+      nextKnowledge.ryan_false_suicide_draft &&
+      nextKnowledge.ryan_research_deleted &&
+      nextKnowledge.ryan_premeditation_timestamp &&
+      !nextKnowledge.ryan_false_suicide_plan_conclusion
+    ) {
+      nextKnowledge.ryan_false_suicide_plan_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.ryan_laura_partial_admission &&
+      nextKnowledge.ryan_laura_says_attacked_first &&
+      nextKnowledge.ryan_necklace_in_hand &&
+      nextKnowledge.ryan_necklace_torn_clasp &&
+      nextKnowledge.ryan_laura_neck_injury &&
+      nextKnowledge.ryan_false_suicide_plan_conclusion &&
+      !nextKnowledge.ryan_self_defense_conclusion
+    ) {
+      nextKnowledge.ryan_self_defense_conclusion = true;
+      changed = true;
+    }
+    if (
+      nextKnowledge.ryan_laura_partial_admission &&
+      nextKnowledge.ryan_silencing_motive_conclusion &&
+      nextKnowledge.ryan_arranged_ledge_meeting_conclusion &&
+      nextKnowledge.ryan_false_suicide_plan_conclusion &&
+      nextKnowledge.ryan_self_defense_conclusion &&
+      !nextKnowledge.ryan_responsibility_conclusion
+    ) {
+      nextKnowledge.ryan_responsibility_conclusion = true;
+      changed = true;
+    }
+  }
+
   if (!changed) return state;
 
   const caseConclusions =
@@ -378,7 +446,9 @@ export function learnKnowledge(
           ? MARIE_CORE_CONCLUSIONS
           : state.selectedCaseId === "jorgen"
             ? JORGEN_CORE_CONCLUSIONS
-        : [];
+            : state.selectedCaseId === "ryan"
+              ? RYAN_CORE_CONCLUSIONS
+              : [];
   const newlyDerived = caseConclusions.filter(
     (id) => nextKnowledge[id] && !state.knowledge[id],
   );
@@ -427,7 +497,15 @@ export function learnKnowledge(
                 currentLead: deriveJorgenLead(knowledgeState),
               },
             }
-      : knowledgeState;
+          : state.selectedCaseId === "ryan"
+            ? {
+                ...knowledgeState,
+                caseProgress: {
+                  ...knowledgeState.caseProgress,
+                  currentLead: deriveRyanLead(knowledgeState),
+                },
+              }
+            : knowledgeState;
 }
 
 export function executeInvestigationStep(

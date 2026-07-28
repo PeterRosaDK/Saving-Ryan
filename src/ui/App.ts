@@ -256,7 +256,92 @@ const CLUE_LABELS: Readonly<Record<KnowledgeId, string>> = {
     "Den senere Jørgen forsvandt, da mordet blev forhindret",
   jorgen_paradox_broken:
     "Det selvskabte mordparadoks er brudt",
+  ryan_fall_caused_death:
+    "Ryan døde af faldet fra afsatsen",
+  ryan_necklace_in_hand:
+    "Ryan døde med Lauras isbjørnehalskæde fastholdt i hånden",
+  ryan_necklace_torn_clasp:
+    "Halskæden er revet voldsomt over, ikke åbnet ved låsen",
+  ryan_laura_on_ledge:
+    "Laura var sammen med Ryan på afsatsen",
+  ryan_laura_owns_necklace:
+    "Isbjørnehalskæden tilhører Laura",
+  ryan_laura_neck_injury:
+    "Laura har et frisk mærke ved halsen, hvor kæden blev revet af",
+  ryan_laura_pushed:
+    "Laura indrømmer, at hun skubbede Ryan væk",
+  ryan_laura_says_attacked_first:
+    "Laura siger, at Ryan forsøgte at skubbe hende først",
+  ryan_laura_partial_admission:
+    "Lauras sande indrømmelse forklarer faldet, men afgør ikke ansvaret alene",
+  ryan_physical_action_open_conclusion:
+    "Laura skubbede Ryan, men den fysiske handling fortæller ikke i sig selv, hvem der angreb først.",
+  ryan_laura_dossier:
+    "Laura havde samlet dokumentation for Ryans manipulation af gruppen",
+  ryan_knew_dossier:
+    "Ryan vidste, at Laura var ved at afsløre ham",
+  ryan_used_private_history_to_control:
+    "Ryan brugte Lauras private institutionsophold til at true hende til tavshed",
+  ryan_group_manipulation_pattern:
+    "Lauras mappe forbinder Ryans pres mod Barbara, Marie, David og hende selv",
+  ryan_silencing_motive_conclusion:
+    "Laura kunne få hele Ryans facade til at falde. Han havde et stærkt motiv til at stoppe hende.",
+  ryan_sent_meeting_message:
+    "Ryan sendte Laura en besked om et møde i læsesalen",
+  ryan_message_before_murder:
+    "Afsenderdata tidsstempler beskeden før faldet",
+  ryan_planned_alone:
+    "Ryan bad Laura komme alene",
+  ryan_knew_passage_before_meeting:
+    "Ryan kendte og forberedte den skjulte passage før mødet",
+  ryan_arranged_ledge_meeting_conclusion:
+    "Ryan lokkede Laura til læsesalen og valgte en skjult vej til afsatsen, hvor ingen andre skulle se dem.",
+  ryan_institution_research:
+    "Ryan undersøgte Lauras institutionsophold og søgte efter en selvmordsfortælling",
+  ryan_false_suicide_draft:
+    "Ryan skrev en falsk kladde om, at Laura længe havde været selvmordstruet",
+  ryan_research_deleted:
+    "Ryan forsøgte at slette researchen og kladden før mødet",
+  ryan_premeditation_timestamp:
+    "Metadata viser, at research, kladde og mødebesked blev forberedt før middag",
+  ryan_false_suicide_plan_conclusion:
+    "Før mødet forberedte Ryan en fortælling, der skulle få Lauras død til at ligne selvmord.",
+  ryan_self_defense_conclusion:
+    "Ryan fik halskæden, fordi han greb Laura under angrebet. Hun skubbede ham for at slippe fri.",
+  ryan_responsibility_conclusion:
+    "Ryan lokkede Laura til afsatsen, forberedte en falsk forklaring på hendes død og angreb hende. Hans eget fald skete, da hun forsvarede sig.",
+  ryan_manipulative_denial:
+    "Ryan forsøger fortsat at gøre Lauras fortid til et argument mod hendes troværdighed",
+  ryan_reconstruction_recorded:
+    "Jørgens private rekonstruktion af Ryans plan er gemt",
+  ryan_prevention_plan:
+    "Plan: Sikr beviserne, advar Laura og nå passagen før Ryan",
+  ryan_message_copy_secured:
+    "En kontrolleret kopi af Ryans mødebesked er sikret",
+  ryan_plan_files_secured:
+    "Research, kladde og tidsstempler er eksporteret og sikret",
+  ryan_laura_warned:
+    "Laura er informeret og møder Ryan med en aftalt sikkerhedsplan",
+  ryan_attack_prevented:
+    "Ryans planlagte angreb blev afbrudt på afsatsen",
+  ryan_laura_saved:
+    "Laura overlevede det planlagte angreb",
+  ryan_ryan_saved:
+    "Ryan overlevede, fordi selvforsvarsskubbets situation aldrig opstod",
 };
+
+function getClueLabel(state: GameState, id: KnowledgeId): string {
+  if (state.selectedCaseId === "ryan") {
+    if (id === "ryan_was_murdered") {
+      return "Ryan døde efter faldet fra afsatsen";
+    }
+    if (id === "ryan_was_saved") {
+      return "Ryans dødsfald er forhindret";
+    }
+  }
+
+  return CLUE_LABELS[id];
+}
 
 function button(
   label: string,
@@ -424,7 +509,7 @@ function renderMainMenu(root: HTMLElement, store: GameStore): void {
       const definition = getCaseDefinition(caseId);
       return `<option value="${caseId}"${
         requestedCaseId === caseId ? " selected" : ""
-      }>${definition.murderer}-sagen</option>`;
+      }>${definition.responsibleParty}-sagen</option>`;
     })
     .join("");
 
@@ -778,7 +863,7 @@ export function renderKnowledge(state: GameState): string {
       ${discoveries
         .map(
           (id) =>
-            `<li><span>${CLUE_LABELS[id]}</span><small>fundet</small></li>`,
+            `<li><span>${getClueLabel(state, id)}</span><small>fundet</small></li>`,
         )
         .join("")}
     </ul>
@@ -801,7 +886,10 @@ export function renderKnowledge(state: GameState): string {
   const list = (ids: readonly KnowledgeId[]): string =>
     ids.length
       ? `<ul class="clue-list">${ids
-          .map((id) => `<li><span>${CLUE_LABELS[id]}</span></li>`)
+          .map(
+            (id) =>
+              `<li><span>${getClueLabel(state, id)}</span></li>`,
+          )
           .join("")}</ul>`
       : "<p class=\"empty-state\">Ingen endnu.</p>";
 
@@ -1055,8 +1143,16 @@ function renderEnding(
         : score >= 750
           ? "Sagen løst"
           : "Vedholdende detektiv";
-    const murdererLabel =
-      caseContent.result?.murdererLabel ?? definition.murderer;
+    const responsiblePartyLabel =
+      caseContent.result?.responsiblePartyLabel ??
+      definition.responsibleParty;
+    const resolutionDetails =
+      caseContent.result?.resolutionDetails
+        ?.map(
+          ({ label, value }) =>
+            `<div><dt>${label}</dt><dd>${value}</dd></div>`,
+        )
+        .join("") ?? "";
     const extraStatistics =
       caseContent.result?.extraStatistics
         ?.map(
@@ -1094,7 +1190,8 @@ function renderEnding(
               .map((paragraph) => `<p>${paragraph}</p>`)
               .join("")}
             <dl class="result-grid">
-              <div><dt>Morder</dt><dd>${murdererLabel}</dd></div>
+              <div><dt>${definition.resolutionLabel}</dt><dd>${responsiblePartyLabel}</dd></div>
+              ${resolutionDetails}
               <div><dt>Dage brugt</dt><dd>${state.loop}</dd></div>
               <div><dt>Konfrontationer</dt><dd>${statistics.confrontations}</dd></div>
               <div><dt>Forkerte anklager</dt><dd>${statistics.wrongAccusations}</dd></div>
@@ -1386,7 +1483,7 @@ function renderExploration(
                 <p class="eyebrow">Jørgen tænker</p>
                 <h2 id="insight-title">Ny konklusion</h2>
                 ${state.caseProgress.pendingInsights
-                  .map((id) => `<p>${CLUE_LABELS[id]}</p>`)
+                  .map((id) => `<p>${getClueLabel(state, id)}</p>`)
                   .join("")}
                 <button class="primary-action" type="button" data-dismiss-insights>Notér</button>
               </div>

@@ -8,7 +8,7 @@ interactive mystery.
 The tagged Director restoration is preserved as `legacy-restoration-v1`, the
 canonical Laura story is playable from intro to epilogue, phase 9's expanded
 time-loop mechanics are complete, and Director’s Cut now contains complete
-David, Barbara, Marie, and Jørgen cases:
+David, Barbara, Marie, Jørgen, and Ryan cases:
 
 - legacy Director files and the original report are preserved in `Legacy/`;
 - converted MP4 files are served from `public/Video/`;
@@ -20,7 +20,7 @@ David, Barbara, Marie, and Jørgen cases:
 - a main menu offers isolated **Original historie** and **Director’s Cut**
   modes from the first launch;
 - Director’s Cut selects uniformly from the enabled `david`, `barbara`, `marie`,
-  and `jorgen`
+  `jorgen`, and `ryan`
   registry entries; `?dcCase=<id>` provides deterministic QA;
 - the selected case is stored at the top level of version 3 game state and
   survives every daily loop unchanged;
@@ -36,6 +36,10 @@ David, Barbara, Marie, and Jørgen cases:
 - Jørgen’s case records actual previous-loop actions, verifies the passage with
   a controlled reset experiment, reveals a later Jørgen through a
   `special-revelation` finale, and resolves the bootstrap paradox with a decoy;
+- Ryan’s reverse case separates Laura’s admitted push from responsibility for
+  the death: message, passage preparation, dossier, and false-suicide plan
+  establish Ryan’s intended attack and Laura’s self-defence before both are
+  saved;
 - Director’s Cut tracks accusations, days, core conclusions, optional evidence,
   and a centrally configured deterministic score;
 - waiting is a two-step transition, so narration and special sequences complete
@@ -128,6 +132,8 @@ Marie-ruten og dens målrettede `?dcCase=marie`-QA er beskrevet i
 [docs/marie-playtest.md](docs/marie-playtest.md).
 Jørgen-paradokset og dets målrettede `?dcCase=jorgen`-QA er beskrevet i
 [docs/jorgen-playtest.md](docs/jorgen-playtest.md).
+Ryan-sagen og dens målrettede `?dcCase=ryan`-QA er beskrevet i
+[docs/ryan-playtest.md](docs/ryan-playtest.md).
 
 ## Commands
 
