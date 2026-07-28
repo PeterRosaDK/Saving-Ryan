@@ -1,4 +1,11 @@
-import { readdirSync } from "node:fs";
+import {
+  openSync,
+  readSync,
+  readdirSync,
+  statSync,
+  closeSync,
+} from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
@@ -45,5 +52,27 @@ describe("Director video manifest", () => {
     expect(manifestFiles).toHaveLength(81);
     expect(new Set(manifestFiles).size).toBe(81);
     expect(manifestFiles).toEqual(actualFiles);
+  });
+
+  it("serves 81 non-empty files with an MP4 file-type header", () => {
+    const videoDirectory = fileURLToPath(
+      new URL("../public/Video", import.meta.url),
+    );
+
+    for (const fileName of Object.values(VIDEO_FILES)) {
+      const filePath = join(videoDirectory, fileName);
+      const header = Buffer.alloc(12);
+      const descriptor = openSync(filePath, "r");
+      try {
+        expect(readSync(descriptor, header, 0, header.length, 0)).toBe(
+          header.length,
+        );
+      } finally {
+        closeSync(descriptor);
+      }
+
+      expect(statSync(filePath).size).toBeGreaterThan(100_000);
+      expect(header.subarray(4, 8).toString("ascii")).toBe("ftyp");
+    }
   });
 });

@@ -19,7 +19,8 @@ expanded time-loop mechanics are complete:
 - waiting is a two-step transition, so narration and special sequences complete
   before the time slot changes;
 - knowledge persists when evening wraps into another morning;
-- intro completion establishes the murder knowledge required by the investigation;
+- the first completed murder interval establishes Ryan's death as persistent
+  knowledge, so he cannot be warned during the initial morning;
 - verified legacy clues use typed, declarative scene interactions;
 - Director dialogue choices are a closed, typed catalogue with prerequisites,
   time-sensitive clips, repeat history, and explicit dead ends;
@@ -61,13 +62,15 @@ expanded time-loop mechanics are complete:
   catalogues;
 - the two-frame body/necklace and trash/letter still sequences are restored;
 - Barbara's computer reproduces both the original locked and unlocked text;
-- the later 581-frame intro uses the original title/credit images, recovered
-  group ending, and extracted sound;
+- the later 581-frame intro uses the original title/credit images, the complete
+  uncropped recovered group ending, and extracted sound; if audible autoplay is
+  blocked, its score waits for an explicit start gesture;
 - the later Director interface supplies the blue stage background plus help,
   music, and quit controls;
 - recovered music loops per location, ducks during narrative media, and can be
-  muted; the historical track order is isolated as a provisional mapping because
-  the saved Director score no longer contains it;
+  muted; it also resumes after browser-induced media interruption, while the
+  historical track order remains a provisional mapping because the saved
+  Director score no longer contains it;
 - the persistent narrative host is isolated from ordinary gameplay rerenders and
   accepts video, Director still sequences, and intentional text-only cues;
 - the abort-safe `VideoPlayer` distinguishes completion, skip, autoplay blocking,

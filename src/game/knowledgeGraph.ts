@@ -130,7 +130,7 @@ export const INVESTIGATION_STEPS = {
   },
   warn_ryan: {
     id: "warn_ryan",
-    requires: [],
+    requires: ["ryan_was_murdered"],
     effects: ["ryan_dismissed_warning"],
   },
   accuse_laura: {

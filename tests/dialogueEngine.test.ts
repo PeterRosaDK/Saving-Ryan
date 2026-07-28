@@ -9,6 +9,7 @@ import {
 } from "../src/app/types";
 import {
   executeDialogueChoice,
+  getDialogueSequenceCompletion,
   getAvailableDialogueChoices,
 } from "../src/game/dialogueEngine";
 import {
@@ -42,7 +43,7 @@ function videoClip(cue: NarrativeCue | null | undefined): string | null {
 }
 
 describe("legacy dialogue rules", () => {
-  it("starts with Director's base topics and Ryan's warning", () => {
+  it("starts with Director's base topics but no premature warning", () => {
     const state = startedState();
 
     expect(topics(state, "Laura")).toEqual([
@@ -58,8 +59,13 @@ describe("legacy dialogue rules", () => {
       "about_david",
       "about_ryan",
       "about_barbara",
-      "warn_ryan",
     ]);
+  });
+
+  it("unlocks Ryan's warning after Jørgen has experienced the murder", () => {
+    const state = learnKnowledge(startedState(), ["ryan_was_murdered"]);
+
+    expect(topics(state, "Ryan")).toContain("warn_ryan");
   });
 
   it("uses living and post-murder Ryan clips according to world time", () => {
@@ -134,8 +140,11 @@ describe("legacy dialogue rules", () => {
   });
 
   it("switches Ryan's warning clip after the first warning", () => {
+    const warnedState = learnKnowledge(startedState(), [
+      "ryan_was_murdered",
+    ]);
     const first = executeDialogueChoice(
-      startedState(),
+      warnedState,
       "Ryan",
       "warn_ryan",
     );
@@ -151,11 +160,15 @@ describe("legacy dialogue rules", () => {
   });
 
   it("resets Ryan's remembered warning stage on a new day but keeps Jørgen's knowledge", () => {
-    const first = executeDialogueChoice(
+    const warnedState = learnKnowledge(
       startedState({
         location: "C",
         timeSlot: 1,
       }),
+      ["ryan_was_murdered"],
+    );
+    const first = executeDialogueChoice(
+      warnedState,
       "Ryan",
       "warn_ryan",
     ).state;
@@ -179,14 +192,27 @@ describe("legacy dialogue rules", () => {
   });
 
   it("does not learn that Ryan dismissed a skipped warning", () => {
+    const warnedState = learnKnowledge(startedState(), [
+      "ryan_was_murdered",
+    ]);
     const skipped = executeDialogueChoice(
-      startedState(),
+      warnedState,
       "Ryan",
       "warn_ryan",
       "skipped",
     );
 
     expect(skipped.state.knowledge.ryan_dismissed_warning).toBe(false);
+  });
+
+  it("uses the answer result for a two-cue dialogue sequence", () => {
+    expect(getDialogueSequenceCompletion("skipped", "ended")).toBe(
+      "ended",
+    );
+    expect(getDialogueSequenceCompletion("ended", "skipped")).toBe(
+      "skipped",
+    );
+    expect(getDialogueSequenceCompletion("skipped")).toBe("skipped");
   });
 
   it("uses a text question and the existing Ryan clip for the Sarah clue", () => {

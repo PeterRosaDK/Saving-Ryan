@@ -145,7 +145,7 @@ export const INTRO_SCORE = {
     alt: "Saving Ryan-holdet med teksten Nogle gange er projektarbejdet en dræber",
     startsAtFrame: 523,
     fullyVisibleAtFrame: 574,
-    rect: { centerX: 400, centerY: 300, width: 800, height: 600 },
+    rect: { centerX: 397, centerY: 298, width: 699, height: 603 },
   },
 } as const;
 

@@ -39,6 +39,7 @@ so location-dependent observation is already present in a basic form.
 
 Current time-triggered knowledge is limited to:
 
+- every midday-to-afternoon advance: learning that Ryan has been murdered;
 - E1: witnessing Ryan bully Marie;
 - B4: playing `LauraSuspekt` and learning about Laura's hidden computer
   activity;
@@ -125,10 +126,11 @@ Legend:
 
 The A2/C2/E2 observation set now has two added neutral branches: the sound at
 the passage and Laura's disappearance. Neither identifies the murderer alone.
-A2 already preserves Director's direct view of the fall and Jørgen knows from
-the intro that Ryan is murdered, so an additional redundant A2 knowledge fact
-is not required for phase 9. A richer visual perspective remains optional later
-content.
+Completing any midday-to-afternoon advance establishes the shared world fact
+that Ryan has been murdered, including when a timed interaction occupies the
+interval. A2 additionally preserves Director's direct view of the fall, so a
+second A2-only death fact is not required. A richer visual perspective remains
+optional later content.
 
 ## UX direction
 

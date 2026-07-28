@@ -428,8 +428,9 @@ Current completion:
   `intro-slut`;
 - the original 30.444-second `intro` sound is extracted reproducibly from the
   Director split-sound chunks;
-- explicit play/skip controls satisfy browser autoplay rules and both hand off
-  to the same tested A1 state.
+- audible autoplay is attempted first; when a browser rejects it, the visual
+  score waits behind an explicit sound-enabled start control. Start and skip
+  still hand off to the same tested A1 state.
 
 ### Phase 4 — Restore scenes and interactions
 
@@ -548,8 +549,10 @@ Completed:
   pillars, and only the strongest accusation produces the text confession;
 - the confession supplies Laura's report-backed passage explanation while the
   original narrow C-room book interaction remains physically discoverable;
-- warning Ryan remains insufficient by itself, but establishes that Jørgen must
-  intervene rather than rely on an unsupported warning;
+- warning Ryan is unavailable during the first morning and unlocks only after
+  Jørgen has experienced the murder interval; it remains insufficient by itself
+  but establishes that he must intervene rather than rely on an unsupported
+  warning;
 - after an ordinary Director day reset, the C1 passage becomes the minimal
   text-backed prevention route;
 - prevention records that Ryan was saved, enters a clear epilogue, applies only

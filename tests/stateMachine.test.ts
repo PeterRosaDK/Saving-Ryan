@@ -35,23 +35,20 @@ describe("legacy game state", () => {
   });
 
   it.each(["INTRO_FINISHED", "SKIP_INTRO"] as const)(
-    "%s enters A1 knowing that Ryan is murdered",
+    "%s enters the first A1 without foreknowledge of Ryan's murder",
     (type) => {
       const started = reduceGameState(createInitialGameState(), { type });
 
       expect(started.phase).toBe("exploration");
       expect(toSceneId(started.location, started.timeSlot)).toBe("A1");
-      expect(started.knowledge.ryan_was_murdered).toBe(true);
+      expect(started.knowledge.ryan_was_murdered).toBe(false);
     },
   );
 
-  it("keeps the time-loop premise out of the notebook's found clues", () => {
+  it("starts the notebook empty before the murder interval", () => {
     const started = finishIntro();
 
-    expect(started.knowledge.ryan_was_murdered).toBe(true);
-    expect(getNotebookKnowledgeIds(started)).not.toContain(
-      "ryan_was_murdered",
-    );
+    expect(started.knowledge.ryan_was_murdered).toBe(false);
     expect(getNotebookKnowledgeIds(started)).toEqual([]);
   });
 
@@ -121,7 +118,33 @@ describe("legacy game state", () => {
         scene.time.id === 4 ? 1 : scene.time.id + 1,
       );
       expect(completed.loop).toBe(scene.time.id === 4 ? 2 : 1);
+      expect(completed.knowledge.ryan_was_murdered).toBe(
+        scene.time.id === 2,
+      );
     }
+  });
+
+  it("records Ryan's murder only after the first murder interval completes", () => {
+    const atMidday: GameState = {
+      ...finishIntro(),
+      location: "D",
+      timeSlot: 2,
+    };
+    const waiting = reduceGameState(atMidday, { type: "WAIT" });
+
+    expect(waiting.knowledge.ryan_was_murdered).toBe(false);
+    expect(getNotebookKnowledgeIds(waiting)).not.toContain(
+      "ryan_was_murdered",
+    );
+
+    const afterScream = reduceGameState(waiting, {
+      type: "COMPLETE_TRANSITION",
+    });
+
+    expect(afterScream.knowledge.ryan_was_murdered).toBe(true);
+    expect(getNotebookKnowledgeIds(afterScream)).toContain(
+      "ryan_was_murdered",
+    );
   });
 
   it("runs B4 through the Laura Suspekt contract before beginning the next loop", () => {
@@ -672,6 +695,7 @@ describe("legacy game state", () => {
     });
     expect(toSceneId(completed.location, completed.timeSlot)).toBe("B3");
     expect(completed.knowledge.barbara_forged_grades).toBe(true);
+    expect(completed.knowledge.ryan_was_murdered).toBe(true);
     expect(completed.loopState.seenTransitions).toEqual(["D1"]);
 
     const replayed = reduceGameState(completed, {

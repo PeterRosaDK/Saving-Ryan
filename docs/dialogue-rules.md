@@ -96,8 +96,12 @@ case:
 
 Only the third variant receives the report-backed text confession and applies
 `laura_confessed` plus `secret_passage_exists`. Warning Ryan records that he
-dismissed the warning, but is not itself a solution. The complete continuation
-is documented in `docs/canonical-laura-completion.md`.
+dismissed the warning, but is not itself a solution. The warning is hidden until
+Jørgen has experienced Ryan's death; it is therefore first useful on a later
+morning. For a two-cue choice, skipping Jørgen's question does not discard an
+answer that the player subsequently completes; only the final answer cue decides
+whether answer-backed effects are applied. The complete continuation is
+documented in `docs/canonical-laura-completion.md`.
 
 ## Phase 9 same-day accusation consequence
 

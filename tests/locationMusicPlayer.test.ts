@@ -11,6 +11,7 @@ class FakeAudioElement {
   loadCalls = 0;
   playCalls = 0;
   playError: unknown = null;
+  paused = true;
 
   load(): void {
     this.loadCalls += 1;
@@ -21,10 +22,12 @@ class FakeAudioElement {
     if (this.playError) {
       throw this.playError;
     }
+    this.paused = false;
   }
 
   pause(): void {
     this.pauseCalls += 1;
+    this.paused = true;
   }
 
   removeAttribute(name: string): void {
@@ -84,6 +87,28 @@ describe("LocationMusicPlayer", () => {
 
     player.setDucked(false);
     expect(element.volume).toBe(0.42);
+  });
+
+  it("resumes a browser-paused track after narrative media ends", async () => {
+    const element = new FakeAudioElement();
+    const player = new LocationMusicPlayer(
+      element as unknown as HTMLAudioElement,
+    );
+
+    player.setLocation("A");
+    await flushPromises();
+    player.setDucked(true);
+    element.pause();
+    player.setDucked(false);
+    await flushPromises();
+
+    expect(element.playCalls).toBe(2);
+    expect(element.paused).toBe(false);
+    expect(player.getState()).toMatchObject({
+      status: "playing",
+      ducked: false,
+      location: "A",
+    });
   });
 
   it("reports autoplay blocking and retries from the music button", async () => {

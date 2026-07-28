@@ -103,6 +103,20 @@ export class LocationMusicPlayer {
       ducked,
     };
     this.applyVolume();
+
+    if (
+      !ducked &&
+      this.state.location !== null &&
+      !this.state.muted &&
+      this.state.status === "playing" &&
+      this.audio.paused
+    ) {
+      this.state = {
+        ...this.state,
+        status: "loading",
+      };
+      void this.beginPlayback();
+    }
   }
 
   destroy(): void {

@@ -121,10 +121,10 @@ describe("Director presentation parity", () => {
       startsAtFrame: 523,
       fullyVisibleAtFrame: 574,
       rect: {
-        centerX: 400,
-        centerY: 300,
-        width: 800,
-        height: 600,
+        centerX: 397,
+        centerY: 298,
+        width: 699,
+        height: 603,
       },
     });
   });

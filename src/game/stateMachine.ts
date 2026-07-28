@@ -76,17 +76,10 @@ export function reduceGameState(
         return state;
       }
 
-      const postIntroState: GameState = {
+      return {
         ...state,
         phase: "exploration",
       };
-
-      return applyEffects(postIntroState, [
-        {
-          type: "LEARN",
-          id: "ryan_was_murdered",
-        },
-      ]);
     }
 
     case "MOVE_TO_LOCATION": {
@@ -134,7 +127,17 @@ export function reduceGameState(
         pending.cause.kind === "clock"
           ? getLocationTransitionEvent(pending.cause.eventId).effects
           : getSceneInteraction(pending.cause.id).effects;
-      const effectState = applyEffects(state, sourceEffects);
+      const sourceScene = getScene(pending.from);
+      const sourceEffectState = applyEffects(state, sourceEffects);
+      const effectState =
+        sourceScene.time.id === 2 && target.time.id === 3
+          ? applyEffects(sourceEffectState, [
+              {
+                type: "LEARN",
+                id: "ryan_was_murdered",
+              },
+            ])
+          : sourceEffectState;
       const seenClockEvent =
         pending.cause.kind === "clock"
           ? getLocationTransitionEvent(pending.cause.eventId).scene

@@ -16,6 +16,13 @@ import {
 
 export type DialogueCompletion = "ended" | "skipped";
 
+export function getDialogueSequenceCompletion(
+  questionCompletion: DialogueCompletion,
+  answerCompletion?: DialogueCompletion,
+): DialogueCompletion {
+  return answerCompletion ?? questionCompletion;
+}
+
 export interface DialogueTransition {
   state: GameState;
   choice: DialogueChoice | null;

@@ -120,12 +120,18 @@ The web app now includes the later build's safe, source-backed improvements:
 - music ducking during video, still, and text narrative cues;
 - recovered clock sound on the wait action;
 - extended 581-frame intro with larger portraits and `intro-slut`;
+- the recovered 699×603 placement of `intro-slut`, preserving the complete
+  image rather than cropping it to the 800×600 stage;
 - all new interface, cursor, and intro bitmaps in the closed image manifest;
 - all eight music masters in a closed, file-size-validated audio manifest.
 
 Browser autoplay rules can initially block location music. Clicking the music
 button retries playback as a user-initiated action. This is an explicit runtime
 state rather than a silent failure.
+
+The same restriction applies to the intro sound. If audible autoplay is
+rejected, the web score now remains paused until the player explicitly starts
+it with sound, instead of silently running ahead of the recovered audio.
 
 ## Deferred or rejected changes
 

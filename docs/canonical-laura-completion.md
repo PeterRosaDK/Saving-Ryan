@@ -35,6 +35,8 @@ ryan_left_laura
 ```
 
 Warning Ryan remains insufficient by itself, matching page 70 of the report.
+The option is withheld during the first morning and becomes available only
+after Jørgen has completed the murder interval and retained that knowledge.
 Completing the existing warning clip records
 `ryan_dismissed_warning`: Jørgen has learned that an unsupported warning will
 not change events. This is permanent protagonist knowledge, not a generalized
@@ -99,7 +101,8 @@ voice-over without changing game rules.
   murder cannot reach it without wrapping through a new morning during normal
   play.
 - The action requires confession, passage knowledge, and the failed-warning
-  fact. It cannot be unlocked by early warning alone.
+  fact. The warning itself requires retained murder knowledge and therefore
+  cannot be performed prematurely during the first morning.
 - Completing prevention changes the phase to `ending`; exploration actions are
   then rejected, preventing effects from being applied twice.
 - “Spil igen fra introen” dispatches the existing full `RESET_GAME`.

@@ -29,8 +29,9 @@ ported presentation improvements are documented in
   Ryan/Claus 435.
 - The embedded `intro` member is reproducibly extracted from the split Director
   `sndH`/`sndS` chunks as a 30.444-second, mono, 44.1 kHz WAV.
-- A user gesture starts the browser version because browsers may reject
-  unsolicited audio. Skipping performs the same state handoff to A1.
+- The browser version attempts audible playback immediately. If autoplay is
+  rejected, the visual score stays paused until a sound-enabled start gesture;
+  skipping performs the same state handoff to A1.
 
 ### World, navigation, and waiting
 

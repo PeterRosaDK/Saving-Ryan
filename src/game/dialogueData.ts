@@ -367,25 +367,28 @@ function getSpecialChoices(
       );
     }
 
-    const wasAsked = state.loopState.dialogue.askedChoices.includes(
-      "Ryan:warn_ryan",
-    );
-    choices.push(
-      defineChoice(
-        person,
-        "warn_ryan",
-        wasAsked ? "Ryan-Advarsel2" : "Ryan-Advarsel1",
-        null,
-        {
-          effects: [
-            {
-              type: "LEARN",
-              id: "ryan_dismissed_warning",
-            },
-          ],
-        },
-      ),
-    );
+    if (state.knowledge.ryan_was_murdered) {
+      const wasAsked = state.loopState.dialogue.askedChoices.includes(
+        "Ryan:warn_ryan",
+      );
+      choices.push(
+        defineChoice(
+          person,
+          "warn_ryan",
+          wasAsked ? "Ryan-Advarsel2" : "Ryan-Advarsel1",
+          null,
+          {
+            requires: ["ryan_was_murdered"],
+            effects: [
+              {
+                type: "LEARN",
+                id: "ryan_dismissed_warning",
+              },
+            ],
+          },
+        ),
+      );
+    }
   }
 
   return choices;

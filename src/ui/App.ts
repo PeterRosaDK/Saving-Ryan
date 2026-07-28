@@ -5,6 +5,7 @@ import type {
   KnowledgeId,
 } from "../app/types";
 import {
+  getDialogueSequenceCompletion,
   getAvailableDialogueChoices,
 } from "../game/dialogueEngine";
 import type { DialogueChoice } from "../game/dialogueData";
@@ -312,14 +313,24 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
         </div>
         <audio
           data-intro-audio
-          autoplay
           preload="auto"
           src="${getIntroAudioUrl()}"
         ></audio>
         <div class="intro-controls">
-          <button class="secondary-action" type="button" data-skip-intro>
-            Spring introen over
-          </button>
+          <p aria-live="polite" data-intro-status>Starter intro med lyd…</p>
+          <div>
+            <button
+              class="primary-action"
+              type="button"
+              data-play-intro
+              hidden
+            >
+              Start intro med lyd
+            </button>
+            <button class="secondary-action" type="button" data-skip-intro>
+              Spring introen over
+            </button>
+          </div>
         </div>
       </section>
     </main>
@@ -327,9 +338,14 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
 
   const stage = root.querySelector<HTMLElement>(".intro-stage");
   const audio = root.querySelector<HTMLAudioElement>("[data-intro-audio]");
+  const playButton = root.querySelector<HTMLButtonElement>(
+    "[data-play-intro]",
+  );
   const skipButton = root.querySelector<HTMLButtonElement>(
     "[data-skip-intro]",
   );
+  const status = root.querySelector<HTMLElement>("[data-intro-status]");
+  let scoreStarted = false;
   let scoreComplete = false;
   let prologueVisible = false;
 
@@ -380,34 +396,58 @@ function renderIntro(root: HTMLElement, store: GameStore): void {
     stage.ariaLabel = "Introen er færdig. Klik for at fortsætte.";
   };
 
-  stage?.classList.add("is-playing");
-  void audio?.play().catch(() => {
-    // The visual score still starts immediately if audible autoplay is blocked.
-  });
-  window.setTimeout(finishScore, INTRO_DURATION_MILLISECONDS);
+  const startScore = async (): Promise<void> => {
+    if (scoreStarted || prologueVisible || !audio) {
+      return;
+    }
+
+    try {
+      await audio.play();
+      if (!stage?.isConnected || prologueVisible) {
+        audio.pause();
+        return;
+      }
+      scoreStarted = true;
+      stage.classList.add("is-playing");
+      if (status) {
+        status.hidden = true;
+      }
+      if (playButton) {
+        playButton.hidden = true;
+      }
+      window.setTimeout(finishScore, INTRO_DURATION_MILLISECONDS);
+    } catch {
+      if (status?.isConnected) {
+        status.hidden = false;
+        status.textContent =
+          "Browseren kræver et klik, før introen kan afspilles med lyd.";
+      }
+      if (playButton?.isConnected) {
+        playButton.hidden = false;
+      }
+    }
+  };
 
   stage?.addEventListener("click", () => {
     if (scoreComplete) {
       showPrologue();
-      return;
     }
-
-    if (audio?.paused) {
-      void audio.play().catch(() => {});
-    }
+  });
+  playButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    void startScore();
   });
   skipButton?.addEventListener("click", (event) => {
     event.stopPropagation();
     showPrologue();
   });
+  void startScore();
 }
 
 export function getNotebookKnowledgeIds(
   state: Pick<GameState, "knowledge">,
 ): KnowledgeId[] {
-  return Object.entries(state.knowledge).filter(
-    ([id, known]) => known && id !== "ryan_was_murdered",
-  )
+  return Object.entries(state.knowledge).filter(([, known]) => known)
     .map(([id]) => id as KnowledgeId);
 }
 
@@ -495,9 +535,10 @@ async function playDialogueChoice(
       return;
     }
 
-    if (answerResult.status === "skipped") {
-      completion = "skipped";
-    }
+    completion = getDialogueSequenceCompletion(
+      questionResult.status,
+      answerResult.status,
+    );
   }
 
   const current = store.getState();
