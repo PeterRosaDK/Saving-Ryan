@@ -519,6 +519,28 @@ button {
   pointer-events: none;
 }
 
+.scene-fallback-actions {
+  position: absolute;
+  z-index: 4;
+  bottom: 8%;
+  left: 50%;
+  display: flex;
+  width: min(78%, 520px);
+  justify-content: center;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.scene-fallback-actions[hidden] {
+  display: none;
+}
+
+.scene-fallback-action {
+  min-height: 44px;
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
 .scene-toolbar-button {
   position: absolute;
   display: block;
@@ -626,6 +648,23 @@ button {
   box-shadow:
     inset 0 0 24px rgba(255, 219, 142, 0.28),
     0 0 12px rgba(240, 189, 99, 0.45);
+}
+
+.scene-hotspot--finale {
+  border-color: rgba(255, 224, 148, 0.78);
+  background: rgba(240, 189, 99, 0.18);
+  box-shadow:
+    inset 0 0 24px rgba(255, 219, 142, 0.22),
+    0 0 14px rgba(240, 189, 99, 0.38);
+}
+
+.scene-hotspot--finale:hover,
+.scene-hotspot--finale:focus-visible {
+  border-color: rgba(255, 235, 184, 1);
+  background: rgba(240, 189, 99, 0.34);
+  box-shadow:
+    inset 0 0 28px rgba(255, 226, 163, 0.38),
+    0 0 18px rgba(240, 189, 99, 0.65);
 }
 
 .scene-hotspot--move:hover,

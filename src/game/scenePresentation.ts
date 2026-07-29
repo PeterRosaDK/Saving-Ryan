@@ -265,7 +265,7 @@ const INTERACTIONS = {
     rect: hotspotRect(117, 294, 14, 46),
   }, {
     interactionId: "prevent_ryans_murder",
-    rect: hotspotRect(117, 294, 14, 46),
+    rect: hotspotRect(99, 276, 50, 82),
   }, {
     interactionId: "place_jorgen_passage_test",
     rect: hotspotRect(117, 294, 14, 46),

@@ -1471,6 +1471,13 @@ function renderExploration(
           <div data-film-loop></div>
           <p class="hotspot-info" aria-live="polite" data-hotspot-info></p>
           <div class="hotspot-layer" data-hotspot-layer></div>
+          <div
+            class="scene-fallback-actions"
+            role="group"
+            aria-label="Tilgængelige finalehandlinger"
+            data-scene-fallback-actions
+            hidden
+          ></div>
           <div class="legacy-help" data-legacy-help hidden>
             <div role="dialog" aria-modal="true" aria-labelledby="legacy-help-title">
               <p class="eyebrow">Hjælp fra Director-udgaven</p>
@@ -1536,6 +1543,9 @@ function renderExploration(
   }
 
   const hotspotLayer = root.querySelector<HTMLElement>("[data-hotspot-layer]");
+  const fallbackActions = root.querySelector<HTMLElement>(
+    "[data-scene-fallback-actions]",
+  );
   const infoBox = root.querySelector<HTMLElement>("[data-hotspot-info]");
   const defaultHotspotLabel = "";
   const appendHotspot = (hotspot: HTMLButtonElement): void => {
@@ -1609,7 +1619,29 @@ function renderExploration(
       if (timeCost === 1) {
         hotspot.classList.add("scene-hotspot--timed");
       }
+      if (interaction.concludesStory) {
+        hotspot.classList.add("scene-hotspot--finale");
+      }
       appendHotspot(hotspot);
+
+      if (interaction.concludesStory) {
+        if (fallbackActions) {
+          fallbackActions.hidden = false;
+        }
+        fallbackActions?.append(
+          button(
+            interaction.label,
+            "secondary-action scene-fallback-action",
+            () => {
+              void playSceneInteraction(
+                interaction,
+                store,
+                narrativeHost,
+              );
+            },
+          ),
+        );
+      }
     }
   });
 

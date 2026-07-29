@@ -106,7 +106,7 @@ describe("verified scene content", () => {
     }
     expect(getScenePresentation("C1").interactions).toContainEqual({
       interactionId: "prevent_ryans_murder",
-      rect: { x: 117, y: 294, width: 14, height: 46 },
+      rect: { x: 99, y: 276, width: 50, height: 82 },
     });
     expect(getScenePresentation("C2").interactions).toContainEqual({
       interactionId: "watch_secret_passage",

@@ -268,6 +268,9 @@ function getLegacySpecialChoices(
                 { type: "LEARN", id: "laura_confessed" },
                 { type: "LEARN", id: "secret_passage_exists" },
               ],
+              effectsOnSkip: true,
+              skipSummary:
+                "Laura tilstår skubbet og forklarer, at hun fulgte Ryan gennem den skjulte passage bag bogreolen til afsatsen.",
             }
           : {},
       ),
@@ -469,6 +472,9 @@ function getLegacySpecialChoices(
                 id: "ryan_dismissed_warning",
               },
             ],
+            effectsOnSkip: true,
+            skipSummary:
+              "Du advarer Ryan om, at han vil blive lokket til afsatsen via den skjulte passage. Han afviser advarslen, så du må nå frem før ham.",
             responseKey: wasAsked
               ? "Ryan:warn_ryan:repeat"
               : "Ryan:warn_ryan:initial",

@@ -219,7 +219,7 @@ describe("legacy dialogue rules", () => {
     expect(videoClip(warning?.questionCue)).toBe("Ryan-Advarsel1");
   });
 
-  it("does not learn that Ryan dismissed a skipped warning", () => {
+  it("keeps the finale unlock when Ryan's warning is skipped", () => {
     const warnedState = learnKnowledge(startedState(), [
       "ryan_was_murdered",
     ]);
@@ -230,7 +230,8 @@ describe("legacy dialogue rules", () => {
       "skipped",
     );
 
-    expect(skipped.state.knowledge.ryan_dismissed_warning).toBe(false);
+    expect(skipped.appliedEffects).toBe(true);
+    expect(skipped.state.knowledge.ryan_dismissed_warning).toBe(true);
   });
 
   it("uses the answer result for a two-cue dialogue sequence", () => {
@@ -501,7 +502,7 @@ describe("legacy dialogue rules", () => {
     );
   });
 
-  it("does not complete Laura's future confession when it is skipped", () => {
+  it("keeps Laura's confession and passage unlock when it is skipped", () => {
     const ready = learnKnowledge(
       startedState({ timeSlot: 3 }),
       ["ryan_left_laura", "necklace_connects_laura_to_scene"],
@@ -513,8 +514,9 @@ describe("legacy dialogue rules", () => {
       "skipped",
     );
 
-    expect(skipped.appliedEffects).toBe(false);
-    expect(skipped.state.knowledge.laura_confessed).toBe(false);
+    expect(skipped.appliedEffects).toBe(true);
+    expect(skipped.state.knowledge.laura_confessed).toBe(true);
+    expect(skipped.state.knowledge.secret_passage_exists).toBe(true);
   });
 
   it("ends an inconclusively accused character's dialogue until the next day", () => {

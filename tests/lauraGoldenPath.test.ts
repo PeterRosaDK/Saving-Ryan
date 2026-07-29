@@ -4,6 +4,11 @@ import type {
   GameAction,
   GameState,
 } from "../src/app/types";
+import {
+  canPerformSceneInteraction,
+  getSceneInteractions,
+} from "../src/game/sceneInteractions";
+import { getScenePresentation } from "../src/game/scenePresentation";
 import { reduceGameState } from "../src/game/stateMachine";
 
 describe("playable Laura golden path", () => {
@@ -138,5 +143,126 @@ describe("playable Laura golden path", () => {
 
     dispatch({ type: "RESET_GAME" });
     expect(state).toEqual(createInitialGameState());
+  });
+
+  it("preserves the finale state across reset and exposes the action after a skipped warning", () => {
+    let state = createInitialGameState();
+    state = reduceGameState(state, {
+      type: "START_CASE",
+      caseId: "laura",
+    });
+    state = reduceGameState(state, { type: "INTRO_FINISHED" });
+    state = {
+      ...state,
+      location: "C",
+      timeSlot: 4,
+      knowledge: {
+        ...state.knowledge,
+        laura_used_secret_passage: true,
+        secret_passage_exists: true,
+        ryan_left_laura: true,
+        killer_dropped_necklace: true,
+        necklace_connects_laura_to_scene: true,
+        laura_confessed: true,
+        ryan_was_murdered: true,
+      },
+    };
+
+    state = reduceGameState(state, { type: "WAIT" });
+    state = reduceGameState(state, { type: "COMPLETE_TRANSITION" });
+
+    expect(state).toMatchObject({
+      phase: "exploration",
+      location: "C",
+      timeSlot: 1,
+    });
+    expect(state.knowledge).toMatchObject({
+      laura_confessed: true,
+      secret_passage_exists: true,
+      laura_used_secret_passage: true,
+    });
+
+    state = reduceGameState(state, {
+      type: "START_DIALOGUE",
+      person: "Ryan",
+    });
+    state = reduceGameState(state, {
+      type: "COMPLETE_DIALOGUE_CHOICE",
+      person: "Ryan",
+      topic: "warn_ryan",
+      completion: "skipped",
+    });
+    state = reduceGameState(state, { type: "CLOSE_DIALOGUE" });
+
+    const finale = getSceneInteractions(state, "C1", "manual").find(
+      ({ id }) => id === "prevent_ryans_murder",
+    );
+    expect(finale).toMatchObject({
+      label: "Gå gennem passagen og vent på Laura",
+      concludesStory: true,
+    });
+    expect(finale && canPerformSceneInteraction(state, finale)).toBe(true);
+
+    const hotspot = getScenePresentation("C1").interactions.find(
+      ({ interactionId }) =>
+        interactionId === "prevent_ryans_murder",
+    );
+    expect(hotspot?.rect.width).toBeGreaterThanOrEqual(44);
+    expect(hotspot?.rect.height).toBeGreaterThanOrEqual(44);
+
+    state = reduceGameState(state, {
+      type: "PERFORM_INTERACTION",
+      id: "prevent_ryans_murder",
+    });
+    expect(state.phase).toBe("ending");
+    expect(state.knowledge.ryan_was_saved).toBe(true);
+  });
+
+  it("keeps the finale available after arriving too late and starting another loop", () => {
+    let state = createInitialGameState();
+    state = reduceGameState(state, {
+      type: "START_CASE",
+      caseId: "laura",
+    });
+    state = reduceGameState(state, { type: "INTRO_FINISHED" });
+    state = {
+      ...state,
+      location: "C",
+      timeSlot: 2,
+      knowledge: {
+        ...state.knowledge,
+        laura_confessed: true,
+        secret_passage_exists: true,
+        ryan_was_murdered: true,
+        ryan_dismissed_warning: true,
+      },
+    };
+
+    const lateAttempt = reduceGameState(state, {
+      type: "PERFORM_INTERACTION",
+      id: "prevent_ryans_murder",
+    });
+    expect(lateAttempt).toBe(state);
+
+    for (let step = 0; step < 3; step += 1) {
+      state = reduceGameState(state, { type: "WAIT" });
+      state = reduceGameState(state, { type: "COMPLETE_TRANSITION" });
+    }
+
+    expect(state).toMatchObject({
+      phase: "exploration",
+      location: "C",
+      timeSlot: 1,
+    });
+    expect(state.knowledge).toMatchObject({
+      laura_confessed: true,
+      secret_passage_exists: true,
+      ryan_dismissed_warning: true,
+      ryan_was_murdered: true,
+    });
+    const finale = getSceneInteractions(state, "C1", "manual").find(
+      ({ id }) => id === "prevent_ryans_murder",
+    );
+    expect(finale && canPerformSceneInteraction(state, finale)).toBe(true);
   });
 });

@@ -167,7 +167,7 @@ export const SCENE_INTERACTIONS = {
     scenes: ["C1"],
     kind: "special",
     trigger: "manual",
-    label: "Brug passagen og stands Laura",
+    label: "Gå gennem passagen og vent på Laura",
     requires: [
       "laura_confessed",
       "secret_passage_exists",
