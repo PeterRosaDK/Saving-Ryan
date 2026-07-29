@@ -13,6 +13,9 @@ export function deriveLauraLead(
     return "Ryan er reddet, og tidsløkken er brudt.";
   }
   if (knowledge.laura_confessed) {
+    if (knowledge.ryan_dismissed_warning) {
+      return "Ryan er advaret. Gå til læsesalen næste morgen, og brug passagen til at nå afsatsen først.";
+    }
     return "Begynd næste dag, advar Ryan, og brug passagen til at nå afsatsen først.";
   }
   if (

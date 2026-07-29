@@ -277,6 +277,9 @@ const INTERACTIONS = {
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
   }, {
+    interactionId: "prevent_ryans_murder",
+    rect: hotspotRect(99, 276, 50, 82),
+  }, {
     interactionId: "watch_secret_passage",
     rect: hotspotRect(117, 294, 14, 46),
   }, {
@@ -305,6 +308,9 @@ const INTERACTIONS = {
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
   }, {
+    interactionId: "prevent_ryans_murder",
+    rect: hotspotRect(99, 276, 50, 82),
+  }, {
     interactionId: "inspect_marie_passage_trace",
     rect: hotspotRect(117, 294, 14, 46),
   }, {
@@ -320,6 +326,9 @@ const INTERACTIONS = {
   C4: [{
     interactionId: "inspect_secret_passage_book",
     rect: hotspotRect(117, 294, 14, 46),
+  }, {
+    interactionId: "prevent_ryans_murder",
+    rect: hotspotRect(99, 276, 50, 82),
   }, {
     interactionId: "inspect_marie_passage_trace",
     rect: hotspotRect(117, 294, 14, 46),

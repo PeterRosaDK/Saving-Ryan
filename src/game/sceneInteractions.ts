@@ -164,7 +164,7 @@ export const SCENE_INTERACTIONS = {
   },
   prevent_ryans_murder: {
     id: "prevent_ryans_murder",
-    scenes: ["C1"],
+    scenes: ["C1", "C2", "C3", "C4"],
     kind: "special",
     trigger: "manual",
     label: "Gå gennem passagen og vent på Laura",
@@ -1088,8 +1088,29 @@ const RYAN_INTERACTION_OVERRIDES: Partial<
 
 export function getSceneInteraction(
   id: SceneInteractionId,
-  state?: Pick<GameState, "selectedCaseId">,
+  state?: Pick<
+    GameState,
+    "selectedCaseId"
+  > &
+    Partial<Pick<GameState, "knowledge" | "timeSlot">>,
 ): SceneInteraction {
+  if (
+    id === "prevent_ryans_murder" &&
+    state?.selectedCaseId === "laura" &&
+    state.knowledge?.laura_confessed
+  ) {
+    const blockedText = !state.knowledge.ryan_dismissed_warning
+      ? "Du må først advare Ryan. Tal med ham om morgenen, og vend derefter tilbage til bogreolen."
+      : state.timeSlot !== 1
+        ? "Det er for sent i dag. Mordøjeblikket kan kun forhindres fra læsesalen næste morgen."
+        : undefined;
+
+    return {
+      ...SCENE_INTERACTIONS.prevent_ryans_murder,
+      blockedCue: blockedText ? textCue(blockedText) : undefined,
+    };
+  }
+
   if (state?.selectedCaseId === "david") {
     return DAVID_INTERACTION_OVERRIDES[id] ?? SCENE_INTERACTIONS[id];
   }
@@ -1114,7 +1135,8 @@ export function getSceneInteraction(
 }
 
 export function getSceneInteractions(
-  state: Pick<GameState, "selectedCaseId">,
+  state: Pick<GameState, "selectedCaseId"> &
+    Partial<Pick<GameState, "knowledge" | "timeSlot">>,
   scene: SceneId,
   trigger: SceneInteractionTrigger,
 ): readonly SceneInteraction[] {
@@ -1123,7 +1145,9 @@ export function getSceneInteractions(
       (interaction.scenes as readonly SceneId[]).includes(scene) &&
       interaction.trigger === trigger &&
       (state.selectedCaseId === "laura"
-        ? !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
+        ? (interaction.id !== "prevent_ryans_murder" ||
+            state.knowledge?.laura_confessed === true) &&
+          !DAVID_STORY_INTERACTIONS.has(interaction.id) &&
           !BARBARA_ONLY_INTERACTIONS.has(interaction.id) &&
           !MARIE_ONLY_INTERACTIONS.has(interaction.id) &&
           !JORGEN_ONLY_INTERACTIONS.has(interaction.id) &&
@@ -1170,6 +1194,14 @@ export function canPerformSceneInteraction(
   state: GameState,
   interaction: SceneInteraction,
 ): boolean {
+  if (
+    interaction.id === "prevent_ryans_murder" &&
+    state.selectedCaseId === "laura" &&
+    state.timeSlot !== 1
+  ) {
+    return false;
+  }
+
   return hasKnowledge(state, interaction.requires);
 }
 

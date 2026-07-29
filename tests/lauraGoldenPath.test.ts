@@ -141,6 +141,9 @@ describe("playable Laura golden path", () => {
     expect(state.knowledge.ryan_was_saved).toBe(true);
     expect(state.knowledge.laura_confessed).toBe(true);
 
+    dispatch({ type: "SHOW_RESULTS" });
+    expect(state.phase).toBe("results");
+
     dispatch({ type: "RESET_GAME" });
     expect(state).toEqual(createInitialGameState());
   });
@@ -216,6 +219,9 @@ describe("playable Laura golden path", () => {
     });
     expect(state.phase).toBe("ending");
     expect(state.knowledge.ryan_was_saved).toBe(true);
+
+    state = reduceGameState(state, { type: "SHOW_RESULTS" });
+    expect(state.phase).toBe("results");
   });
 
   it("keeps the finale available after arriving too late and starting another loop", () => {
@@ -264,5 +270,146 @@ describe("playable Laura golden path", () => {
       ({ id }) => id === "prevent_ryans_murder",
     );
     expect(finale && canPerformSceneInteraction(state, finale)).toBe(true);
+  });
+
+  it("explains a missing warning instead of silently re-running passage discovery", () => {
+    const state: GameState = {
+      ...reduceGameState(
+        reduceGameState(createInitialGameState(), {
+          type: "START_CASE",
+          caseId: "laura",
+        }),
+        { type: "INTRO_FINISHED" },
+      ),
+      location: "C",
+      timeSlot: 1,
+      knowledge: {
+        ...createInitialGameState().knowledge,
+        laura_confessed: true,
+        secret_passage_exists: true,
+        ryan_was_murdered: true,
+      },
+    };
+
+    const interactions = getSceneInteractions(
+      state,
+      "C1",
+      "manual",
+    );
+    const finale = interactions.find(
+      ({ id }) => id === "prevent_ryans_murder",
+    );
+    const replacedIds = new Set(
+      interactions.flatMap(({ replaces }) => replaces ?? []),
+    );
+
+    expect(replacedIds).toContain("inspect_secret_passage_book");
+    expect(finale?.blockedCue).toMatchObject({
+      kind: "text",
+      text: expect.stringContaining("først advare Ryan"),
+    });
+    expect(finale && canPerformSceneInteraction(state, finale)).toBe(false);
+    expect(
+      reduceGameState(state, {
+        type: "PERFORM_INTERACTION",
+        id: "prevent_ryans_murder",
+      }),
+    ).toBe(state);
+  });
+
+  it("explains a late attempt and offers the finale again next morning", () => {
+    let state: GameState = {
+      ...reduceGameState(
+        reduceGameState(createInitialGameState(), {
+          type: "START_CASE",
+          caseId: "laura",
+        }),
+        { type: "INTRO_FINISHED" },
+      ),
+      location: "C",
+      timeSlot: 2,
+      knowledge: {
+        ...createInitialGameState().knowledge,
+        laura_confessed: true,
+        secret_passage_exists: true,
+        ryan_was_murdered: true,
+        ryan_dismissed_warning: true,
+      },
+    };
+
+    const lateFinale = getSceneInteractions(
+      state,
+      "C2",
+      "manual",
+    ).find(({ id }) => id === "prevent_ryans_murder");
+    expect(lateFinale?.blockedCue).toMatchObject({
+      kind: "text",
+      text: expect.stringContaining("for sent i dag"),
+    });
+    expect(
+      lateFinale && canPerformSceneInteraction(state, lateFinale),
+    ).toBe(false);
+
+    for (let step = 0; step < 3; step += 1) {
+      state = reduceGameState(state, { type: "WAIT" });
+      state = reduceGameState(state, { type: "COMPLETE_TRANSITION" });
+    }
+
+    const nextMorningFinale = getSceneInteractions(
+      state,
+      "C1",
+      "manual",
+    ).find(({ id }) => id === "prevent_ryans_murder");
+    expect(nextMorningFinale?.blockedCue).toBeUndefined();
+    expect(
+      nextMorningFinale &&
+        canPerformSceneInteraction(state, nextMorningFinale),
+    ).toBe(true);
+  });
+
+  it("does not expose Original-history prevention before Laura confesses", () => {
+    const state: GameState = {
+      ...reduceGameState(
+        reduceGameState(createInitialGameState(), {
+          type: "START_CASE",
+          caseId: "laura",
+        }),
+        { type: "INTRO_FINISHED" },
+      ),
+      location: "C",
+      timeSlot: 1,
+    };
+
+    expect(
+      getSceneInteractions(state, "C1", "manual").map(({ id }) => id),
+    ).toContain("inspect_secret_passage_book");
+    expect(
+      getSceneInteractions(state, "C1", "manual").map(({ id }) => id),
+    ).not.toContain("prevent_ryans_murder");
+  });
+
+  it("only advances from the Laura epilogue to its result card", () => {
+    const exploration = reduceGameState(
+      reduceGameState(createInitialGameState(), {
+        type: "START_CASE",
+        caseId: "laura",
+      }),
+      { type: "INTRO_FINISHED" },
+    );
+    expect(
+      reduceGameState(exploration, { type: "SHOW_RESULTS" }),
+    ).toBe(exploration);
+
+    const ending: GameState = {
+      ...exploration,
+      phase: "ending",
+      knowledge: {
+        ...exploration.knowledge,
+        ryan_was_saved: true,
+      },
+    };
+    expect(
+      reduceGameState(ending, { type: "SHOW_RESULTS" }).phase,
+    ).toBe("results");
   });
 });

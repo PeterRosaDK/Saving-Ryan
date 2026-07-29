@@ -4,7 +4,8 @@ export type AppPhase =
   | "exploration"
   | "dialogue"
   | "reconstruction"
-  | "ending";
+  | "ending"
+  | "results";
 
 export const CASE_IDS = [
   "laura",
@@ -333,4 +334,5 @@ export type GameAction =
     }
   | { type: "DISMISS_INSIGHTS" }
   | { type: "COMPLETE_RECONSTRUCTION" }
+  | { type: "SHOW_RESULTS" }
   | { type: "RESET_GAME" };

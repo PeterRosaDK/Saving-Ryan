@@ -391,6 +391,16 @@ export function reduceGameState(
       };
     }
 
+    case "SHOW_RESULTS":
+      return state.phase === "ending" &&
+        state.selectedCaseId === "laura" &&
+        state.knowledge.ryan_was_saved
+        ? {
+            ...state,
+            phase: "results",
+          }
+        : state;
+
     case "RESET_GAME":
       return createInitialGameState();
   }

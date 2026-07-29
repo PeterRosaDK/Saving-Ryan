@@ -1252,8 +1252,8 @@ function renderEnding(
           />
         </div>
         <div class="ending-copy">
-          <p class="eyebrow">Sagen er opklaret</p>
-          <h1 id="ending-title">Ryan er reddet</h1>
+          <p class="eyebrow">Original historie · Epilog</p>
+          <h1 id="ending-title">Dagen fortsætter</h1>
           <p>
             For første gang fortsætter dagen uden mordet. Jørgen kendte
             motivet, beviset og vejen til afsatsen, og nåede derfor at
@@ -1263,13 +1263,48 @@ function renderEnding(
             Tidsløkken har ført Jørgen tilbage til det øjeblik, hvor hans
             viden kunne ændre udfaldet.
           </p>
-          <dl class="status-strip ending-status">
-            <div><dt>Dage</dt><dd>${state.loop}</dd></div>
-            <div><dt>Udfald</dt><dd>Ryan lever</dd></div>
-          </dl>
-          <button class="primary-action" type="button" data-restart>
-            Tilbage til hovedmenuen
+          <button class="primary-action" type="button" data-show-results>
+            Se resultat
           </button>
+        </div>
+      </section>
+    </main>
+  `;
+
+  root
+    .querySelector("[data-show-results]")
+    ?.addEventListener("click", () => {
+      store.dispatch({ type: "SHOW_RESULTS" });
+    });
+}
+
+function renderLauraResults(
+  root: HTMLElement,
+  state: GameState,
+  store: GameStore,
+): void {
+  root.innerHTML = `
+    <main class="app-shell ending-shell">
+      <section class="ending-card ending-card--results" aria-labelledby="result-title">
+        <div class="ending-copy">
+          <p class="eyebrow">Original historie · Resultat</p>
+          <h1 id="result-title">Ryan er reddet</h1>
+          <p>
+            Laura tilstod, den skjulte passage blev afsløret, og Jørgen
+            nåede afsatsen før mordet. Tidsløkken er brudt.
+          </p>
+          <dl class="result-grid">
+            <div><dt>Sag</dt><dd>Laura</dd></div>
+            <div><dt>Gerningsperson</dt><dd>Laura</dd></div>
+            <div><dt>Udfald</dt><dd>Ryan overlever</dd></div>
+            <div><dt>Finale</dt><dd>Mordet forhindret</dd></div>
+            <div><dt>Dage brugt</dt><dd>${state.loop}</dd></div>
+          </dl>
+          <div class="ending-actions">
+            <button class="primary-action" type="button" data-restart>
+              Tilbage til hovedmenuen
+            </button>
+          </div>
         </div>
       </section>
     </main>
@@ -1799,6 +1834,11 @@ export function mountApp(root: HTMLElement, store: GameStore): () => void {
 
     if (state.phase === "ending") {
       renderEnding(appView, state, store);
+      return;
+    }
+
+    if (state.phase === "results") {
+      renderLauraResults(appView, state, store);
       return;
     }
 

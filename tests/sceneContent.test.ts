@@ -282,7 +282,7 @@ describe("verified scene content", () => {
     const initial = createInitialGameState();
 
     expect(interaction).toMatchObject({
-      scenes: ["C1"],
+      scenes: ["C1", "C2", "C3", "C4"],
       replaces: ["inspect_secret_passage_book"],
       concludesStory: true,
     });
